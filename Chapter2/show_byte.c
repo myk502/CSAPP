@@ -1,6 +1,5 @@
 #include<stdio.h>
 typedef unsigned char *byte_pointer;
-
 void show_byte(byte_pointer start,int offset)
 {
     for(int i=0;i<offset;i++)
