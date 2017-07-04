@@ -1,0 +1,5048 @@
+1
+00:00:01,110 --> 00:00:06,939
+all right good afternoon everybody
+
+2
+00:00:02,980 --> 00:00:11,980
+welcome good to see you all welcome also
+
+3
+00:00:06,939 --> 00:00:13,660
+to our viewers on video so last week we
+
+4
+00:00:11,980 --> 00:00:19,150
+looked at this this virtual memory
+
+5
+00:00:13,660 --> 00:00:20,859
+mechanism and how it provides so many
+
+6
+00:00:19,150 --> 00:00:25,269
+different useful functionalities to the
+
+7
+00:00:20,859 --> 00:00:26,939
+system along with this sort of
+
+8
+00:00:25,269 --> 00:00:33,160
+abstraction of having this large
+
+9
+00:00:26,939 --> 00:00:36,700
+contiguous array of bytes now once we're
+
+10
+00:00:33,160 --> 00:00:42,280
+given that that large array of bytes now
+
+11
+00:00:36,700 --> 00:00:44,650
+we have to manage it and we have to we
+
+12
+00:00:42,280 --> 00:00:47,110
+have to have some mechanism to to manage
+
+13
+00:00:44,650 --> 00:00:51,250
+and use that that resource okay so
+
+14
+00:00:47,110 --> 00:00:55,270
+that's the topic of our our lectures
+
+15
+00:00:51,250 --> 00:00:58,150
+this week is storage allocation and how
+
+16
+00:00:55,270 --> 00:01:00,100
+storage allocators work and how you use
+
+17
+00:00:58,150 --> 00:01:07,630
+them to manage them there the virtual
+
+18
+00:01:00,100 --> 00:01:11,280
+memory in your system so the basic idea
+
+19
+00:01:07,630 --> 00:01:14,890
+of a dynamic memory allocator is that
+
+20
+00:01:11,280 --> 00:01:18,550
+applications use it to to manipulate
+
+21
+00:01:14,890 --> 00:01:21,790
+virtual memory to create to to allocate
+
+22
+00:01:18,550 --> 00:01:24,729
+and free chunks of virtual memory that
+
+23
+00:01:21,790 --> 00:01:27,280
+you need in your program and it's this
+
+24
+00:01:24,729 --> 00:01:30,840
+memory is maintained in it in an area of
+
+25
+00:01:27,280 --> 00:01:33,940
+virtual memory called the heap ok and
+
+26
+00:01:30,840 --> 00:01:36,130
+almost all languages have some ask some
+
+27
+00:01:33,940 --> 00:01:41,799
+mechanism for for acquiring and
+
+28
+00:01:36,130 --> 00:01:47,440
+manipulating this this this dynamic
+
+29
+00:01:41,799 --> 00:01:50,799
+memory so in NC it's a phone it's the
+
+30
+00:01:47,440 --> 00:01:55,170
+malloc package languages like Java have
+
+31
+00:01:50,799 --> 00:01:55,170
+the new you know the new method
+
+32
+00:01:55,780 --> 00:01:59,830
+now the allocator the allocator
+
+33
+00:01:58,120 --> 00:02:03,910
+maintains the heap as a contiguous
+
+34
+00:01:59,830 --> 00:02:05,229
+collection of blocks where it blocks can
+
+35
+00:02:03,910 --> 00:02:07,330
+be allocated or free
+
+36
+00:02:05,229 --> 00:02:10,140
+okay allocated meaning that they're
+
+37
+00:02:07,330 --> 00:02:13,900
+they're being used by some program
+
+38
+00:02:10,140 --> 00:02:17,260
+application free meaning that they're
+
+39
+00:02:13,900 --> 00:02:20,080
+available to be for use by an
+
+40
+00:02:17,260 --> 00:02:21,730
+application and there's there's two
+
+41
+00:02:20,080 --> 00:02:24,520
+types of allocators the kind of
+
+42
+00:02:21,730 --> 00:02:26,830
+allocator that you find in c such as the
+
+43
+00:02:24,520 --> 00:02:30,160
+malloc package it's up to the
+
+44
+00:02:26,830 --> 00:02:32,709
+application to both explicitly allocate
+
+45
+00:02:30,160 --> 00:02:34,630
+the the memory and explicitly free it
+
+46
+00:02:32,709 --> 00:02:36,130
+when when the when the application is
+
+47
+00:02:34,630 --> 00:02:38,980
+finished with it okay so the system
+
+48
+00:02:36,130 --> 00:02:42,910
+won't won't free up any memory that you
+
+49
+00:02:38,980 --> 00:02:45,510
+allocate unless you do it explicitly by
+
+50
+00:02:42,910 --> 00:02:49,900
+calling the by calling the free function
+
+51
+00:02:45,510 --> 00:02:52,510
+but there's other languages that that
+
+52
+00:02:49,900 --> 00:02:55,000
+support implicit allocators and in these
+
+53
+00:02:52,510 --> 00:02:58,680
+and these implicit allocators the
+
+54
+00:02:55,000 --> 00:03:01,510
+programmer explicitly allocates memory
+
+55
+00:02:58,680 --> 00:03:04,180
+but then the system takes care of
+
+56
+00:03:01,510 --> 00:03:07,000
+freeing the memory okay so it's that the
+
+57
+00:03:04,180 --> 00:03:10,000
+burden of freeing the memory is shifted
+
+58
+00:03:07,000 --> 00:03:13,150
+from the application program to the to
+
+59
+00:03:10,000 --> 00:03:15,010
+the system and it it frees this memory
+
+60
+00:03:13,150 --> 00:03:16,360
+implicitly sort of behind the scenes
+
+61
+00:03:15,010 --> 00:03:19,260
+using a process called garbage
+
+62
+00:03:16,360 --> 00:03:23,160
+collection okay so languages like Java
+
+63
+00:03:19,260 --> 00:03:25,630
+ml Lisp they all they all do implicit
+
+64
+00:03:23,160 --> 00:03:28,030
+implicit they all support and close at
+
+65
+00:03:25,630 --> 00:03:30,160
+allocators now today we're going to just
+
+66
+00:03:28,030 --> 00:03:32,610
+we're going to discuss explicit memory
+
+67
+00:03:30,160 --> 00:03:37,069
+alligators on Thursday we'll get into
+
+68
+00:03:32,610 --> 00:03:40,159
+implicit alligators and how they work
+
+69
+00:03:37,069 --> 00:03:44,030
+now the allocator and see is provided it
+
+70
+00:03:40,159 --> 00:03:48,379
+by the standard c library in a set of
+
+71
+00:03:44,030 --> 00:03:50,750
+function called malloc package the the
+
+72
+00:03:48,379 --> 00:03:53,900
+malloc function is used to to allocate
+
+73
+00:03:50,750 --> 00:03:57,590
+memory and it takes as input a size
+
+74
+00:03:53,900 --> 00:04:01,340
+argument which is in bytes okay and then
+
+75
+00:03:57,590 --> 00:04:04,010
+it returns a pointer to a to a memory
+
+76
+00:04:01,340 --> 00:04:07,400
+block that contains at least size bytes
+
+77
+00:04:04,010 --> 00:04:11,060
+and that block is aligned T on x86
+
+78
+00:04:07,400 --> 00:04:17,259
+systems to 8 bytes on x86 64 systems to
+
+79
+00:04:11,060 --> 00:04:20,959
+16 bytes if size is zero it return to no
+
+80
+00:04:17,259 --> 00:04:26,539
+and then it returns -1 like like most
+
+81
+00:04:20,959 --> 00:04:29,389
+typical system calls the programmer
+
+82
+00:04:26,539 --> 00:04:32,180
+frees memory by calling the free
+
+83
+00:04:29,389 --> 00:04:34,940
+function it takes as an argument a
+
+84
+00:04:32,180 --> 00:04:37,220
+pointer that was returned from some
+
+85
+00:04:34,940 --> 00:04:43,430
+prior indication of malloc and it
+
+86
+00:04:37,220 --> 00:04:45,320
+returns nothing and it frees that I've
+
+87
+00:04:43,430 --> 00:04:47,930
+given this pointer that was returned by
+
+88
+00:04:45,320 --> 00:04:51,650
+the prior indication of malloc it frees
+
+89
+00:04:47,930 --> 00:04:53,419
+the block at that address and then
+
+90
+00:04:51,650 --> 00:04:56,030
+returns that block to the pool of
+
+91
+00:04:53,419 --> 00:05:00,440
+available memory now there's some
+
+92
+00:04:56,030 --> 00:05:02,330
+there's some other functions sialic is a
+
+93
+00:05:00,440 --> 00:05:04,490
+version of malloc that gives you an
+
+94
+00:05:02,330 --> 00:05:08,389
+initialized block of memory that's
+
+95
+00:05:04,490 --> 00:05:10,460
+initialized to 0 and realloc you can you
+
+96
+00:05:08,389 --> 00:05:12,650
+can malloc a block and then call realloc
+
+97
+00:05:10,460 --> 00:05:15,320
+to change the size of that previously
+
+98
+00:05:12,650 --> 00:05:17,300
+allocated block and then there's a
+
+99
+00:05:15,320 --> 00:05:19,789
+function called S break which is used
+
+100
+00:05:17,300 --> 00:05:21,560
+internally by allocators to to grow and
+
+101
+00:05:19,789 --> 00:05:25,370
+shrink the heap so when an allocator
+
+102
+00:05:21,560 --> 00:05:27,169
+needs more memory it calls S break 2 to
+
+103
+00:05:25,370 --> 00:05:29,720
+get that additional virtual memory and
+
+104
+00:05:27,169 --> 00:05:32,240
+then that that's added to the heat that
+
+105
+00:05:29,720 --> 00:05:34,370
+proportion that grows the heap and then
+
+106
+00:05:32,240 --> 00:05:38,409
+it adds it to the memory that the the
+
+107
+00:05:34,370 --> 00:05:38,409
+allocators is manipulating
+
+108
+00:05:39,700 --> 00:05:45,250
+so here's an example of how we would use
+
+109
+00:05:41,950 --> 00:05:50,560
+malloc and it's in a simple program we
+
+110
+00:05:45,250 --> 00:05:53,710
+have a pointer to an int P and we call
+
+111
+00:05:50,560 --> 00:05:56,830
+malloc and we we want to allocate an
+
+112
+00:05:53,710 --> 00:05:59,290
+array of n imps so this is that this is
+
+113
+00:05:56,830 --> 00:06:02,290
+sort of the standard way you call it we
+
+114
+00:05:59,290 --> 00:06:04,930
+want an int and so we call it with n
+
+115
+00:06:02,290 --> 00:06:08,620
+times the size event it because remember
+
+116
+00:06:04,930 --> 00:06:12,220
+the argument is in bytes malloc returns
+
+117
+00:06:08,620 --> 00:06:15,700
+a pointer it returns a generic pointer
+
+118
+00:06:12,220 --> 00:06:19,060
+void star pointer so we cast it to a
+
+119
+00:06:15,700 --> 00:06:24,700
+pointer to an int to keep the compiler
+
+120
+00:06:19,060 --> 00:06:29,550
+happy and then assign it to 2p we check
+
+121
+00:06:24,700 --> 00:06:34,150
+for a we check for a null return value
+
+122
+00:06:29,550 --> 00:06:36,580
+so I should I should point out the it
+
+123
+00:06:34,150 --> 00:06:39,460
+returns zero on air so we check we
+
+124
+00:06:36,580 --> 00:06:43,720
+recheck recheck for this know the smell
+
+125
+00:06:39,460 --> 00:06:46,810
+pointer which is 0 and print an error if
+
+126
+00:06:43,720 --> 00:06:49,230
+it's no now once we've got that pointer
+
+127
+00:06:46,810 --> 00:06:52,480
+now P we can treat it just like an array
+
+128
+00:06:49,230 --> 00:06:56,560
+so we can so inside the loop if we want
+
+129
+00:06:52,480 --> 00:06:57,840
+to initialize it we loop across the
+
+130
+00:06:56,560 --> 00:07:01,150
+elements of the array
+
+131
+00:06:57,840 --> 00:07:02,860
+initializing each one to some value now
+
+132
+00:07:01,150 --> 00:07:04,270
+when we're finished when we're finished
+
+133
+00:07:02,860 --> 00:07:06,010
+with this chunk of memory that we've
+
+134
+00:07:04,270 --> 00:07:11,340
+allocated then we free it by calling
+
+135
+00:07:06,010 --> 00:07:11,340
+free with the pointer P
+
+136
+00:07:11,999 --> 00:07:17,610
+okay now the so we're going to look
+
+137
+00:07:14,789 --> 00:07:19,949
+today at how functions like malloc and
+
+138
+00:07:17,610 --> 00:07:23,879
+free are implemented so we're going to
+
+139
+00:07:19,949 --> 00:07:28,679
+make a few simplifying assumptions so
+
+140
+00:07:23,879 --> 00:07:30,329
+I'm going to memory is byte address we
+
+141
+00:07:28,679 --> 00:07:31,860
+know that but for the purposes of this
+
+142
+00:07:30,329 --> 00:07:33,389
+lecture we're going to assume that it's
+
+143
+00:07:31,860 --> 00:07:39,149
+it's word address okay so we're just
+
+144
+00:07:33,389 --> 00:07:43,669
+going to look at word size units and I'm
+
+145
+00:07:39,149 --> 00:07:51,119
+going to assume that words are 4 bytes
+
+146
+00:07:43,669 --> 00:07:52,860
+so basically the size of an int so this
+
+147
+00:07:51,119 --> 00:07:57,269
+isn't actually this this isn't true I
+
+148
+00:07:52,860 --> 00:07:58,349
+need to fix that so basically we're
+
+149
+00:07:57,269 --> 00:08:01,349
+going to we're going to think of words
+
+150
+00:07:58,349 --> 00:08:06,059
+that's for byte quantity sort of integer
+
+151
+00:08:01,349 --> 00:08:07,919
+sized quantities and then our blocks or
+
+152
+00:08:06,059 --> 00:08:10,769
+contiguous chunks of those words that
+
+153
+00:08:07,919 --> 00:08:13,369
+can be either allocated or free so here
+
+154
+00:08:10,769 --> 00:08:16,050
+we have a portion of the heap which
+
+155
+00:08:13,369 --> 00:08:19,309
+consists of a forward allocated block
+
+156
+00:08:16,050 --> 00:08:21,869
+followed by a two-word free block
+
+157
+00:08:19,309 --> 00:08:24,389
+followed by another forward allocated
+
+158
+00:08:21,869 --> 00:08:26,669
+block followed by a three word free
+
+159
+00:08:24,389 --> 00:08:29,279
+blocking and we'll indicate these free
+
+160
+00:08:26,669 --> 00:08:32,029
+blocks by by white and will indicate
+
+161
+00:08:29,279 --> 00:08:37,829
+allocated blocks with some some shade of
+
+162
+00:08:32,029 --> 00:08:41,430
+color so let's look now how a sequence
+
+163
+00:08:37,829 --> 00:08:44,550
+of allocations and freeze would work and
+
+164
+00:08:41,430 --> 00:08:47,839
+now notice I'm calling malloc with the
+
+165
+00:08:44,550 --> 00:08:50,490
+size of in words not bytes just to keep
+
+166
+00:08:47,839 --> 00:08:52,970
+just to keep things keep these pictures
+
+167
+00:08:50,490 --> 00:08:52,970
+simpler
+
+168
+00:08:54,520 --> 00:09:04,000
+so in this first we call malloc and
+
+169
+00:08:58,480 --> 00:09:06,070
+allocate of a forward block then we
+
+170
+00:09:04,000 --> 00:09:08,050
+canet and that gives us a pointer P 1
+
+171
+00:09:06,070 --> 00:09:10,839
+then we call malloc again to get a
+
+172
+00:09:08,050 --> 00:09:15,610
+five-word block so it just takes it one
+
+173
+00:09:10,839 --> 00:09:17,410
+of the free words and allocates it we
+
+174
+00:09:15,610 --> 00:09:21,010
+call malloc again to get a six word
+
+175
+00:09:17,410 --> 00:09:25,290
+block and then we free the block that's
+
+176
+00:09:21,010 --> 00:09:28,390
+pointed at by P to this purple block
+
+177
+00:09:25,290 --> 00:09:31,899
+okay so now we that frees up that block
+
+178
+00:09:28,390 --> 00:09:35,130
+and then we do another allocation for a
+
+179
+00:09:31,899 --> 00:09:37,660
+two word block and so the the allocator
+
+180
+00:09:35,130 --> 00:09:40,660
+looks to see if it can find a free block
+
+181
+00:09:37,660 --> 00:09:42,490
+that has enough enough room and it finds
+
+182
+00:09:40,660 --> 00:09:46,110
+that it finds this free block here that
+
+183
+00:09:42,490 --> 00:09:50,680
+has five free words and then it
+
+184
+00:09:46,110 --> 00:09:58,240
+allocates the requested block inside of
+
+185
+00:09:50,680 --> 00:10:00,220
+that that free block now allocators work
+
+186
+00:09:58,240 --> 00:10:02,079
+under a lot of a lot of different
+
+187
+00:10:00,220 --> 00:10:03,310
+constraints so it's hard to write an
+
+188
+00:10:02,079 --> 00:10:07,870
+allocator because of all these
+
+189
+00:10:03,310 --> 00:10:10,660
+constraints applications can choose any
+
+190
+00:10:07,870 --> 00:10:12,730
+combination of allocated and free blocks
+
+191
+00:10:10,660 --> 00:10:16,079
+so you can't predict what what an
+
+192
+00:10:12,730 --> 00:10:19,209
+application is going to request and and
+
+193
+00:10:16,079 --> 00:10:21,430
+the application is required to free a
+
+194
+00:10:19,209 --> 00:10:24,070
+block by when it frees a block to pass a
+
+195
+00:10:21,430 --> 00:10:26,860
+pointer that was returned from a
+
+196
+00:10:24,070 --> 00:10:28,600
+previous invocation of malloc okay so
+
+197
+00:10:26,860 --> 00:10:32,020
+the the application has a few
+
+198
+00:10:28,600 --> 00:10:34,329
+constraints but but really the only one
+
+199
+00:10:32,020 --> 00:10:36,579
+that it has is that the fact that the
+
+200
+00:10:34,329 --> 00:10:38,680
+when it frees something it has to be a
+
+201
+00:10:36,579 --> 00:10:42,459
+pointer from previous invocation of
+
+202
+00:10:38,680 --> 00:10:44,290
+malloc now the malloc operates or
+
+203
+00:10:42,459 --> 00:10:46,690
+allocators like malloc operate under a
+
+204
+00:10:44,290 --> 00:10:48,579
+lot of different constraints they can't
+
+205
+00:10:46,690 --> 00:10:50,950
+control the size or the number of the
+
+206
+00:10:48,579 --> 00:10:52,930
+allocated blocks because they have no
+
+207
+00:10:50,950 --> 00:10:56,529
+control over the what the application is
+
+208
+00:10:52,930 --> 00:10:59,380
+doing if an application calls Malik
+
+209
+00:10:56,529 --> 00:11:01,990
+Malik has to respond right away it might
+
+210
+00:10:59,380 --> 00:11:03,459
+you might be able to do a better more
+
+211
+00:11:01,990 --> 00:11:05,680
+efficient version by batching up
+
+212
+00:11:03,459 --> 00:11:07,379
+requests and then responding to all
+
+213
+00:11:05,680 --> 00:11:09,299
+those requests at once
+
+214
+00:11:07,379 --> 00:11:11,309
+but the allocator can't do it when it
+
+215
+00:11:09,299 --> 00:11:14,759
+gets called it has to process the
+
+216
+00:11:11,309 --> 00:11:16,169
+request and then return right away it
+
+217
+00:11:14,759 --> 00:11:17,939
+has to of course it has to allocate
+
+218
+00:11:16,169 --> 00:11:20,459
+blocks from free memory so it can't
+
+219
+00:11:17,939 --> 00:11:22,619
+in general I can't touch any allocated
+
+220
+00:11:20,459 --> 00:11:25,049
+block right once it allocates a block
+
+221
+00:11:22,619 --> 00:11:28,769
+that block belongs to the application
+
+222
+00:11:25,049 --> 00:11:31,919
+and the malloc package can't touch it
+
+223
+00:11:28,769 --> 00:11:37,049
+now this has a number of implications so
+
+224
+00:11:31,919 --> 00:11:39,179
+this means that the allocator can't it
+
+225
+00:11:37,049 --> 00:11:40,979
+can't move blocks around like it can't
+
+226
+00:11:39,179 --> 00:11:43,349
+compress blocks like an alligator might
+
+227
+00:11:40,979 --> 00:11:45,720
+want to take allocated blocks and smoosh
+
+228
+00:11:43,349 --> 00:11:48,479
+them all together to create larger free
+
+229
+00:11:45,720 --> 00:11:51,539
+blocks okay but it can't do that okay so
+
+230
+00:11:48,479 --> 00:11:55,039
+once you know in a language like C once
+
+231
+00:11:51,539 --> 00:11:57,799
+once an alligator gives a block to an
+
+232
+00:11:55,039 --> 00:12:01,439
+application it can't touch it
+
+233
+00:11:57,799 --> 00:12:03,269
+okay now blocks like blocks because
+
+234
+00:12:01,439 --> 00:12:07,319
+blocks are holding data structures like
+
+235
+00:12:03,269 --> 00:12:10,289
+structs or you know scalar scalar
+
+236
+00:12:07,319 --> 00:12:12,299
+objects it has to be aligned to the size
+
+237
+00:12:10,289 --> 00:12:15,209
+of the largest object that that can
+
+238
+00:12:12,299 --> 00:12:18,449
+occur okay so for 64-bit systems that's
+
+239
+00:12:15,209 --> 00:12:21,470
+16 byte alignment for 32-bit systems
+
+240
+00:12:18,449 --> 00:12:21,470
+it's 8 byte alignment
+
+241
+00:12:23,720 --> 00:12:29,580
+now alligators are really interesting
+
+242
+00:12:26,779 --> 00:12:33,330
+objects because they they combine a
+
+243
+00:12:29,580 --> 00:12:36,240
+trade-off of both sort of running times
+
+244
+00:12:33,330 --> 00:12:38,610
+sort of speed and space so it's kind of
+
+245
+00:12:36,240 --> 00:12:40,290
+a space and performance trade-off you're
+
+246
+00:12:38,610 --> 00:12:42,899
+trying to optimize both you want it to
+
+247
+00:12:40,290 --> 00:12:44,790
+run as quickly as possible but you want
+
+248
+00:12:42,899 --> 00:12:47,010
+to use you want it to use the virtual
+
+249
+00:12:44,790 --> 00:12:50,820
+memory in the heap as efficiently as
+
+250
+00:12:47,010 --> 00:12:56,180
+possible okay so let's now we define
+
+251
+00:12:50,820 --> 00:12:59,640
+these these sort of speed and and
+
+252
+00:12:56,180 --> 00:13:01,350
+efficiency memory efficiency metrics we
+
+253
+00:12:59,640 --> 00:13:03,870
+have we have two metrics that we use one
+
+254
+00:13:01,350 --> 00:13:07,680
+is called throughput so given some
+
+255
+00:13:03,870 --> 00:13:12,000
+sequence of malloc and free requests are
+
+256
+00:13:07,680 --> 00:13:16,440
+0 through R n minus 1 so just some where
+
+257
+00:13:12,000 --> 00:13:20,100
+R is either a malloc or free our goal is
+
+258
+00:13:16,440 --> 00:13:23,519
+to maximize throughput and the peak
+
+259
+00:13:20,100 --> 00:13:25,769
+memory utilization and what makes malloc
+
+260
+00:13:23,519 --> 00:13:28,440
+such a fascinating and interesting study
+
+261
+00:13:25,769 --> 00:13:31,260
+is that these often conflict like it's
+
+262
+00:13:28,440 --> 00:13:33,630
+very easy to make a really fast malloc
+
+263
+00:13:31,260 --> 00:13:38,010
+that that has terrible memory
+
+264
+00:13:33,630 --> 00:13:40,680
+utilization so throughput is just the
+
+265
+00:13:38,010 --> 00:13:43,459
+number of recomputed requests per unit
+
+266
+00:13:40,680 --> 00:13:47,250
+time so we have 5,000 malloc calls and
+
+267
+00:13:43,459 --> 00:13:49,110
+5,000 free calls in 10 seconds then our
+
+268
+00:13:47,250 --> 00:13:52,680
+throughput is a thousand operations per
+
+269
+00:13:49,110 --> 00:13:55,470
+second so it's just measuring sort of
+
+270
+00:13:52,680 --> 00:13:56,970
+how efficiently are our malloc can can
+
+271
+00:13:55,470 --> 00:13:59,540
+process these requests from an
+
+272
+00:13:56,970 --> 00:13:59,540
+application
+
+273
+00:14:00,100 --> 00:14:11,290
+now peak memory utilization is a measure
+
+274
+00:14:06,670 --> 00:14:14,140
+sort of how how much useful space sort
+
+275
+00:14:11,290 --> 00:14:16,750
+of how much it measures how efficiently
+
+276
+00:14:14,140 --> 00:14:19,270
+the allocator uses the heat sort of how
+
+277
+00:14:16,750 --> 00:14:21,160
+much is wasted on sort of overhead in
+
+278
+00:14:19,270 --> 00:14:25,200
+the data structures that the allocator
+
+279
+00:14:21,160 --> 00:14:29,620
+has to use us to in its implementation
+
+280
+00:14:25,200 --> 00:14:33,040
+so we'll define a payload when when
+
+281
+00:14:29,620 --> 00:14:34,660
+malloc returns a block what when it I'm
+
+282
+00:14:33,040 --> 00:14:37,450
+sorry when an application makes a call
+
+283
+00:14:34,660 --> 00:14:40,420
+to malloc it's a questing a certain size
+
+284
+00:14:37,450 --> 00:14:42,910
+block and that that block is called the
+
+285
+00:14:40,420 --> 00:14:45,880
+payload so if we call malloc with an
+
+286
+00:14:42,910 --> 00:14:48,970
+argument of 10 bytes we're requesting a
+
+287
+00:14:45,880 --> 00:14:51,970
+block that has a payload of it that's at
+
+288
+00:14:48,970 --> 00:14:53,530
+least size 10 ok and the 10 bytes that
+
+289
+00:14:51,970 --> 00:14:55,780
+we request that are called the payload
+
+290
+00:14:53,530 --> 00:14:58,860
+everything else in that block is is
+
+291
+00:14:55,780 --> 00:14:58,860
+overhead ok
+
+292
+00:15:00,240 --> 00:15:08,279
+so after after we've run a sequence of
+
+293
+00:15:04,019 --> 00:15:10,679
+requests the aggregate payload is the
+
+294
+00:15:08,279 --> 00:15:13,860
+sum of all the payloads in the currently
+
+295
+00:15:10,679 --> 00:15:17,459
+allocated block okay so in a perfect
+
+296
+00:15:13,860 --> 00:15:20,879
+allocator the the aggregate payload
+
+297
+00:15:17,459 --> 00:15:23,009
+would would would equal the amount of
+
+298
+00:15:20,879 --> 00:15:24,389
+memory the total size of all the
+
+299
+00:15:23,009 --> 00:15:26,939
+allocated blocks or because there'd be
+
+300
+00:15:24,389 --> 00:15:30,829
+no overhead would just be would just be
+
+301
+00:15:26,939 --> 00:15:30,829
+pure every block would be pure payload
+
+302
+00:15:32,720 --> 00:15:38,339
+now we're going to assume that the heap
+
+303
+00:15:35,459 --> 00:15:41,279
+is is monotonically non-decreasing so it
+
+304
+00:15:38,339 --> 00:15:43,529
+always gets bigger okay so our this is a
+
+305
+00:15:41,279 --> 00:15:46,050
+simplifying assumption it's not it's not
+
+306
+00:15:43,529 --> 00:15:47,929
+true in a real malloc package but we'll
+
+307
+00:15:46,050 --> 00:15:50,279
+just assume that the allocator never
+
+308
+00:15:47,929 --> 00:15:57,029
+decreases the size of the heap it only
+
+309
+00:15:50,279 --> 00:15:59,610
+increases the size of the heap okay so
+
+310
+00:15:57,029 --> 00:16:03,839
+the peek given those given those notions
+
+311
+00:15:59,610 --> 00:16:07,290
+of aggregate payload and heap size the
+
+312
+00:16:03,839 --> 00:16:12,449
+peak memory utilization after k plus 1
+
+313
+00:16:07,290 --> 00:16:15,839
+requests is the sum of all the is the
+
+314
+00:16:12,449 --> 00:16:20,730
+sum of all the payloads divided by the
+
+315
+00:16:15,839 --> 00:16:25,339
+total size of the heap so the in the
+
+316
+00:16:20,730 --> 00:16:28,110
+best case each each block in the heap
+
+317
+00:16:25,339 --> 00:16:30,829
+consists of pure payload so the
+
+318
+00:16:28,110 --> 00:16:33,629
+utilization would be 1 that's the best
+
+319
+00:16:30,829 --> 00:16:36,230
+we can do but in in in practice each
+
+320
+00:16:33,629 --> 00:16:39,149
+block the allocator is going to place
+
+321
+00:16:36,230 --> 00:16:43,679
+have data structures and padding inside
+
+322
+00:16:39,149 --> 00:16:46,259
+of each block that that that keep it
+
+323
+00:16:43,679 --> 00:16:48,269
+from getting a perfect utilization now
+
+324
+00:16:46,259 --> 00:16:52,079
+one one obvious thing is that since
+
+325
+00:16:48,269 --> 00:16:53,399
+blocks have to be aligned to some you
+
+326
+00:16:52,079 --> 00:16:55,559
+know if there's sixteen by two lines
+
+327
+00:16:53,399 --> 00:16:57,389
+then blocks have to start on 16 by
+
+328
+00:16:55,559 --> 00:16:59,970
+boundaries and they have to be at least
+
+329
+00:16:57,389 --> 00:17:03,119
+16 bytes so if you were to request a
+
+330
+00:16:59,970 --> 00:17:05,279
+payload of 2 bytes you'd have a lot of
+
+331
+00:17:03,119 --> 00:17:08,429
+wasted bytes right that would sort of
+
+332
+00:17:05,279 --> 00:17:11,159
+decrease the utilization so this is some
+
+333
+00:17:08,429 --> 00:17:13,539
+some of this some of this overhead is
+
+334
+00:17:11,159 --> 00:17:16,329
+unavoidable but your job as a
+
+335
+00:17:13,539 --> 00:17:19,979
+someone who writes a implements Malik is
+
+336
+00:17:16,329 --> 00:17:19,979
+to try to keep that as small as possible
+
+337
+00:17:21,449 --> 00:17:27,069
+so poor memory utilization it's this
+
+338
+00:17:25,449 --> 00:17:29,820
+example that we just talked about is an
+
+339
+00:17:27,069 --> 00:17:31,899
+example of what we call fragmentation
+
+340
+00:17:29,820 --> 00:17:35,019
+and there's there's two types of
+
+341
+00:17:31,899 --> 00:17:37,419
+fragmentation internal fragmentation
+
+342
+00:17:35,019 --> 00:17:38,739
+occurs if the payload is smaller than
+
+343
+00:17:37,419 --> 00:17:41,229
+the block size those just what we're
+
+344
+00:17:38,739 --> 00:17:45,249
+we're talking about and this can be
+
+345
+00:17:41,229 --> 00:17:46,720
+caused by either padding in the block or
+
+346
+00:17:45,249 --> 00:17:51,879
+some kind of data structure in the block
+
+347
+00:17:46,720 --> 00:17:54,249
+that the allocator needs sometimes to
+
+348
+00:17:51,879 --> 00:17:57,039
+you might make a policy decision that if
+
+349
+00:17:54,249 --> 00:17:59,320
+it if application requests a small block
+
+350
+00:17:57,039 --> 00:18:01,629
+you might return a larger block just to
+
+351
+00:17:59,320 --> 00:18:03,309
+keep so the blocks don't get sort of
+
+352
+00:18:01,629 --> 00:18:06,279
+splintered up into little chunk you
+
+353
+00:18:03,309 --> 00:18:08,940
+might want to keep blocks at some
+
+354
+00:18:06,279 --> 00:18:08,940
+minimum size
+
+355
+00:18:12,059 --> 00:18:20,129
+now internal fragmentation you know
+
+356
+00:18:16,139 --> 00:18:21,989
+given a series of requests we can we can
+
+357
+00:18:20,129 --> 00:18:24,749
+just stop and freeze the heat and it's
+
+358
+00:18:21,989 --> 00:18:26,580
+very easy to so it computes the amount
+
+359
+00:18:24,749 --> 00:18:29,099
+of internal fragmentation we can at any
+
+360
+00:18:26,580 --> 00:18:31,830
+point in time we can just look at all
+
+361
+00:18:29,099 --> 00:18:34,349
+the previous requests that we we've made
+
+362
+00:18:31,830 --> 00:18:38,489
+and and look at the size of the payload
+
+363
+00:18:34,349 --> 00:18:43,200
+for each one of those requests and so we
+
+364
+00:18:38,489 --> 00:18:44,489
+can so we can determine the level you
+
+365
+00:18:43,200 --> 00:18:46,019
+know get at a point in time we can
+
+366
+00:18:44,489 --> 00:18:48,450
+determine the level of internal
+
+367
+00:18:46,019 --> 00:18:52,559
+fragmentation just by looking at the
+
+368
+00:18:48,450 --> 00:18:54,989
+previous requests so there's another
+
+369
+00:18:52,559 --> 00:18:56,519
+form of fragmentation called external
+
+370
+00:18:54,989 --> 00:19:00,119
+fragmentation which is a little more
+
+371
+00:18:56,519 --> 00:19:02,479
+difficult to to deal with so external
+
+372
+00:19:00,119 --> 00:19:05,669
+fragmentation occurs when there's enough
+
+373
+00:19:02,479 --> 00:19:08,249
+memory in the heap but there's there's
+
+374
+00:19:05,669 --> 00:19:10,739
+no single free block that can satisfy a
+
+375
+00:19:08,249 --> 00:19:13,229
+particular request ok so external
+
+376
+00:19:10,739 --> 00:19:15,769
+fragmentation occurs when the
+
+377
+00:19:13,229 --> 00:19:18,619
+application makes a request for a block
+
+378
+00:19:15,769 --> 00:19:22,259
+but nowhere in the heap is there a free
+
+379
+00:19:18,619 --> 00:19:24,799
+block that's large enough to to satisfy
+
+380
+00:19:22,259 --> 00:19:24,799
+that request
+
+381
+00:19:25,730 --> 00:19:30,440
+so an example of this like suppose
+
+382
+00:19:28,220 --> 00:19:33,049
+here's the previous example we looked at
+
+383
+00:19:30,440 --> 00:19:37,070
+now where we have after a series of
+
+384
+00:19:33,049 --> 00:19:39,950
+malloc and free calls we have two free
+
+385
+00:19:37,070 --> 00:19:41,750
+blocks in the heap one containing five
+
+386
+00:19:39,950 --> 00:19:44,149
+words and the other containing two words
+
+387
+00:19:41,750 --> 00:19:46,730
+so the total the total number of free
+
+388
+00:19:44,149 --> 00:19:51,399
+words in our heap is seven seven words
+
+389
+00:19:46,730 --> 00:19:54,679
+and now we get a request for six words
+
+390
+00:19:51,399 --> 00:19:57,860
+okay we have enough free blocks we have
+
+391
+00:19:54,679 --> 00:20:01,279
+enough free words in the heap but we
+
+392
+00:19:57,860 --> 00:20:03,679
+can't satisfy that request and it's
+
+393
+00:20:01,279 --> 00:20:05,600
+because of it's because of this
+
+394
+00:20:03,679 --> 00:20:10,159
+phenomenon called external fragmentation
+
+395
+00:20:05,600 --> 00:20:13,240
+for example if we'd have if we'd have
+
+396
+00:20:10,159 --> 00:20:13,240
+somehow allocated
+
+397
+00:20:17,630 --> 00:20:21,450
+yeah I don't know in this case I don't
+
+398
+00:20:19,710 --> 00:20:24,090
+think we could have avoided the external
+
+399
+00:20:21,450 --> 00:20:26,370
+fragmentation but nonetheless there's
+
+400
+00:20:24,090 --> 00:20:29,340
+enough memory here we just it's the way
+
+401
+00:20:26,370 --> 00:20:31,950
+that our blocks are configured in the
+
+402
+00:20:29,340 --> 00:20:34,470
+heap we can't satisfy the request so in
+
+403
+00:20:31,950 --> 00:20:36,390
+this in this in this case that the
+
+404
+00:20:34,470 --> 00:20:39,659
+allocator has to go and get more more
+
+405
+00:20:36,390 --> 00:20:40,919
+virtual memory would have to go and it
+
+406
+00:20:39,659 --> 00:20:44,429
+would have to get more virtual memory
+
+407
+00:20:40,919 --> 00:20:47,580
+and extend the heap out this way and to
+
+408
+00:20:44,429 --> 00:20:50,309
+get a large enough free block so you
+
+409
+00:20:47,580 --> 00:20:52,970
+know assessing and sort of understanding
+
+410
+00:20:50,309 --> 00:20:55,169
+external fragmentation is difficult
+
+411
+00:20:52,970 --> 00:20:58,549
+because unlike internal fragmentation
+
+412
+00:20:55,169 --> 00:21:01,289
+which depended on the previous request
+
+413
+00:20:58,549 --> 00:21:04,020
+external fragmentation depends on future
+
+414
+00:21:01,289 --> 00:21:06,630
+requests so if we look back at this
+
+415
+00:21:04,020 --> 00:21:09,750
+point we say is our is our heap
+
+416
+00:21:06,630 --> 00:21:12,809
+externally fragmented well we it depends
+
+417
+00:21:09,750 --> 00:21:15,210
+right we can't say it turns out it is
+
+418
+00:21:12,809 --> 00:21:17,490
+because the next request is is for a
+
+419
+00:21:15,210 --> 00:21:19,649
+block of size six but if all of the
+
+420
+00:21:17,490 --> 00:21:21,899
+future blocks are future requests were
+
+421
+00:21:19,649 --> 00:21:24,000
+four below we're four blocks of you know
+
+422
+00:21:21,899 --> 00:21:26,730
+say small blocks then we be able to
+
+423
+00:21:24,000 --> 00:21:28,049
+satisfy those and we wouldn't we
+
+424
+00:21:26,730 --> 00:21:30,200
+wouldn't suffer from external
+
+425
+00:21:28,049 --> 00:21:30,200
+fragmentation
+
+426
+00:21:32,960 --> 00:21:42,740
+okay now when we build an alligator all
+
+427
+00:21:37,850 --> 00:21:44,570
+kinds of issues come up and said I've
+
+428
+00:21:42,740 --> 00:21:49,400
+glossed over with my simple examples
+
+429
+00:21:44,570 --> 00:21:52,160
+right you know how do we know if we call
+
+430
+00:21:49,400 --> 00:21:54,260
+free how does free know how much memory
+
+431
+00:21:52,160 --> 00:21:56,390
+to free up right we don't call free with
+
+432
+00:21:54,260 --> 00:21:59,450
+the block size we call it with a pointer
+
+433
+00:21:56,390 --> 00:22:03,080
+so how does three know how big that
+
+434
+00:21:59,450 --> 00:22:09,200
+block is how do we keep track of all the
+
+435
+00:22:03,080 --> 00:22:12,010
+free blocks when we have you know when
+
+436
+00:22:09,200 --> 00:22:13,910
+we're satisfying an allocation request
+
+437
+00:22:12,010 --> 00:22:16,660
+we're going to fight we're going to look
+
+438
+00:22:13,910 --> 00:22:20,060
+for a free block that is larger than the
+
+439
+00:22:16,660 --> 00:22:21,920
+requested size on that that case what do
+
+440
+00:22:20,060 --> 00:22:25,100
+we do with the extra space in the block
+
+441
+00:22:21,920 --> 00:22:26,660
+we do we just keep it in the block you
+
+442
+00:22:25,100 --> 00:22:29,360
+know and and suffer some internal
+
+443
+00:22:26,660 --> 00:22:34,220
+fragmentation do we split that block
+
+444
+00:22:29,360 --> 00:22:37,330
+into a smaller block there's a lot of
+
+445
+00:22:34,220 --> 00:22:39,830
+free blocks in the in the heap how do we
+
+446
+00:22:37,330 --> 00:22:42,530
+when we make an out when the allocator
+
+447
+00:22:39,830 --> 00:22:44,450
+gets a allocation request how does it
+
+448
+00:22:42,530 --> 00:22:45,410
+pick from all among all of those
+
+449
+00:22:44,450 --> 00:22:50,990
+different free blocks
+
+450
+00:22:45,410 --> 00:22:53,360
+there's many choices and then once when
+
+451
+00:22:50,990 --> 00:22:56,120
+free tries to insert a free block we're
+
+452
+00:22:53,360 --> 00:22:58,640
+in the heap you know where does it
+
+453
+00:22:56,120 --> 00:23:01,400
+insert it okay when it's when it's free
+
+454
+00:22:58,640 --> 00:23:03,890
+and how do we reinsert a free block what
+
+455
+00:23:01,400 --> 00:23:07,880
+does that mean so today we're going to
+
+456
+00:23:03,890 --> 00:23:11,060
+look at all of these issues starting
+
+457
+00:23:07,880 --> 00:23:14,660
+with knowing how much to free so how big
+
+458
+00:23:11,060 --> 00:23:19,490
+our block sizes so the typical the
+
+459
+00:23:14,660 --> 00:23:21,320
+standard method is to keep sort of a
+
+460
+00:23:19,490 --> 00:23:23,900
+word sized quantity at the beginning of
+
+461
+00:23:21,320 --> 00:23:28,130
+each block that gives the size of that
+
+462
+00:23:23,900 --> 00:23:31,480
+block in in some units I'm showing them
+
+463
+00:23:28,130 --> 00:23:35,510
+here in word size units okay so that if
+
+464
+00:23:31,480 --> 00:23:37,970
+if the application Malick's a payload of
+
+465
+00:23:35,510 --> 00:23:43,400
+size wants to want to now like a payload
+
+466
+00:23:37,970 --> 00:23:45,100
+of size four then the allocator needs to
+
+467
+00:23:43,400 --> 00:23:49,809
+find a block
+
+468
+00:23:45,100 --> 00:23:51,669
+of size five so consisting of four
+
+469
+00:23:49,809 --> 00:23:55,149
+payload words at least four payload
+
+470
+00:23:51,669 --> 00:23:58,289
+words and then a header block had to be
+
+471
+00:23:55,149 --> 00:24:00,700
+a header word at the beginning that that
+
+472
+00:23:58,289 --> 00:24:03,789
+indicates the size the total size of
+
+473
+00:24:00,700 --> 00:24:06,309
+that block and then it returns a pointer
+
+474
+00:24:03,789 --> 00:24:09,360
+p0 in this case to the beginning of the
+
+475
+00:24:06,309 --> 00:24:09,360
+payload okay
+
+476
+00:24:11,800 --> 00:24:16,310
+okay so now we know how big each block
+
+477
+00:24:14,210 --> 00:24:17,870
+is that's pretty simple and how we keep
+
+478
+00:24:16,310 --> 00:24:21,170
+track of the free block and this is
+
+479
+00:24:17,870 --> 00:24:23,330
+where it gets interesting the simplest
+
+480
+00:24:21,170 --> 00:24:27,080
+method is to use that we call an
+
+481
+00:24:23,330 --> 00:24:31,100
+implicit list an implicit list of free
+
+482
+00:24:27,080 --> 00:24:33,800
+blocks and the idea here is to just put
+
+483
+00:24:31,100 --> 00:24:38,540
+a header in the front of every block in
+
+484
+00:24:33,800 --> 00:24:40,490
+the heap whether allocated or free and
+
+485
+00:24:38,540 --> 00:24:42,110
+then we can use that starting at the
+
+486
+00:24:40,490 --> 00:24:47,600
+beginning of the heap we can use that
+
+487
+00:24:42,110 --> 00:24:50,030
+size to walk the heap okay so here's a
+
+488
+00:24:47,600 --> 00:24:52,820
+block of size five so we can we can jump
+
+489
+00:24:50,030 --> 00:24:57,470
+we know that the next block starts at an
+
+490
+00:24:52,820 --> 00:24:59,840
+offset of five with the second block we
+
+491
+00:24:57,470 --> 00:25:02,060
+know the then the next block starts at
+
+492
+00:24:59,840 --> 00:25:05,380
+an offset of four and so on
+
+493
+00:25:02,060 --> 00:25:07,700
+okay so we call it an implicit free list
+
+494
+00:25:05,380 --> 00:25:10,100
+because there's there's no real list of
+
+495
+00:25:07,700 --> 00:25:12,800
+free blocks but we can't we can't
+
+496
+00:25:10,100 --> 00:25:17,810
+reverse that all of the free blocks in
+
+497
+00:25:12,800 --> 00:25:19,550
+the heap by traversing all of the blocks
+
+498
+00:25:17,810 --> 00:25:23,350
+in the heat and then just ignoring the
+
+499
+00:25:19,550 --> 00:25:23,350
+the allocated blocks okay so
+
+500
+00:25:25,370 --> 00:25:29,960
+now another thing we could do is we
+
+501
+00:25:27,170 --> 00:25:32,150
+could actually use some of the some of
+
+502
+00:25:29,960 --> 00:25:35,780
+the words in the block to create a
+
+503
+00:25:32,150 --> 00:25:39,970
+linked list of some kind either singly
+
+504
+00:25:35,780 --> 00:25:43,220
+or doubly linked lists and in this case
+
+505
+00:25:39,970 --> 00:25:48,560
+we it's an explicit list of the free
+
+506
+00:25:43,220 --> 00:25:50,360
+blocks and we can just walk that list so
+
+507
+00:25:48,560 --> 00:25:53,540
+we here we visit the first free block
+
+508
+00:25:50,360 --> 00:25:56,450
+and then there's a pointer to the next
+
+509
+00:25:53,540 --> 00:25:57,740
+free block and so on so this you see
+
+510
+00:25:56,450 --> 00:26:00,380
+this might be a little more efficient
+
+511
+00:25:57,740 --> 00:26:04,700
+because if we want to traverse the free
+
+512
+00:26:00,380 --> 00:26:07,430
+list in this case if it's going to be
+
+513
+00:26:04,700 --> 00:26:09,020
+ordered the number of blocks in the list
+
+514
+00:26:07,430 --> 00:26:10,910
+okay it's going to be linear in the
+
+515
+00:26:09,020 --> 00:26:13,160
+total number of blocks in the heap which
+
+516
+00:26:10,910 --> 00:26:16,940
+might be quite large there could be lots
+
+517
+00:26:13,160 --> 00:26:21,130
+of allocated blocks in this case with an
+
+518
+00:26:16,940 --> 00:26:23,500
+explicit list any traversal just just be
+
+519
+00:26:21,130 --> 00:26:26,500
+linear in the size of the free list
+
+520
+00:26:23,500 --> 00:26:26,500
+question
+
+521
+00:26:29,260 --> 00:26:34,299
+yeah that's the question is don't we
+
+522
+00:26:31,510 --> 00:26:37,470
+need a free bit and we do and I'll we
+
+523
+00:26:34,299 --> 00:26:37,470
+have that's the next question
+
+524
+00:26:44,760 --> 00:26:49,570
+now another method a more sophisticated
+
+525
+00:26:47,020 --> 00:26:52,570
+method instead of having one free list
+
+526
+00:26:49,570 --> 00:26:55,660
+we can have multiple free lists where
+
+527
+00:26:52,570 --> 00:27:00,720
+each free list contains blocks of a
+
+528
+00:26:55,660 --> 00:27:00,720
+certain size or certain range of sizes
+
+529
+00:27:02,430 --> 00:27:09,820
+or we can get really fancy and use some
+
+530
+00:27:05,230 --> 00:27:12,309
+kind of some kind of a balance tree to
+
+531
+00:27:09,820 --> 00:27:16,960
+sort the blocks to use the tree to sort
+
+532
+00:27:12,309 --> 00:27:19,390
+them by size order now today we're going
+
+533
+00:27:16,960 --> 00:27:22,450
+to look at the implicit list the
+
+534
+00:27:19,390 --> 00:27:24,700
+simplest kind of free list and this will
+
+535
+00:27:22,450 --> 00:27:27,429
+identify a lot of basic concepts that
+
+536
+00:27:24,700 --> 00:27:34,720
+are used in the more sophisticated free
+
+537
+00:27:27,429 --> 00:27:36,490
+list questions okay the question is what
+
+538
+00:27:34,720 --> 00:27:39,520
+do you what do we mean by different free
+
+539
+00:27:36,490 --> 00:27:44,140
+lists for different size classes so what
+
+540
+00:27:39,520 --> 00:27:47,559
+I mean is that you identify a range of
+
+541
+00:27:44,140 --> 00:27:50,080
+sizes and you associate that range with
+
+542
+00:27:47,559 --> 00:27:52,630
+with each of these individual free lists
+
+543
+00:27:50,080 --> 00:27:56,200
+okay so one free list might hold blocks
+
+544
+00:27:52,630 --> 00:27:59,010
+of size 0 to 8 and another free list
+
+545
+00:27:56,200 --> 00:28:02,650
+might hold blocks of size 9 to 16 and
+
+546
+00:27:59,010 --> 00:28:06,550
+the other another free list may be 17 to
+
+547
+00:28:02,650 --> 00:28:10,540
+32 you know some and so you're
+
+548
+00:28:06,550 --> 00:28:13,059
+guaranteed you now know when you're
+
+549
+00:28:10,540 --> 00:28:15,070
+traversing a certain list you know the
+
+550
+00:28:13,059 --> 00:28:20,110
+range of sizes of the blocks in that
+
+551
+00:28:15,070 --> 00:28:23,800
+list the reason you might want to do
+
+552
+00:28:20,110 --> 00:28:28,120
+that by the way is that imagine you had
+
+553
+00:28:23,800 --> 00:28:32,200
+an infinite number of of these lists one
+
+554
+00:28:28,120 --> 00:28:34,600
+for each possible size then every time
+
+555
+00:28:32,200 --> 00:28:37,630
+you allocated a block you'd get a block
+
+556
+00:28:34,600 --> 00:28:38,860
+of exactly the size you needed so
+
+557
+00:28:37,630 --> 00:28:40,900
+there'd be a minimum amount of
+
+558
+00:28:38,860 --> 00:28:43,710
+fragmentation if you had an infinite
+
+559
+00:28:40,900 --> 00:28:46,390
+number of these of these size classes
+
+560
+00:28:43,710 --> 00:28:48,670
+now if we of course we can't have an
+
+561
+00:28:46,390 --> 00:28:50,740
+infinite number but the more of these
+
+562
+00:28:48,670 --> 00:28:53,400
+size classes we have the closer we get
+
+563
+00:28:50,740 --> 00:28:53,400
+to that ideal
+
+564
+00:28:54,490 --> 00:29:01,340
+all right so let's look at how we would
+
+565
+00:28:56,870 --> 00:29:04,280
+build in implicit free list so as you
+
+566
+00:29:01,340 --> 00:29:06,950
+correctly point it out for for each each
+
+567
+00:29:04,280 --> 00:29:17,750
+block we need we need both sides and the
+
+568
+00:29:06,950 --> 00:29:21,190
+allocation status question why can't we
+
+569
+00:29:17,750 --> 00:29:21,190
+map every size class
+
+570
+00:29:31,860 --> 00:29:37,429
+yeah that's so why can't we have an
+
+571
+00:29:34,080 --> 00:29:37,429
+infinite number of size classes
+
+572
+00:29:41,240 --> 00:29:48,140
+I suppose you know that'd be an
+
+573
+00:29:44,660 --> 00:29:50,450
+interesting strategy to to think about
+
+574
+00:29:48,140 --> 00:29:53,120
+so you can't have an infinite number of
+
+575
+00:29:50,450 --> 00:29:55,700
+size classes but you could create a new
+
+576
+00:29:53,120 --> 00:29:59,630
+size class for every new size that you
+
+577
+00:29:55,700 --> 00:30:01,910
+get and that that might work but it just
+
+578
+00:29:59,630 --> 00:30:04,700
+depends on the the range of these size
+
+579
+00:30:01,910 --> 00:30:08,210
+classes and the frequency and one
+
+580
+00:30:04,700 --> 00:30:12,230
+problem you might have is that you you
+
+581
+00:30:08,210 --> 00:30:14,060
+would get maybe if you only get it
+
+582
+00:30:12,230 --> 00:30:16,100
+depends on the distribution of your
+
+583
+00:30:14,060 --> 00:30:18,050
+sizes that you get if you're getting an
+
+584
+00:30:16,100 --> 00:30:20,990
+equal number if your distribution of
+
+585
+00:30:18,050 --> 00:30:22,820
+sizes is fairly uniform that would
+
+586
+00:30:20,990 --> 00:30:27,230
+probably work pretty well if you're
+
+587
+00:30:22,820 --> 00:30:28,640
+getting if you have requests if if you
+
+588
+00:30:27,230 --> 00:30:31,610
+have a lot of requests for different
+
+589
+00:30:28,640 --> 00:30:35,810
+size classes you have a lot of sort of
+
+590
+00:30:31,610 --> 00:30:38,090
+wasted free lists I think right so it's
+
+591
+00:30:35,810 --> 00:30:41,350
+a good question it depends on it depends
+
+592
+00:30:38,090 --> 00:30:45,260
+on your workload and there and that is
+
+593
+00:30:41,350 --> 00:30:48,410
+for that and that is a really useful
+
+594
+00:30:45,260 --> 00:30:51,250
+strategy for so you if you have really
+
+595
+00:30:48,410 --> 00:30:53,870
+popular size classes in your request
+
+596
+00:30:51,250 --> 00:30:57,350
+then you could just make you know
+
+597
+00:30:53,870 --> 00:31:00,140
+special case special case free lists to
+
+598
+00:30:57,350 --> 00:31:02,420
+handle those requests and then and then
+
+599
+00:31:00,140 --> 00:31:05,150
+let the other free list sort of handle a
+
+600
+00:31:02,420 --> 00:31:06,650
+wider range and imagine if you had a
+
+601
+00:31:05,150 --> 00:31:08,810
+free list where all the blocks were the
+
+602
+00:31:06,650 --> 00:31:11,180
+same it could be a lot more efficient
+
+603
+00:31:08,810 --> 00:31:14,690
+right because you won't Nate you only
+
+604
+00:31:11,180 --> 00:31:16,430
+need like a bit vector 1 1 bit for each
+
+605
+00:31:14,690 --> 00:31:19,130
+potential block to tell you whether it's
+
+606
+00:31:16,430 --> 00:31:21,110
+allocated or free so it could be very
+
+607
+00:31:19,130 --> 00:31:24,730
+efficient you wouldn't you wouldn't need
+
+608
+00:31:21,110 --> 00:31:24,730
+to walk any any lists or anything
+
+609
+00:31:26,300 --> 00:31:29,360
+that's a good question and that's the
+
+610
+00:31:28,100 --> 00:31:31,730
+kind of thing you'll be thinking about
+
+611
+00:31:29,360 --> 00:31:36,130
+when you do your Mallik lab is one of
+
+612
+00:31:31,730 --> 00:31:39,410
+the there's a huge design space
+
+613
+00:31:36,130 --> 00:31:41,300
+implementing malloc function and we just
+
+614
+00:31:39,410 --> 00:31:43,600
+we just explored a one tiny part of it
+
+615
+00:31:41,300 --> 00:31:47,210
+just now
+
+616
+00:31:43,600 --> 00:31:50,840
+so with this implicit list we're going
+
+617
+00:31:47,210 --> 00:31:52,429
+to need both the size of the block and
+
+618
+00:31:50,840 --> 00:31:54,800
+then its allocation status whether it's
+
+619
+00:31:52,429 --> 00:31:56,480
+allocated or free now we could do this
+
+620
+00:31:54,800 --> 00:31:57,110
+in two words right but that would be
+
+621
+00:31:56,480 --> 00:31:59,720
+wasteful
+
+622
+00:31:57,110 --> 00:32:01,940
+so the standard trick is to take
+
+623
+00:31:59,720 --> 00:32:05,179
+advantage of the fact that blocks have
+
+624
+00:32:01,940 --> 00:32:06,230
+to be aligned okay so this is actually
+
+625
+00:32:05,179 --> 00:32:08,809
+it's kind of a pain in the neck to
+
+626
+00:32:06,230 --> 00:32:10,309
+always have to align these blocks but we
+
+627
+00:32:08,809 --> 00:32:13,460
+can take advantage of it in this case
+
+628
+00:32:10,309 --> 00:32:16,610
+and the reason is that if a block is
+
+629
+00:32:13,460 --> 00:32:18,920
+aligned to some say 8 by 8 or 16 byte
+
+630
+00:32:16,610 --> 00:32:21,230
+boundary then the lower order bits are
+
+631
+00:32:18,920 --> 00:32:23,690
+always going to be 0 so if it's aligned
+
+632
+00:32:21,230 --> 00:32:25,550
+to an 8 byte boundary the low order
+
+633
+00:32:23,690 --> 00:32:33,320
+three the three low order bits will
+
+634
+00:32:25,550 --> 00:32:39,200
+always be 0 right 8 is 1 0 0 0 16 1 with
+
+635
+00:32:33,320 --> 00:32:46,550
+4 zeros 24 1 1 0 0 0 right so there any
+
+636
+00:32:39,200 --> 00:32:48,440
+any 8 byte any 8 byte aligned block has
+
+637
+00:32:46,550 --> 00:32:51,200
+to be size 8 and it has to start on
+
+638
+00:32:48,440 --> 00:32:55,610
+address that's a multiple of 8 all right
+
+639
+00:32:51,200 --> 00:33:00,620
+so those the size so always the size of
+
+640
+00:32:55,610 --> 00:33:04,220
+that block will always have 0 2 3 3 or 4
+
+641
+00:33:00,620 --> 00:33:05,720
+a low-order bits set to 0 so we can take
+
+642
+00:33:04,220 --> 00:33:09,830
+it we can take advantage of that and
+
+643
+00:33:05,720 --> 00:33:12,250
+we'll just make we'll just have one eye
+
+644
+00:33:09,830 --> 00:33:15,230
+we'll just have one header word and
+
+645
+00:33:12,250 --> 00:33:19,340
+we'll use the lower order bit to store
+
+646
+00:33:15,230 --> 00:33:21,860
+the allocation status okay and we can do
+
+647
+00:33:19,340 --> 00:33:25,400
+that because we know it's always zero so
+
+648
+00:33:21,860 --> 00:33:27,200
+when we so we use that low order bit to
+
+649
+00:33:25,400 --> 00:33:30,110
+store the allocation status and then the
+
+650
+00:33:27,200 --> 00:33:32,570
+remaining bits correspond to the size
+
+651
+00:33:30,110 --> 00:33:35,330
+and then whenever we want to extract the
+
+652
+00:33:32,570 --> 00:33:37,760
+size we just mask out this allocation
+
+653
+00:33:35,330 --> 00:33:40,630
+status and always set it to zero because
+
+654
+00:33:37,760 --> 00:33:40,630
+we know that it's zero
+
+655
+00:33:47,789 --> 00:33:54,850
+so let's look in detail what given this
+
+656
+00:33:51,190 --> 00:33:58,779
+given this form of implicit list how we
+
+657
+00:33:54,850 --> 00:34:02,110
+might set things up so in this case
+
+658
+00:33:58,779 --> 00:34:06,010
+we're going to assume for bite words
+
+659
+00:34:02,110 --> 00:34:10,480
+okay in size words and we're going to
+
+660
+00:34:06,010 --> 00:34:12,280
+align on eight byte boundaries okay so
+
+661
+00:34:10,480 --> 00:34:14,470
+remember the payload of our blocks
+
+662
+00:34:12,280 --> 00:34:17,290
+always has to start on an eight eight
+
+663
+00:34:14,470 --> 00:34:19,599
+byte boundary so the way we do that is
+
+664
+00:34:17,290 --> 00:34:21,730
+we create this unused word at the
+
+665
+00:34:19,599 --> 00:34:25,300
+beginning of the heap that's aligned on
+
+666
+00:34:21,730 --> 00:34:29,830
+this eight byte boundary and then that
+
+667
+00:34:25,300 --> 00:34:32,260
+the first block in the heap starts at an
+
+668
+00:34:29,830 --> 00:34:34,540
+offset of four from that from the
+
+669
+00:34:32,260 --> 00:34:39,429
+beginning of the heap so we have the
+
+670
+00:34:34,540 --> 00:34:42,129
+header which is is not aligned and then
+
+671
+00:34:39,429 --> 00:34:44,260
+we have the payload which follows in
+
+672
+00:34:42,129 --> 00:34:48,879
+this case at the payload of one one word
+
+673
+00:34:44,260 --> 00:34:50,980
+and that starts on this that begins on
+
+674
+00:34:48,879 --> 00:34:54,700
+this this a word boundary and then the
+
+675
+00:34:50,980 --> 00:34:59,310
+next block and and here we're indicating
+
+676
+00:34:54,700 --> 00:35:03,099
+a free block consisting of eight bytes
+
+677
+00:34:59,310 --> 00:35:06,040
+and then that's followed by an allocated
+
+678
+00:35:03,099 --> 00:35:09,960
+block to the one here of sixteen bytes
+
+679
+00:35:06,040 --> 00:35:09,960
+or four forwards
+
+680
+00:35:10,950 --> 00:35:17,730
+and now the payload is only two words so
+
+681
+00:35:15,000 --> 00:35:19,440
+we have to pad right all of our blocks
+
+682
+00:35:17,730 --> 00:35:21,930
+because we're assuming that they're
+
+683
+00:35:19,440 --> 00:35:24,240
+lined on eight byte boundary all of our
+
+684
+00:35:21,930 --> 00:35:26,730
+blocks have to be a multiple of size
+
+685
+00:35:24,240 --> 00:35:28,500
+multiple of eight okay so here's the
+
+686
+00:35:26,730 --> 00:35:31,200
+case of internal fragmentation where we
+
+687
+00:35:28,500 --> 00:35:32,280
+have this extra this extra block in
+
+688
+00:35:31,200 --> 00:35:34,829
+order to maintain the alignment
+
+689
+00:35:32,280 --> 00:35:39,990
+requirement so that that ensures that
+
+690
+00:35:34,829 --> 00:35:43,950
+the next block payload starts at a an 8
+
+691
+00:35:39,990 --> 00:35:45,420
+byte align boundary and so on and so we
+
+692
+00:35:43,950 --> 00:35:47,790
+can walk this heap by just following
+
+693
+00:35:45,420 --> 00:35:52,040
+these headers masking out the allocation
+
+694
+00:35:47,790 --> 00:36:00,299
+bits and then we have this special
+
+695
+00:35:52,040 --> 00:36:04,380
+episode a load
+
+696
+00:36:00,299 --> 00:36:06,990
+it's an allocated block of size 0 and
+
+697
+00:36:04,380 --> 00:36:09,990
+this is a this is a trick this is a
+
+698
+00:36:06,990 --> 00:36:11,760
+trick you should use too so this and
+
+699
+00:36:09,990 --> 00:36:14,549
+we'll see when we look at coalescing why
+
+700
+00:36:11,760 --> 00:36:16,700
+this is why this helps but this this
+
+701
+00:36:14,549 --> 00:36:18,960
+allocated block at the very end
+
+702
+00:36:16,700 --> 00:36:21,240
+eliminates some sort of special cases
+
+703
+00:36:18,960 --> 00:36:23,490
+when we when we start to coalesce free
+
+704
+00:36:21,240 --> 00:36:27,829
+blocks and we'll talk about that in just
+
+705
+00:36:23,490 --> 00:36:32,400
+a just a moment but you can finish your
+
+706
+00:36:27,829 --> 00:36:34,920
+exists this allocated block of size 0 is
+
+707
+00:36:32,400 --> 00:36:36,599
+also helpful in terminating when you're
+
+708
+00:36:34,920 --> 00:36:39,270
+walking this list you can you can check
+
+709
+00:36:36,599 --> 00:36:42,200
+for a size allocated block of size 0 to
+
+710
+00:36:39,270 --> 00:36:42,200
+terminate your search
+
+711
+00:36:43,130 --> 00:36:48,270
+okay so given this kind of structure
+
+712
+00:36:45,420 --> 00:36:50,970
+then how do we find a free block okay
+
+713
+00:36:48,270 --> 00:36:52,620
+there's a number of different ways the
+
+714
+00:36:50,970 --> 00:36:55,620
+first the first way which is called
+
+715
+00:36:52,620 --> 00:36:59,030
+first the first fit is to search the
+
+716
+00:36:55,620 --> 00:37:01,500
+free list from the beginning and just
+
+717
+00:36:59,030 --> 00:37:07,350
+look for the first block we can find
+
+718
+00:37:01,500 --> 00:37:09,810
+that satisfies the request so we're
+
+719
+00:37:07,350 --> 00:37:11,970
+allocating we're asking for a block of
+
+720
+00:37:09,810 --> 00:37:14,880
+size 10 we start at the beginning of the
+
+721
+00:37:11,970 --> 00:37:19,230
+heap and we walked a list we walked the
+
+722
+00:37:14,880 --> 00:37:23,490
+heap looking for a free block that's at
+
+723
+00:37:19,230 --> 00:37:25,440
+least size 10 and it needs to be
+
+724
+00:37:23,490 --> 00:37:32,910
+actually and it needs to be 10 plus the
+
+725
+00:37:25,440 --> 00:37:35,460
+size of our header 2 so once so that's a
+
+726
+00:37:32,910 --> 00:37:37,830
+simple idea now some people have
+
+727
+00:37:35,460 --> 00:37:39,990
+proposed an alternative called next fit
+
+728
+00:37:37,830 --> 00:37:41,580
+so the idea here is that instead of
+
+729
+00:37:39,990 --> 00:37:44,010
+starting over each time from the
+
+730
+00:37:41,580 --> 00:37:46,650
+beginning of the heap to find a block
+
+731
+00:37:44,010 --> 00:37:49,830
+that sits we just pick up where we left
+
+732
+00:37:46,650 --> 00:37:53,520
+off the last time okay so we look we
+
+733
+00:37:49,830 --> 00:37:55,230
+scan the heap we find a block that's big
+
+734
+00:37:53,520 --> 00:37:57,210
+enough to satisfy the request and then
+
+735
+00:37:55,230 --> 00:38:00,360
+we remember where that where we left off
+
+736
+00:37:57,210 --> 00:38:02,340
+and the next time the request comes in
+
+737
+00:38:00,360 --> 00:38:04,830
+we pick up the search starting where we
+
+738
+00:38:02,340 --> 00:38:07,320
+left off now this seems like would be a
+
+739
+00:38:04,830 --> 00:38:09,450
+good idea but but studies pyrrha chol
+
+740
+00:38:07,320 --> 00:38:11,730
+studies that people have done has shown
+
+741
+00:38:09,450 --> 00:38:15,510
+that this actually results in worse
+
+742
+00:38:11,730 --> 00:38:18,870
+fragmentation so you know you can you
+
+743
+00:38:15,510 --> 00:38:20,580
+can consider it but it generally it's
+
+744
+00:38:18,870 --> 00:38:27,960
+generally probably not the best thing to
+
+745
+00:38:20,580 --> 00:38:30,210
+do now another alternative is to find
+
+746
+00:38:27,960 --> 00:38:33,420
+that the block in the heat a free block
+
+747
+00:38:30,210 --> 00:38:37,080
+in the heap that's the best fit so look
+
+748
+00:38:33,420 --> 00:38:39,900
+at in general look at all the blocks in
+
+749
+00:38:37,080 --> 00:38:43,550
+the heap and find the block that fits
+
+750
+00:38:39,900 --> 00:38:46,410
+the best okay so if we ask for 10 bytes
+
+751
+00:38:43,550 --> 00:38:49,260
+try to scan the heat for the block that
+
+752
+00:38:46,410 --> 00:38:52,320
+has the closest to 10 bytes in it okay
+
+753
+00:38:49,260 --> 00:38:55,559
+so that's called best fit and that's
+
+754
+00:38:52,320 --> 00:38:56,549
+that you can see it might be more it's
+
+755
+00:38:55,559 --> 00:38:58,049
+sounds like it would be a lot more
+
+756
+00:38:56,549 --> 00:38:59,549
+expensive right because you'd have to
+
+757
+00:38:58,049 --> 00:39:01,589
+look instead of just looking until you
+
+758
+00:38:59,549 --> 00:39:03,769
+find a fit you'd have to scan all the
+
+759
+00:39:01,589 --> 00:39:06,359
+free blocks and then pick the best one
+
+760
+00:39:03,769 --> 00:39:09,509
+okay but it has a nice property that it
+
+761
+00:39:06,359 --> 00:39:11,519
+improves memory utilization okay so if
+
+762
+00:39:09,509 --> 00:39:14,969
+this isn't this is a classic example the
+
+763
+00:39:11,519 --> 00:39:17,099
+space time trade-off so it's slower but
+
+764
+00:39:14,969 --> 00:39:20,449
+it improves improves our use of the
+
+765
+00:39:17,099 --> 00:39:20,449
+efficiency of the way we use memory
+
+766
+00:39:23,420 --> 00:39:30,019
+and there's a now we mentioned we
+
+767
+00:39:27,740 --> 00:39:31,910
+mentioned an alternative way to organize
+
+768
+00:39:30,019 --> 00:39:35,000
+the free list using multiple free lists
+
+769
+00:39:31,910 --> 00:39:36,680
+for different size classes now going
+
+770
+00:39:35,000 --> 00:39:38,750
+back to that example again if we had an
+
+771
+00:39:36,680 --> 00:39:41,869
+infinite number of size classes one for
+
+772
+00:39:38,750 --> 00:39:44,180
+each size that would implement best fit
+
+773
+00:39:41,869 --> 00:39:46,640
+with a constant time search we don't
+
+774
+00:39:44,180 --> 00:39:50,630
+know exactly which free list to get the
+
+775
+00:39:46,640 --> 00:39:53,450
+block from the problem of course is how
+
+776
+00:39:50,630 --> 00:39:57,740
+much memory such a organization would
+
+777
+00:39:53,450 --> 00:40:00,319
+use but the interesting thing about
+
+778
+00:39:57,740 --> 00:40:03,019
+using multiple free lists is that the
+
+779
+00:40:00,319 --> 00:40:05,809
+more the more of these free lists you
+
+780
+00:40:03,019 --> 00:40:06,369
+have the closer you get to a true best
+
+781
+00:40:05,809 --> 00:40:09,019
+fit
+
+782
+00:40:06,369 --> 00:40:10,910
+okay so you can approach best fit and
+
+783
+00:40:09,019 --> 00:40:14,329
+then at some point you begin to get
+
+784
+00:40:10,910 --> 00:40:16,130
+diminishing returns so so that's another
+
+785
+00:40:14,329 --> 00:40:17,720
+sort of design decision is how many of
+
+786
+00:40:16,130 --> 00:40:20,180
+these multiple free lists do you need
+
+787
+00:40:17,720 --> 00:40:23,769
+and what sort of what what should be the
+
+788
+00:40:20,180 --> 00:40:23,769
+size range is associated with them
+
+789
+00:40:24,940 --> 00:40:29,650
+okay now the question now once we found
+
+790
+00:40:27,070 --> 00:40:34,240
+a block so the application has made a
+
+791
+00:40:29,650 --> 00:40:36,010
+call to malloc the malloc package is
+
+792
+00:40:34,240 --> 00:40:39,490
+looked in the free list that somehow
+
+793
+00:40:36,010 --> 00:40:42,130
+using some some policy it's identified a
+
+794
+00:40:39,490 --> 00:40:43,720
+block that in which the requested blah a
+
+795
+00:40:42,130 --> 00:40:47,800
+free block in which the requested block
+
+796
+00:40:43,720 --> 00:40:50,260
+will fit okay so now what does it do it
+
+797
+00:40:47,800 --> 00:40:54,960
+has to the malloc package has to
+
+798
+00:40:50,260 --> 00:40:58,170
+allocate it has to sort of take that
+
+799
+00:40:54,960 --> 00:41:02,500
+that so there's a question how does it
+
+800
+00:40:58,170 --> 00:41:04,840
+it could allocate the whole block and
+
+801
+00:41:02,500 --> 00:41:07,030
+return that back to the programmer or it
+
+802
+00:41:04,840 --> 00:41:09,220
+could it could choose to split out a
+
+803
+00:41:07,030 --> 00:41:10,870
+portion just only the portion of block
+
+804
+00:41:09,220 --> 00:41:16,980
+that's needed and then create a smaller
+
+805
+00:41:10,870 --> 00:41:22,180
+free block okay so for example if if we
+
+806
+00:41:16,980 --> 00:41:26,470
+if our if our application is has
+
+807
+00:41:22,180 --> 00:41:29,770
+requested a block of size 4 or I'm sorry
+
+808
+00:41:26,470 --> 00:41:31,720
+it if the malloc package is determined
+
+809
+00:41:29,770 --> 00:41:33,640
+that that it in order to satisfy the
+
+810
+00:41:31,720 --> 00:41:39,790
+application request it needs a block of
+
+811
+00:41:33,640 --> 00:41:41,680
+size 4 okay including the header then it
+
+812
+00:41:39,790 --> 00:41:45,250
+would look and it would try to find a
+
+813
+00:41:41,680 --> 00:41:49,480
+free block of at least size forward so
+
+814
+00:41:45,250 --> 00:41:52,410
+let's say it chooses this block for some
+
+815
+00:41:49,480 --> 00:41:56,350
+reason maybe because it was a next fit
+
+816
+00:41:52,410 --> 00:42:04,420
+picked up here so this free block is
+
+817
+00:41:56,350 --> 00:42:06,160
+actually six contains six words so the
+
+818
+00:42:04,420 --> 00:42:08,200
+allocator has to decide whether just to
+
+819
+00:42:06,160 --> 00:42:11,020
+keep this block of size six and just
+
+820
+00:42:08,200 --> 00:42:13,960
+return that back to the to the
+
+821
+00:42:11,020 --> 00:42:16,600
+application or whether to split that
+
+822
+00:42:13,960 --> 00:42:19,420
+block into two blocks into an allocated
+
+823
+00:42:16,600 --> 00:42:22,360
+block of size four which it then returns
+
+824
+00:42:19,420 --> 00:42:26,340
+to the application followed by a free
+
+825
+00:42:22,360 --> 00:42:26,340
+block of size two
+
+826
+00:42:30,450 --> 00:42:35,700
+okay now another question is how to free
+
+827
+00:42:33,809 --> 00:42:37,170
+a block so the application is requested
+
+828
+00:42:35,700 --> 00:42:38,789
+the allocate is called free and it's
+
+829
+00:42:37,170 --> 00:42:42,420
+asked the allocator to free up a
+
+830
+00:42:38,789 --> 00:42:48,990
+particular block so this is pretty
+
+831
+00:42:42,420 --> 00:42:51,829
+simple so if we want to free up this
+
+832
+00:42:48,990 --> 00:42:54,119
+block you just clear the allocated flag
+
+833
+00:42:51,829 --> 00:42:57,089
+so if we want to free up the block we
+
+834
+00:42:54,119 --> 00:42:59,789
+just created you just clear you just set
+
+835
+00:42:57,089 --> 00:43:02,250
+the allocated bit to zero and you're
+
+836
+00:42:59,789 --> 00:43:04,740
+done it's really simple but the problem
+
+837
+00:43:02,250 --> 00:43:10,019
+now is this this creates external
+
+838
+00:43:04,740 --> 00:43:13,410
+fragmentation so if now if if we just
+
+839
+00:43:10,019 --> 00:43:16,890
+free that block of size for what used to
+
+840
+00:43:13,410 --> 00:43:19,289
+be a block of size six now consists of
+
+841
+00:43:16,890 --> 00:43:24,510
+two contiguous smaller blocks one of
+
+842
+00:43:19,289 --> 00:43:26,579
+size 4 and one of size 2 and so now if
+
+843
+00:43:24,510 --> 00:43:30,930
+that's followed by a request for five
+
+844
+00:43:26,579 --> 00:43:32,549
+blocks now we're stuck right so this but
+
+845
+00:43:30,930 --> 00:43:35,549
+we've got plenty of memory and it's even
+
+846
+00:43:32,549 --> 00:43:39,779
+worse in this case that memory is all
+
+847
+00:43:35,549 --> 00:43:42,059
+contiguous just because but just because
+
+848
+00:43:39,779 --> 00:43:45,089
+we just oh we just cleared the free
+
+849
+00:43:42,059 --> 00:43:47,339
+block we didn't we didn't really notice
+
+850
+00:43:45,089 --> 00:43:48,930
+that it was contiguous and so we ended
+
+851
+00:43:47,339 --> 00:43:52,339
+up it was a situation where we have
+
+852
+00:43:48,930 --> 00:43:52,339
+these two continuous free blocks
+
+853
+00:43:53,740 --> 00:44:00,290
+so this this suggests that when we do
+
+854
+00:43:57,470 --> 00:44:03,230
+when we free up blocks that we somehow
+
+855
+00:44:00,290 --> 00:44:05,930
+need to coalesce any neighboring blocks
+
+856
+00:44:03,230 --> 00:44:08,870
+to keep blocks as big as possible right
+
+857
+00:44:05,930 --> 00:44:12,860
+so we cannot one of the invariance of
+
+858
+00:44:08,870 --> 00:44:15,200
+any decent allocator is that they're
+
+859
+00:44:12,860 --> 00:44:17,420
+never there never contiguous free blocks
+
+860
+00:44:15,200 --> 00:44:23,000
+like this it's always a free block
+
+861
+00:44:17,420 --> 00:44:25,400
+followed by an allocated block okay so
+
+862
+00:44:23,000 --> 00:44:28,810
+the idea is that if we free a particular
+
+863
+00:44:25,400 --> 00:44:31,820
+so here we have this allocated block and
+
+864
+00:44:28,810 --> 00:44:34,880
+if we free that block and we somehow
+
+865
+00:44:31,820 --> 00:44:38,530
+have to check and see if there's any
+
+866
+00:44:34,880 --> 00:44:41,900
+adjacent free blocks either following
+
+867
+00:44:38,530 --> 00:44:45,020
+either neck either next in memory or
+
+868
+00:44:41,900 --> 00:44:47,930
+previous in memory and if there are we
+
+869
+00:44:45,020 --> 00:44:49,640
+need to as part of the freeing process
+
+870
+00:44:47,930 --> 00:44:52,610
+we need to coalesce those two blocks
+
+871
+00:44:49,640 --> 00:44:56,660
+into a into a larger block the largest
+
+872
+00:44:52,610 --> 00:44:59,240
+possible block possible now it's pretty
+
+873
+00:44:56,660 --> 00:45:03,050
+easy if we're if we're asked to free
+
+874
+00:44:59,240 --> 00:45:04,820
+this block this green block it's pretty
+
+875
+00:45:03,050 --> 00:45:07,220
+easy to check that the next block
+
+876
+00:45:04,820 --> 00:45:09,410
+because you just we have the size we
+
+877
+00:45:07,220 --> 00:45:12,010
+have this header so we know that the
+
+878
+00:45:09,410 --> 00:45:16,880
+next block starts at an offset of four
+
+879
+00:45:12,010 --> 00:45:18,020
+so we just we just we just check we know
+
+880
+00:45:16,880 --> 00:45:20,420
+and we know that the header for that
+
+881
+00:45:18,020 --> 00:45:22,040
+block is at an offset of four so we just
+
+882
+00:45:20,420 --> 00:45:25,070
+checked the allocated status of that
+
+883
+00:45:22,040 --> 00:45:27,860
+next block using the using the size
+
+884
+00:45:25,070 --> 00:45:31,040
+using the size field in our header but
+
+885
+00:45:27,860 --> 00:45:33,820
+what about the previous block what about
+
+886
+00:45:31,040 --> 00:45:36,980
+this block how do we check that
+
+887
+00:45:33,820 --> 00:45:38,690
+well given given all that we talked
+
+888
+00:45:36,980 --> 00:45:40,130
+about now the only thing the only way we
+
+889
+00:45:38,690 --> 00:45:42,830
+could do it would be to start at the
+
+890
+00:45:40,130 --> 00:45:45,260
+beginning of the heap and now walk the
+
+891
+00:45:42,830 --> 00:45:49,220
+free list until we get to this current
+
+892
+00:45:45,260 --> 00:45:52,130
+block remembering the previous block so
+
+893
+00:45:49,220 --> 00:45:54,980
+each time we each time we traverse we
+
+894
+00:45:52,130 --> 00:45:56,870
+remember the previous block okay so that
+
+895
+00:45:54,980 --> 00:45:59,300
+but that would be very inefficient right
+
+896
+00:45:56,870 --> 00:46:01,760
+that would be that what that would make
+
+897
+00:45:59,300 --> 00:46:03,950
+free linear in the size of the heat
+
+898
+00:46:01,760 --> 00:46:05,480
+because we'd have to in order to check
+
+899
+00:46:03,950 --> 00:46:06,240
+the previous block we'd have to walk
+
+900
+00:46:05,480 --> 00:46:07,800
+starting
+
+901
+00:46:06,240 --> 00:46:12,390
+very beginning and walked the entire
+
+902
+00:46:07,800 --> 00:46:14,400
+heap so the solution for that is was
+
+903
+00:46:12,390 --> 00:46:18,660
+proposed by a famous computer scientist
+
+904
+00:46:14,400 --> 00:46:20,520
+Don Knuth in 1973 and it's very clever
+
+905
+00:46:18,660 --> 00:46:23,460
+it very simple like all really good
+
+906
+00:46:20,520 --> 00:46:25,290
+ideas it seems obvious that when you see
+
+907
+00:46:23,460 --> 00:46:29,820
+it but it turns out to be very clever
+
+908
+00:46:25,290 --> 00:46:33,240
+and a very very useful technique and the
+
+909
+00:46:29,820 --> 00:46:37,350
+idea is just to replicate for each block
+
+910
+00:46:33,240 --> 00:46:39,990
+replicate the header block at the end of
+
+911
+00:46:37,350 --> 00:46:43,080
+the block ok so each block now contains
+
+912
+00:46:39,990 --> 00:46:46,950
+a header and a footer identical header
+
+913
+00:46:43,080 --> 00:46:52,380
+and footer and then this creates sort of
+
+914
+00:46:46,950 --> 00:46:57,840
+an implicit backwards backwards link
+
+915
+00:46:52,380 --> 00:47:01,770
+that we can use so now given given some
+
+916
+00:46:57,840 --> 00:47:05,250
+block that we want to given some block
+
+917
+00:47:01,770 --> 00:47:08,070
+that we want to free we know that the
+
+918
+00:47:05,250 --> 00:47:12,869
+the size of that block will just be one
+
+919
+00:47:08,070 --> 00:47:14,940
+one-word previous and memory so so we
+
+920
+00:47:12,869 --> 00:47:20,369
+can just and its always a fixed fixed
+
+921
+00:47:14,940 --> 00:47:22,050
+offset of one word so given you know
+
+922
+00:47:20,369 --> 00:47:24,119
+given a pointer to the header of this
+
+923
+00:47:22,050 --> 00:47:26,369
+block we can look one word back to see
+
+924
+00:47:24,119 --> 00:47:29,070
+the size and the allocated allocation
+
+925
+00:47:26,369 --> 00:47:31,020
+status of the previous block ok so we
+
+926
+00:47:29,070 --> 00:47:34,020
+added so that allows us to do that in
+
+927
+00:47:31,020 --> 00:47:36,869
+constant time and so this footer is
+
+928
+00:47:34,020 --> 00:47:39,330
+sometimes called the boundary tag and
+
+929
+00:47:36,869 --> 00:47:43,350
+Knuth called it a boundary tag but we'll
+
+930
+00:47:39,330 --> 00:47:45,869
+just and or we can call it a footer to
+
+931
+00:47:43,350 --> 00:47:48,450
+be sort of parallel with with the notion
+
+932
+00:47:45,869 --> 00:47:50,130
+of a header but the key thing is that
+
+933
+00:47:48,450 --> 00:47:53,690
+it's just identical has the identical
+
+934
+00:47:50,130 --> 00:47:53,690
+size and allocation status
+
+935
+00:47:54,960 --> 00:48:07,740
+okay now so given yes question so the
+
+936
+00:48:06,690 --> 00:48:09,450
+question is if we want to have a
+
+937
+00:48:07,740 --> 00:48:11,279
+boundary tag when we allocate a block do
+
+938
+00:48:09,450 --> 00:48:16,859
+we need to set aside space for it and
+
+939
+00:48:11,279 --> 00:48:17,369
+answers yes most of the time I'll show
+
+940
+00:48:16,859 --> 00:48:22,609
+you one
+
+941
+00:48:17,369 --> 00:48:22,609
+I'll show you one optimization in a bit
+
+942
+00:48:23,690 --> 00:48:35,579
+okay so given given this idea of a over
+
+943
+00:48:28,559 --> 00:48:37,349
+the boundary tag and and and given that
+
+944
+00:48:35,579 --> 00:48:41,160
+we have some allocated block that we
+
+945
+00:48:37,349 --> 00:48:43,549
+want to free this yellow block yes
+
+946
+00:48:41,160 --> 00:48:43,549
+question
+
+947
+00:48:51,589 --> 00:49:00,499
+yeah we sorta quit yeah so just to
+
+948
+00:48:56,059 --> 00:49:01,849
+summarize the question you need to when
+
+949
+00:49:00,499 --> 00:49:03,759
+you allocate when you're looking for
+
+950
+00:49:01,849 --> 00:49:08,439
+blocks that fit you have to include the
+
+951
+00:49:03,759 --> 00:49:08,439
+size of the header and the boundary tag
+
+952
+00:49:10,239 --> 00:49:15,279
+it would you then you'd have and then
+
+953
+00:49:12,799 --> 00:49:17,869
+you'd have to insert padding to get a
+
+954
+00:49:15,279 --> 00:49:20,689
+size a total block size that's a
+
+955
+00:49:17,869 --> 00:49:23,499
+multiple of that set of multiple that
+
+956
+00:49:20,689 --> 00:49:30,829
+satisfies your alignment requirement
+
+957
+00:49:23,499 --> 00:49:33,170
+sorry yeah I mean it can yeah if you
+
+958
+00:49:30,829 --> 00:49:35,539
+have it the question is wouldn't I use a
+
+959
+00:49:33,170 --> 00:49:37,759
+lot of memory and it can if again it
+
+960
+00:49:35,539 --> 00:49:39,769
+depends on the request the request
+
+961
+00:49:37,759 --> 00:49:42,259
+pattern is if the application is
+
+962
+00:49:39,769 --> 00:49:43,459
+requesting lots of small payloads then
+
+963
+00:49:42,259 --> 00:49:45,709
+it's going to it's going to waste a lot
+
+964
+00:49:43,459 --> 00:49:48,910
+of memory if it's requesting big
+
+965
+00:49:45,709 --> 00:49:48,910
+payloads not so bad
+
+966
+00:49:51,520 --> 00:49:56,599
+okay so given that we have some block
+
+967
+00:49:54,260 --> 00:49:59,000
+that we want to free there's four cases
+
+968
+00:49:56,599 --> 00:50:02,180
+that we need to consider when when
+
+969
+00:49:59,000 --> 00:50:04,040
+coalescing the case where that the next
+
+970
+00:50:02,180 --> 00:50:08,990
+block is allocated and the previous
+
+971
+00:50:04,040 --> 00:50:10,580
+block is free is allocated a case where
+
+972
+00:50:08,990 --> 00:50:13,730
+the next block is free and the previous
+
+973
+00:50:10,580 --> 00:50:15,440
+block is allocated case where the the
+
+974
+00:50:13,730 --> 00:50:16,940
+previous block is free and the next
+
+975
+00:50:15,440 --> 00:50:18,830
+block is allocated in the case where
+
+976
+00:50:16,940 --> 00:50:24,320
+both the previous and next block are
+
+977
+00:50:18,830 --> 00:50:27,440
+free okay so in case one where we have
+
+978
+00:50:24,320 --> 00:50:30,619
+our allocated block that we want to free
+
+979
+00:50:27,440 --> 00:50:31,970
+surrounded by two allocated blocks we
+
+980
+00:50:30,619 --> 00:50:37,280
+don't do anything right because the only
+
+981
+00:50:31,970 --> 00:50:40,130
+call us free memory so so in this case
+
+982
+00:50:37,280 --> 00:50:41,720
+we just set keep the size of the header
+
+983
+00:50:40,130 --> 00:50:47,349
+and footer stays the same and we just
+
+984
+00:50:41,720 --> 00:50:47,349
+set the allocation status to shift free
+
+985
+00:50:49,220 --> 00:50:56,569
+now if the if the next block is is free
+
+986
+00:50:53,240 --> 00:51:00,020
+and the previous block is allocated what
+
+987
+00:50:56,569 --> 00:51:02,150
+we do is we we check the boundary tag of
+
+988
+00:51:00,020 --> 00:51:03,710
+the the previous block and we see that
+
+989
+00:51:02,150 --> 00:51:07,670
+it's allocated so there's nothing to do
+
+990
+00:51:03,710 --> 00:51:10,730
+there we use the size to check the
+
+991
+00:51:07,670 --> 00:51:13,220
+allocation status of the next block we
+
+992
+00:51:10,730 --> 00:51:15,970
+use n to jump to the header of the next
+
+993
+00:51:13,220 --> 00:51:20,359
+block we see that it's allocations
+
+994
+00:51:15,970 --> 00:51:23,569
+status is free so these two blocks need
+
+995
+00:51:20,359 --> 00:51:28,010
+to be coalesced so we do that by just
+
+996
+00:51:23,569 --> 00:51:30,109
+adding adding the two sizes together to
+
+997
+00:51:28,010 --> 00:51:34,300
+create this larger coalesce block and
+
+998
+00:51:30,109 --> 00:51:36,650
+setting its allocation status to zero
+
+999
+00:51:34,300 --> 00:51:41,960
+now in the case where the previous block
+
+1000
+00:51:36,650 --> 00:51:43,730
+is is free again we we check the
+
+1001
+00:51:41,960 --> 00:51:48,410
+boundary tech footer when we see that
+
+1002
+00:51:43,730 --> 00:51:52,720
+it's we see it it's free so in this case
+
+1003
+00:51:48,410 --> 00:51:55,280
+we create we have to update the size of
+
+1004
+00:51:52,720 --> 00:51:57,760
+the the old the header of the old
+
+1005
+00:51:55,280 --> 00:52:00,560
+previous block to create this now new
+
+1006
+00:51:57,760 --> 00:52:02,540
+larger coalesce block and we and we
+
+1007
+00:52:00,560 --> 00:52:05,530
+update the header and the boundary check
+
+1008
+00:52:02,540 --> 00:52:05,530
+footer accordingly
+
+1009
+00:52:06,610 --> 00:52:11,560
+and then in the case where where both
+
+1010
+00:52:08,800 --> 00:52:21,130
+the previous and the next blocker are
+
+1011
+00:52:11,560 --> 00:52:23,260
+free we create a single block a single
+
+1012
+00:52:21,130 --> 00:52:25,680
+block that's the sum of all three of
+
+1013
+00:52:23,260 --> 00:52:25,680
+those sizes
+
+1014
+00:52:27,299 --> 00:52:37,169
+okay so is that is that clear to
+
+1015
+00:52:28,919 --> 00:52:39,719
+everybody now if you point it out
+
+1016
+00:52:37,169 --> 00:52:41,249
+correctly pointed out that boundary tags
+
+1017
+00:52:39,719 --> 00:52:43,739
+can create additional internal
+
+1018
+00:52:41,249 --> 00:52:45,439
+fragmentation because they're they're
+
+1019
+00:52:43,739 --> 00:52:50,849
+not part of payload so by definition
+
+1020
+00:52:45,439 --> 00:52:53,880
+they're if they're overhead and so you
+
+1021
+00:52:50,849 --> 00:52:57,329
+might you might ask yourself are there
+
+1022
+00:52:53,880 --> 00:53:00,049
+any cases where you don't need a
+
+1023
+00:52:57,329 --> 00:53:00,049
+boundary tag
+
+1024
+00:53:06,210 --> 00:53:14,090
+so which which blocks need which blocks
+
+1025
+00:53:11,070 --> 00:53:14,090
+need a boundary tag
+
+1026
+00:53:16,430 --> 00:53:18,490
+you
+
+1027
+00:53:28,460 --> 00:53:33,380
+could you get away with as an allocated
+
+1028
+00:53:30,630 --> 00:53:33,380
+block need one
+
+1029
+00:53:47,200 --> 00:53:52,920
+yeah your if you're not going to if
+
+1030
+00:53:50,349 --> 00:53:55,809
+you're not if you don't need to coalesce
+
+1031
+00:53:52,920 --> 00:53:59,400
+and you don't need to that footer and
+
+1032
+00:53:55,809 --> 00:54:02,549
+what kind of blocks don't you coalesce
+
+1033
+00:53:59,400 --> 00:54:02,549
+allocated blog
+
+1034
+00:54:04,449 --> 00:54:13,339
+so what so maybe we can maybe maybe we
+
+1035
+00:54:11,179 --> 00:54:15,469
+don't need those at those boundary tech
+
+1036
+00:54:13,339 --> 00:54:19,009
+footers on allocated blocks right just
+
+1037
+00:54:15,469 --> 00:54:21,829
+on free blocks but then how are we going
+
+1038
+00:54:19,009 --> 00:54:25,699
+to determine that the previous block is
+
+1039
+00:54:21,829 --> 00:54:32,259
+allocated or free if an allocated block
+
+1040
+00:54:25,699 --> 00:54:32,259
+doesn't have a boundary tag footer yes
+
+1041
+00:54:32,320 --> 00:54:40,030
+sorry well yeah you would give it one
+
+1042
+00:54:37,870 --> 00:54:41,470
+when you free it but somehow when we're
+
+1043
+00:54:40,030 --> 00:54:44,050
+doing coalescing we need to check
+
+1044
+00:54:41,470 --> 00:54:50,200
+somehow that that previous block whether
+
+1045
+00:54:44,050 --> 00:54:52,120
+it's allocated or free okay but how does
+
+1046
+00:54:50,200 --> 00:54:58,660
+it know it's whether it's a boundary tag
+
+1047
+00:54:52,120 --> 00:55:08,920
+or not not sure no that's okay that's it
+
+1048
+00:54:58,660 --> 00:55:10,510
+okay yep bingo you got it so remember
+
+1049
+00:55:08,920 --> 00:55:14,530
+this number remember because of our
+
+1050
+00:55:10,510 --> 00:55:16,750
+alignment we've got we've got multiple
+
+1051
+00:55:14,530 --> 00:55:20,050
+at least three bits these three or four
+
+1052
+00:55:16,750 --> 00:55:23,050
+bits that are always zero we're only
+
+1053
+00:55:20,050 --> 00:55:26,020
+using one of them so why not use another
+
+1054
+00:55:23,050 --> 00:55:30,970
+one to contain the allocation status of
+
+1055
+00:55:26,020 --> 00:55:33,390
+the previous block okay so very good
+
+1056
+00:55:30,970 --> 00:55:33,390
+that was
+
+1057
+00:55:38,920 --> 00:55:50,279
+and so the idea so here's the block that
+
+1058
+00:55:45,760 --> 00:55:52,779
+we want to free and here's its header
+
+1059
+00:55:50,279 --> 00:55:55,930
+and we pass the P to it and we want to
+
+1060
+00:55:52,779 --> 00:55:59,680
+we want to free it and we've got we've
+
+1061
+00:55:55,930 --> 00:56:02,140
+got one bit we know that if we have a 8
+
+1062
+00:55:59,680 --> 00:56:05,950
+byte alignment we know that these are
+
+1063
+00:56:02,140 --> 00:56:08,170
+all implicitly 0 so we're using this is
+
+1064
+00:56:05,950 --> 00:56:14,970
+a allocated block that we want to free
+
+1065
+00:56:08,170 --> 00:56:17,799
+so it has an allocation status of 1 and
+
+1066
+00:56:14,970 --> 00:56:21,490
+let's use this let's use one of these
+
+1067
+00:56:17,799 --> 00:56:26,789
+spare bits to indicate the allocation
+
+1068
+00:56:21,490 --> 00:56:33,180
+status of the previous block ok so far
+
+1069
+00:56:26,789 --> 00:56:38,200
+if the previous block is is allocated
+
+1070
+00:56:33,180 --> 00:56:39,400
+then this would be a 1 and when we're
+
+1071
+00:56:38,200 --> 00:56:42,309
+checking to see whether we need to
+
+1072
+00:56:39,400 --> 00:56:45,279
+coalesce we just check that we just
+
+1073
+00:56:42,309 --> 00:56:46,869
+check that that that second allocated
+
+1074
+00:56:45,279 --> 00:56:49,630
+bit the allocated bit of the previous
+
+1075
+00:56:46,869 --> 00:56:52,930
+block and if it's 1 we don't need to
+
+1076
+00:56:49,630 --> 00:56:54,190
+know what its sizes ok we don't need to
+
+1077
+00:56:52,930 --> 00:56:57,549
+know where that block is because we're
+
+1078
+00:56:54,190 --> 00:57:00,009
+not going to coalesce it okay so in that
+
+1079
+00:56:57,549 --> 00:57:04,269
+we don't need so here we don't need a
+
+1080
+00:57:00,009 --> 00:57:09,849
+boundary tag for an allocated block but
+
+1081
+00:57:04,269 --> 00:57:14,230
+now if that if that block is free it'll
+
+1082
+00:57:09,849 --> 00:57:19,250
+have a boundary tag so we'll check if
+
+1083
+00:57:14,230 --> 00:57:23,570
+that block is free then the
+
+1084
+00:57:19,250 --> 00:57:26,119
+the allocation status will be will
+
+1085
+00:57:23,570 --> 00:57:29,150
+indicate free and then we know we need
+
+1086
+00:57:26,119 --> 00:57:32,599
+to we need to coalesce and we're going
+
+1087
+00:57:29,150 --> 00:57:34,099
+to need we're going to need a boundary
+
+1088
+00:57:32,599 --> 00:57:37,099
+tag because we need to know where that
+
+1089
+00:57:34,099 --> 00:57:40,849
+block starts we need to know its size so
+
+1090
+00:57:37,099 --> 00:57:43,490
+that we can go back and and update this
+
+1091
+00:57:40,849 --> 00:57:47,560
+size to include the you know the total
+
+1092
+00:57:43,490 --> 00:57:47,560
+coal left size and so that's two blocks
+
+1093
+00:57:47,859 --> 00:57:57,890
+so that's that clear yep
+
+1094
+00:57:51,890 --> 00:58:00,260
+oh I just it's just the allocated bit so
+
+1095
+00:57:57,890 --> 00:58:02,830
+zero means not allocated one means
+
+1096
+00:58:00,260 --> 00:58:02,830
+allocated
+
+1097
+00:58:09,180 --> 00:58:13,490
+oh why are those bits that are why are
+
+1098
+00:58:11,550 --> 00:58:18,569
+the bits always zero why
+
+1099
+00:58:13,490 --> 00:58:19,670
+okay so blocks have to be aligned to
+
+1100
+00:58:18,569 --> 00:58:22,170
+eight byte boundaries
+
+1101
+00:58:19,670 --> 00:58:25,710
+okay oral payloads have to be aligned to
+
+1102
+00:58:22,170 --> 00:58:29,069
+eight byte boundaries okay that means
+
+1103
+00:58:25,710 --> 00:58:32,329
+that that blocks have to be the size of
+
+1104
+00:58:29,069 --> 00:58:34,470
+blocks has to be a multiple of eight
+
+1105
+00:58:32,329 --> 00:58:36,900
+because it's the same thing it's when we
+
+1106
+00:58:34,470 --> 00:58:41,160
+were doing padding alignment instructs
+
+1107
+00:58:36,900 --> 00:58:43,050
+the next each block has to be a size has
+
+1108
+00:58:41,160 --> 00:58:45,809
+to be a multiple of eight so that the
+
+1109
+00:58:43,050 --> 00:58:48,390
+the block that follows that in memory is
+
+1110
+00:58:45,809 --> 00:58:50,309
+aligned properly okay
+
+1111
+00:58:48,390 --> 00:58:51,839
+so you're guaranteed because of the
+
+1112
+00:58:50,309 --> 00:58:54,240
+alignment requirement you're guaranteed
+
+1113
+00:58:51,839 --> 00:58:55,800
+that of eight or sixteen you're
+
+1114
+00:58:54,240 --> 00:58:58,819
+guarantee that the size of the blocks
+
+1115
+00:58:55,800 --> 00:59:01,800
+are always multiples of either 8 or 16
+
+1116
+00:58:58,819 --> 00:59:04,050
+okay and so that and that so that
+
+1117
+00:59:01,800 --> 00:59:06,180
+because that size is always a multiple
+
+1118
+00:59:04,050 --> 00:59:10,819
+of eight or sixteen you're guaranteed
+
+1119
+00:59:06,180 --> 00:59:14,240
+that either three or four four bits are
+
+1120
+00:59:10,819 --> 00:59:14,240
+all zeros
+
+1121
+00:59:18,040 --> 00:59:21,110
+[Music]
+
+1122
+00:59:22,150 --> 00:59:25,660
+any other questions
+
+1123
+00:59:28,190 --> 00:59:31,280
+[Music]
+
+1124
+00:59:31,630 --> 00:59:38,569
+okay let me summarize then some key
+
+1125
+00:59:34,279 --> 00:59:40,400
+policies when one implementing an
+
+1126
+00:59:38,569 --> 00:59:42,979
+allocator and i mentioned that there's
+
+1127
+00:59:40,400 --> 00:59:44,419
+the design spaces for these things it's
+
+1128
+00:59:42,979 --> 00:59:47,059
+really large and really interesting
+
+1129
+00:59:44,419 --> 00:59:48,849
+there's a lot of things that you a lot
+
+1130
+00:59:47,059 --> 00:59:52,219
+of decisions that you have to make about
+
+1131
+00:59:48,849 --> 00:59:55,789
+various policies so the first is the
+
+1132
+00:59:52,219 --> 00:59:57,079
+placement policy where when we when
+
+1133
+00:59:55,789 --> 01:00:00,679
+we're trying to find when we're trying
+
+1134
+00:59:57,079 --> 01:00:02,869
+to place a free block I mean and out
+
+1135
+01:00:00,679 --> 01:00:04,759
+when we're trying to place an allocated
+
+1136
+01:00:02,869 --> 01:00:05,809
+block somewhere in a free block
+
+1137
+01:00:04,759 --> 01:00:08,509
+somewhere in the list
+
+1138
+01:00:05,809 --> 01:00:11,719
+what what what policy do we use first
+
+1139
+01:00:08,509 --> 01:00:15,279
+fit next fit or best fit and generally
+
+1140
+01:00:11,719 --> 01:00:19,130
+these things a trade-off throughput for
+
+1141
+01:00:15,279 --> 01:00:24,939
+fragmentation all right so the the
+
+1142
+01:00:19,130 --> 01:00:24,939
+faster faster versions like
+
+1143
+01:00:26,570 --> 01:00:30,750
+if you're willing to if you're willing
+
+1144
+01:00:28,950 --> 01:00:33,780
+to deal with with lower throughput like
+
+1145
+01:00:30,750 --> 01:00:38,730
+in the case of best fit and you can get
+
+1146
+01:00:33,780 --> 01:00:41,730
+better memory utilization now there are
+
+1147
+01:00:38,730 --> 01:00:43,730
+interesting there are interesting ways
+
+1148
+01:00:41,730 --> 01:00:46,200
+to improve the performance of best fit
+
+1149
+01:00:43,730 --> 01:00:49,290
+you might you might consider something
+
+1150
+01:00:46,200 --> 01:00:51,840
+like good fit which is sort of a mix of
+
+1151
+01:00:49,290 --> 01:00:55,470
+first fit and best fit so maybe maybe
+
+1152
+01:00:51,840 --> 01:00:57,270
+you only search the first you know a
+
+1153
+01:00:55,470 --> 01:00:58,980
+portion of the heap and then identify
+
+1154
+01:00:57,270 --> 01:01:01,290
+the best fit you know maybe instead of
+
+1155
+01:00:58,980 --> 01:01:03,240
+searching the entire heap you just
+
+1156
+01:01:01,290 --> 01:01:05,640
+search some some portion of the heap and
+
+1157
+01:01:03,240 --> 01:01:07,920
+then cut off the search and then within
+
+1158
+01:01:05,640 --> 01:01:11,600
+that region that you searched you pick
+
+1159
+01:01:07,920 --> 01:01:15,660
+the best block so that's something that
+
+1160
+01:01:11,600 --> 01:01:19,440
+called good fit so that's that kind of
+
+1161
+01:01:15,660 --> 01:01:21,300
+approximates best fit or you can use
+
+1162
+01:01:19,440 --> 01:01:24,870
+these multiple free lists to approximate
+
+1163
+01:01:21,300 --> 01:01:27,900
+best fit and that's and then and there
+
+1164
+01:01:24,870 --> 01:01:31,620
+you the real advantage of using multiple
+
+1165
+01:01:27,900 --> 01:01:33,150
+free lists is that it not only improves
+
+1166
+01:01:31,620 --> 01:01:35,670
+memory utilization but it improves
+
+1167
+01:01:33,150 --> 01:01:37,890
+performance too because the individual
+
+1168
+01:01:35,670 --> 01:01:40,050
+list that you're looking for you know
+
+1169
+01:01:37,890 --> 01:01:43,460
+that they contain blocks that are close
+
+1170
+01:01:40,050 --> 01:01:45,990
+to what you're asking for and since
+
+1171
+01:01:43,460 --> 01:01:48,420
+you're dividing all the free blocks up
+
+1172
+01:01:45,990 --> 01:01:50,190
+among amongst multiple amongst multiple
+
+1173
+01:01:48,420 --> 01:01:52,800
+free lists those free lists will be
+
+1174
+01:01:50,190 --> 01:01:55,590
+shorter okay so your searches will take
+
+1175
+01:01:52,800 --> 01:01:58,100
+less time and your your probability of
+
+1176
+01:01:55,590 --> 01:02:00,320
+finding a block that fits goes up
+
+1177
+01:01:58,100 --> 01:02:04,070
+because you're segregating these
+
+1178
+01:02:00,320 --> 01:02:04,070
+different size classes
+
+1179
+01:02:04,740 --> 01:02:10,770
+now there's a good we also have to
+
+1180
+01:02:07,470 --> 01:02:12,930
+decide on some splitting policy so when
+
+1181
+01:02:10,770 --> 01:02:15,530
+we find we find a free block that's big
+
+1182
+01:02:12,930 --> 01:02:18,150
+enough what do we do with the leftover
+
+1183
+01:02:15,530 --> 01:02:20,970
+the leftover part of that block you know
+
+1184
+01:02:18,150 --> 01:02:23,609
+once we placed our allocated block into
+
+1185
+01:02:20,970 --> 01:02:25,200
+that into that free block what do we do
+
+1186
+01:02:23,609 --> 01:02:27,720
+with the leftovers do we just leave the
+
+1187
+01:02:25,200 --> 01:02:29,490
+leftover part in the block itself and
+
+1188
+01:02:27,720 --> 01:02:32,730
+return that back to the application
+
+1189
+01:02:29,490 --> 01:02:35,580
+you know avoiding so that sort of
+
+1190
+01:02:32,730 --> 01:02:37,650
+keeping keeping larger blocks or do we
+
+1191
+01:02:35,580 --> 01:02:42,240
+go ahead and split it like like I showed
+
+1192
+01:02:37,650 --> 01:02:44,490
+before and splitting we go ahead and
+
+1193
+01:02:42,240 --> 01:02:46,670
+splitting that block and creating that
+
+1194
+01:02:44,490 --> 01:02:48,630
+creating the original free block
+
+1195
+01:02:46,670 --> 01:02:51,750
+allocating a portion of it and then
+
+1196
+01:02:48,630 --> 01:02:54,240
+creating a smaller free block so that's
+
+1197
+01:02:51,750 --> 01:02:57,780
+you know that's a policy we may you may
+
+1198
+01:02:54,240 --> 01:03:00,960
+want to you may want to for small
+
+1199
+01:02:57,780 --> 01:03:02,940
+requests for small payloads you may up
+
+1200
+01:03:00,960 --> 01:03:05,369
+to a certain size you may not want to
+
+1201
+01:03:02,940 --> 01:03:08,580
+split so you may not you may decide not
+
+1202
+01:03:05,369 --> 01:03:11,970
+to split blocks smaller you may not you
+
+1203
+01:03:08,580 --> 01:03:14,760
+may decide not to create free blocks
+
+1204
+01:03:11,970 --> 01:03:17,670
+that are smaller than some threshold and
+
+1205
+01:03:14,760 --> 01:03:21,390
+only splitting for four requests for
+
+1206
+01:03:17,670 --> 01:03:27,270
+larger blocks and then there's there's a
+
+1207
+01:03:21,390 --> 01:03:29,070
+coalescing policy now we've seen freeing
+
+1208
+01:03:27,270 --> 01:03:32,730
+is pretty quick now it's constant time
+
+1209
+01:03:29,070 --> 01:03:35,910
+because of the boundary tag footers but
+
+1210
+01:03:32,730 --> 01:03:38,190
+you may you may want to you may want to
+
+1211
+01:03:35,910 --> 01:03:43,609
+try to just speed that up even more by
+
+1212
+01:03:38,190 --> 01:03:48,270
+by deferring the coalescing so you could
+
+1213
+01:03:43,609 --> 01:03:50,220
+you can do coalescing it every time the
+
+1214
+01:03:48,270 --> 01:03:54,030
+free is called like like we just looked
+
+1215
+01:03:50,220 --> 01:03:56,400
+at or you could defer coalescing to some
+
+1216
+01:03:54,030 --> 01:03:58,530
+later time you know maybe when you're
+
+1217
+01:03:56,400 --> 01:04:01,200
+scanning the free list when you're
+
+1218
+01:03:58,530 --> 01:04:02,790
+scanning the free list looking set try
+
+1219
+01:04:01,200 --> 01:04:04,830
+trying to find trying to place an
+
+1220
+01:04:02,790 --> 01:04:07,560
+allocated block in response to a malloc
+
+1221
+01:04:04,830 --> 01:04:09,240
+call maybe as you scan that free list
+
+1222
+01:04:07,560 --> 01:04:12,920
+you could go ahead and do the coalescing
+
+1223
+01:04:09,240 --> 01:04:12,920
+at that time right so
+
+1224
+01:04:13,180 --> 01:04:17,380
+I'm not saying which one is better it's
+
+1225
+01:04:15,519 --> 01:04:19,390
+hard to it's really hard to argue for
+
+1226
+01:04:17,380 --> 01:04:23,799
+the third coalescent getting the
+
+1227
+01:04:19,390 --> 01:04:26,859
+constant time performance of a boundary
+
+1228
+01:04:23,799 --> 01:04:32,079
+tag-based coalescing but it but it is an
+
+1229
+01:04:26,859 --> 01:04:35,529
+option okay so here's the summary then
+
+1230
+01:04:32,079 --> 01:04:39,430
+of implicit lists this is the simplest
+
+1231
+01:04:35,529 --> 01:04:45,400
+well it's a very simple kind of
+
+1232
+01:04:39,430 --> 01:04:47,710
+allocator i it's it's the cost to
+
+1233
+01:04:45,400 --> 01:04:53,470
+allocate is linear in the in the size of
+
+1234
+01:04:47,710 --> 01:04:55,299
+the heap a worst case that's the cost of
+
+1235
+01:04:53,470 --> 01:04:58,180
+free is constant time even with
+
+1236
+01:04:55,299 --> 01:04:59,859
+coalescing memory usage will be will
+
+1237
+01:04:58,180 --> 01:05:03,309
+depend on that the placement policy
+
+1238
+01:04:59,859 --> 01:05:07,480
+first fit next fit our best fit um
+
+1239
+01:05:03,309 --> 01:05:09,970
+it's not used in practice because of the
+
+1240
+01:05:07,480 --> 01:05:14,559
+linear time the linear time cost of
+
+1241
+01:05:09,970 --> 01:05:16,900
+allocation okay but it it can be used in
+
+1242
+01:05:14,559 --> 01:05:19,239
+sort of special-purpose allocators where
+
+1243
+01:05:16,900 --> 01:05:21,519
+you have a small number of size classes
+
+1244
+01:05:19,239 --> 01:05:23,650
+maybe or you ever very you know that you
+
+1245
+01:05:21,519 --> 01:05:27,279
+have a very small or fairly small free
+
+1246
+01:05:23,650 --> 01:05:29,499
+list but the ideas of splitting and
+
+1247
+01:05:27,279 --> 01:05:31,960
+coalescing that we looked at are general
+
+1248
+01:05:29,499 --> 01:05:33,579
+to all allocators okay so the idea of a
+
+1249
+01:05:31,960 --> 01:05:38,460
+boundary tag called boundary tag based
+
+1250
+01:05:33,579 --> 01:05:42,130
+coalescing is use used regardless of the
+
+1251
+01:05:38,460 --> 01:05:45,069
+structure of your free list so implicit
+
+1252
+01:05:42,130 --> 01:05:47,559
+lists are useful to study because they
+
+1253
+01:05:45,069 --> 01:05:50,430
+introduce some important concepts but
+
+1254
+01:05:47,559 --> 01:05:52,710
+generally they're not they're not
+
+1255
+01:05:50,430 --> 01:05:57,609
+they're not that useful
+
+1256
+01:05:52,710 --> 01:05:59,980
+so next next class we'll look at some
+
+1257
+01:05:57,609 --> 01:06:04,089
+more sophisticated organizations of free
+
+1258
+01:05:59,980 --> 01:06:07,210
+lists the explicit lists and multiple
+
+1259
+01:06:04,089 --> 01:06:08,710
+free lists in particular all right so
+
+1260
+01:06:07,210 --> 01:06:12,999
+we'll see you then good luck on your
+
+1261
+01:06:08,710 --> 01:06:15,569
+shell lab due tonight and we'll see you
+
+1262
+01:06:12,999 --> 01:06:15,569
+on Thursday
+

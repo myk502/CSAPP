@@ -1,0 +1,6056 @@
+1
+00:00:00,020 --> 00:00:07,109
+good afternoon everybody welcome good to
+
+2
+00:00:03,929 --> 00:00:12,750
+see you hope you all have started your
+
+3
+00:00:07,109 --> 00:00:15,900
+attack lab everybody started be a good
+
+4
+00:00:12,750 --> 00:00:18,570
+time to start I think anyway I hope
+
+5
+00:00:15,900 --> 00:00:21,060
+you're enjoying it that's a that's a new
+
+6
+00:00:18,570 --> 00:00:23,369
+one this semester that I think really
+
+7
+00:00:21,060 --> 00:00:29,820
+really interesting and modern and
+
+8
+00:00:23,369 --> 00:00:30,779
+current okay today we're going to today
+
+9
+00:00:29,820 --> 00:00:33,600
+we're going to talk about something
+
+10
+00:00:30,779 --> 00:00:36,680
+called the memory hierarchy now so far
+
+11
+00:00:33,600 --> 00:00:38,700
+in the class we we thought of memory
+
+12
+00:00:36,680 --> 00:00:40,290
+when we're looking at our assembly
+
+13
+00:00:38,700 --> 00:00:42,989
+language programs we thought of memory
+
+14
+00:00:40,290 --> 00:00:46,800
+as a an array of bytes it's a big array
+
+15
+00:00:42,989 --> 00:00:51,329
+of bytes that we can access with an
+
+16
+00:00:46,800 --> 00:00:54,590
+index called an address but in actuality
+
+17
+00:00:51,329 --> 00:00:57,780
+the memory system is a very complex
+
+18
+00:00:54,590 --> 00:01:00,000
+hierarchy of devices that provides this
+
+19
+00:00:57,780 --> 00:01:02,129
+abstraction of this this large linear
+
+20
+00:01:00,000 --> 00:01:05,840
+array and so today we're going to look
+
+21
+00:01:02,129 --> 00:01:08,570
+at how memory hierarchies are built and
+
+22
+00:01:05,840 --> 00:01:12,630
+why they're built the way they are and
+
+23
+00:01:08,570 --> 00:01:16,049
+and what we'll see is that the sort of
+
+24
+00:01:12,630 --> 00:01:19,350
+beautiful confluence of the properties
+
+25
+00:01:16,049 --> 00:01:22,320
+of storage devices and the properties of
+
+26
+00:01:19,350 --> 00:01:26,130
+programs come together to create this
+
+27
+00:01:22,320 --> 00:01:28,979
+this this this beautiful design called a
+
+28
+00:01:26,130 --> 00:01:31,579
+memory hierarchy so we're going to
+
+29
+00:01:28,979 --> 00:01:34,590
+quickly kind of do a high-level tour of
+
+30
+00:01:31,579 --> 00:01:35,700
+storage technologies and trends we're
+
+31
+00:01:34,590 --> 00:01:39,150
+not going to go into a whole lot of
+
+32
+00:01:35,700 --> 00:01:42,030
+detail the point the point in looking at
+
+33
+00:01:39,150 --> 00:01:43,799
+these at these that's that the
+
+34
+00:01:42,030 --> 00:01:45,570
+properties of these technologies is that
+
+35
+00:01:43,799 --> 00:01:47,070
+there are some fundamental properties
+
+36
+00:01:45,570 --> 00:01:49,770
+that determine their performance and
+
+37
+00:01:47,070 --> 00:01:52,200
+their speed and determine limits on
+
+38
+00:01:49,770 --> 00:01:55,560
+their performance and speed and so I
+
+39
+00:01:52,200 --> 00:01:57,780
+want you to have you know a just some
+
+40
+00:01:55,560 --> 00:02:00,810
+high-level idea of what those what those
+
+41
+00:01:57,780 --> 00:02:03,000
+properties are and then we'll look at a
+
+42
+00:02:00,810 --> 00:02:05,009
+property of programs called locality of
+
+43
+00:02:03,000 --> 00:02:09,090
+reference and we'll see how that
+
+44
+00:02:05,009 --> 00:02:11,790
+locality and the properties of storage
+
+45
+00:02:09,090 --> 00:02:13,860
+devices come together to suggest this
+
+46
+00:02:11,790 --> 00:02:17,580
+design of memory systems as
+
+47
+00:02:13,860 --> 00:02:19,950
+as a hierarchy okay so we'll look at
+
+48
+00:02:17,580 --> 00:02:22,290
+memories first now the the workhorse
+
+49
+00:02:19,950 --> 00:02:25,710
+memory is called a random access memory
+
+50
+00:02:22,290 --> 00:02:27,630
+or Ram it's traditionally packaged up as
+
+51
+00:02:25,710 --> 00:02:30,030
+a chip and then you put multiple chips
+
+52
+00:02:27,630 --> 00:02:33,360
+together to form to form your main
+
+53
+00:02:30,030 --> 00:02:34,950
+memory and there's a basic storage unit
+
+54
+00:02:33,360 --> 00:02:38,730
+called a cell which where each cell
+
+55
+00:02:34,950 --> 00:02:41,790
+stores one bit okay now there's there's
+
+56
+00:02:38,730 --> 00:02:44,160
+a ram comes in two varieties there's a
+
+57
+00:02:41,790 --> 00:02:46,140
+SRAM and DRAM and they're distinguished
+
+58
+00:02:44,160 --> 00:02:55,140
+by the way that those cells are
+
+59
+00:02:46,140 --> 00:02:57,570
+implemented so in an SRAM requires it's
+
+60
+00:02:55,140 --> 00:03:00,330
+more complex than a than DRAM it
+
+61
+00:02:57,570 --> 00:03:03,150
+requires like four to six transistors
+
+62
+00:03:00,330 --> 00:03:05,489
+per bit whereas DRAM only requires a one
+
+63
+00:03:03,150 --> 00:03:09,290
+transistor okay so you'll see that
+
+64
+00:03:05,489 --> 00:03:12,480
+SRAM's are going to be more expensive
+
+65
+00:03:09,290 --> 00:03:15,080
+lots more expensive because they are
+
+66
+00:03:12,480 --> 00:03:17,970
+more complex each cell is more complex
+
+67
+00:03:15,080 --> 00:03:22,260
+but they're also much faster like ten
+
+68
+00:03:17,970 --> 00:03:23,519
+order of magnitude faster than DRAM and
+
+69
+00:03:22,260 --> 00:03:26,700
+they have a there's some other
+
+70
+00:03:23,519 --> 00:03:29,010
+properties too like SRAM constantly a
+
+71
+00:03:26,700 --> 00:03:33,150
+dram constantly needs to be refreshed if
+
+72
+00:03:29,010 --> 00:03:37,260
+you don't hit it with a with a with a
+
+73
+00:03:33,150 --> 00:03:40,140
+voltage it loses a charge whereas DRAM
+
+74
+00:03:37,260 --> 00:03:42,030
+while it needs to be plugged in and and
+
+75
+00:03:40,140 --> 00:03:44,750
+have an electric charge it doesn't need
+
+76
+00:03:42,030 --> 00:03:48,000
+to be refreshed SRAM is a lot more
+
+77
+00:03:44,750 --> 00:03:49,260
+reliable than DRAM so it there's less
+
+78
+00:03:48,000 --> 00:03:52,380
+need for error detection and correction
+
+79
+00:03:49,260 --> 00:03:55,940
+and there and so because of this
+
+80
+00:03:52,380 --> 00:04:01,860
+difference right the SRAM's are costlier
+
+81
+00:03:55,940 --> 00:04:04,110
+smaller and faster than DRAM we find
+
+82
+00:04:01,860 --> 00:04:08,100
+SRAM's being used in these small fast
+
+83
+00:04:04,110 --> 00:04:09,870
+memories on on chip called cache
+
+84
+00:04:08,100 --> 00:04:14,940
+memories and we're going to learn all
+
+85
+00:04:09,870 --> 00:04:17,940
+about those on Thursday and then DRAM is
+
+86
+00:04:14,940 --> 00:04:19,260
+the workhorse used in main memories and
+
+87
+00:04:17,940 --> 00:04:24,650
+the frame buffers associated with
+
+88
+00:04:19,260 --> 00:04:28,319
+graphics graphics cards
+
+89
+00:04:24,650 --> 00:04:30,360
+now DRAM and SRAM are volatile in the
+
+90
+00:04:28,319 --> 00:04:32,550
+sense that if if they're powered off
+
+91
+00:04:30,360 --> 00:04:34,110
+they they lose all the information right
+
+92
+00:04:32,550 --> 00:04:35,430
+so this is why when you turn your
+
+93
+00:04:34,110 --> 00:04:37,949
+computer off you have to you lose
+
+94
+00:04:35,430 --> 00:04:40,319
+everything in your memory and you have
+
+95
+00:04:37,949 --> 00:04:42,779
+to when you turn it back on you have to
+
+96
+00:04:40,319 --> 00:04:45,419
+sort of reload everything from from your
+
+97
+00:04:42,779 --> 00:04:46,830
+disk there's a different kind of memory
+
+98
+00:04:45,419 --> 00:04:49,680
+called a non-volatile memory which
+
+99
+00:04:46,830 --> 00:04:51,810
+retains its information when it's
+
+100
+00:04:49,680 --> 00:04:56,189
+powered off and there's a whole bunch of
+
+101
+00:04:51,810 --> 00:04:58,080
+these things that so-called a read-only
+
+102
+00:04:56,189 --> 00:05:00,779
+memory so the generic name for these
+
+103
+00:04:58,080 --> 00:05:02,580
+non-volatile memories is read only
+
+104
+00:05:00,779 --> 00:05:05,729
+memories or roms and there's a whole
+
+105
+00:05:02,580 --> 00:05:06,750
+bunch of different kinds sort of going
+
+106
+00:05:05,729 --> 00:05:10,409
+back in time
+
+107
+00:05:06,750 --> 00:05:12,330
+the original read only memories were
+
+108
+00:05:10,409 --> 00:05:14,789
+roms and they can only do program once
+
+109
+00:05:12,330 --> 00:05:16,560
+when the chip was was produced and then
+
+110
+00:05:14,789 --> 00:05:18,930
+over time gradually over a period of
+
+111
+00:05:16,560 --> 00:05:20,550
+like twenty or thirty years there were
+
+112
+00:05:18,930 --> 00:05:22,349
+improvements in the way that Rob's could
+
+113
+00:05:20,550 --> 00:05:25,879
+be programmed and in how they were
+
+114
+00:05:22,349 --> 00:05:28,560
+erased so they could be reprogrammed the
+
+115
+00:05:25,879 --> 00:05:30,270
+what we have today the the modern form
+
+116
+00:05:28,560 --> 00:05:36,650
+of read only memories is called flash
+
+117
+00:05:30,270 --> 00:05:39,360
+memory which provides the capability of
+
+118
+00:05:36,650 --> 00:05:43,939
+erasing you can erase just chunks of the
+
+119
+00:05:39,360 --> 00:05:46,560
+flash memory called blocks and then the
+
+120
+00:05:43,939 --> 00:05:48,149
+the downside is that these things wear
+
+121
+00:05:46,560 --> 00:05:51,569
+out after about a hundred thousand
+
+122
+00:05:48,149 --> 00:05:54,629
+erasers okay so you can erase and
+
+123
+00:05:51,569 --> 00:05:59,099
+reprogram a hundred thousand times and
+
+124
+00:05:54,629 --> 00:06:02,219
+then and then it's your bricked now that
+
+125
+00:05:59,099 --> 00:06:05,789
+these non-volatile memories are show up
+
+126
+00:06:02,219 --> 00:06:08,339
+in Inwood so-called firmware which is
+
+127
+00:06:05,789 --> 00:06:11,189
+software that's that's programmed into
+
+128
+00:06:08,339 --> 00:06:13,229
+it into Iran and you see those in the
+
+129
+00:06:11,189 --> 00:06:15,719
+bios of computers so when you power on
+
+130
+00:06:13,229 --> 00:06:18,029
+your computer the very first
+
+131
+00:06:15,719 --> 00:06:19,649
+instructions that execute are stored in
+
+132
+00:06:18,029 --> 00:06:21,479
+a in a ROM right if you're wondered like
+
+133
+00:06:19,649 --> 00:06:23,669
+where do those things come from so
+
+134
+00:06:21,479 --> 00:06:25,289
+they're stored in ROM and then there's a
+
+135
+00:06:23,669 --> 00:06:28,550
+boot process where gradually more and
+
+136
+00:06:25,289 --> 00:06:31,550
+more information is and instructions are
+
+137
+00:06:28,550 --> 00:06:35,219
+loaded into memory
+
+138
+00:06:31,550 --> 00:06:38,040
+you know IO IO devices have little
+
+139
+00:06:35,219 --> 00:06:39,390
+computers in them called controllers
+
+140
+00:06:38,040 --> 00:06:41,130
+these controllers consist of
+
+141
+00:06:39,390 --> 00:06:44,370
+instructions and data that are that are
+
+142
+00:06:41,130 --> 00:06:48,030
+stored in roms and you see them all over
+
+143
+00:06:44,370 --> 00:06:53,130
+and all over the place in these solid
+
+144
+00:06:48,030 --> 00:06:56,220
+state disks that to the to the to the
+
+145
+00:06:53,130 --> 00:06:59,790
+system look like a rotating disk but
+
+146
+00:06:56,220 --> 00:07:01,620
+they're built of flash memories and
+
+147
+00:06:59,790 --> 00:07:04,110
+these are you see these in thumb drives
+
+148
+00:07:01,620 --> 00:07:05,490
+smartphones tablets and laptops and
+
+149
+00:07:04,110 --> 00:07:16,530
+they're even starting to show up in in
+
+150
+00:07:05,490 --> 00:07:20,310
+servers now so the memories are
+
+151
+00:07:16,530 --> 00:07:22,560
+connected to the CPU using sort of wires
+
+152
+00:07:20,310 --> 00:07:25,620
+that are collectively called buses okay
+
+153
+00:07:22,560 --> 00:07:31,910
+so data flows across the wires back and
+
+154
+00:07:25,620 --> 00:07:35,730
+forth from the we have the CPU chip and
+
+155
+00:07:31,910 --> 00:07:37,770
+it consists of a register file these are
+
+156
+00:07:35,730 --> 00:07:40,020
+the general-purpose registers are ax RDI
+
+157
+00:07:37,770 --> 00:07:42,900
+and so on and there's an arithmetic
+
+158
+00:07:40,020 --> 00:07:45,510
+logic unit that reads and writes data
+
+159
+00:07:42,900 --> 00:07:47,370
+from the register files and then
+
+160
+00:07:45,510 --> 00:07:49,800
+manipulates that data in some way by
+
+161
+00:07:47,370 --> 00:07:52,590
+doing some kind of arithmetic operation
+
+162
+00:07:49,800 --> 00:07:55,980
+or some logical operation and if
+
+163
+00:07:52,590 --> 00:07:58,920
+instructions if instructions need to
+
+164
+00:07:55,980 --> 00:08:03,390
+access memory so if there's you're doing
+
+165
+00:07:58,920 --> 00:08:06,840
+a move a move instruction that reads or
+
+166
+00:08:03,390 --> 00:08:09,260
+writes to memory then that's handled by
+
+167
+00:08:06,840 --> 00:08:13,530
+a bus interface which is connected to a
+
+168
+00:08:09,260 --> 00:08:16,080
+what we'll call a system bus and then
+
+169
+00:08:13,530 --> 00:08:18,840
+that's connected to an i/o bridge and
+
+170
+00:08:16,080 --> 00:08:21,630
+this this is another collection of chips
+
+171
+00:08:18,840 --> 00:08:24,840
+Intel calls this what I'm calling a i/o
+
+172
+00:08:21,630 --> 00:08:27,330
+Bridge they call the chipset okay but
+
+173
+00:08:24,840 --> 00:08:30,120
+it's a collection of chips separate from
+
+174
+00:08:27,330 --> 00:08:31,890
+the process the CPU chip and then the
+
+175
+00:08:30,120 --> 00:08:33,660
+i/o bridge is connected to another bus
+
+176
+00:08:31,890 --> 00:08:36,720
+called the memory bus which which
+
+177
+00:08:33,660 --> 00:08:39,599
+connects the main memory you know this
+
+178
+00:08:36,720 --> 00:08:41,010
+is uh this is kind of an abstraction I
+
+179
+00:08:39,599 --> 00:08:43,110
+don't want you to take this too
+
+180
+00:08:41,010 --> 00:08:45,330
+literally but it it gives you the idea
+
+181
+00:08:43,110 --> 00:08:48,270
+of how information flows in the system
+
+182
+00:08:45,330 --> 00:08:50,550
+okay modern modern systems use
+
+183
+00:08:48,270 --> 00:08:53,730
+proprietary bus designs and they're very
+
+184
+00:08:50,550 --> 00:08:54,720
+very arcane and increasingly complex so
+
+185
+00:08:53,730 --> 00:08:57,450
+we're just going to we're just going to
+
+186
+00:08:54,720 --> 00:09:01,310
+use a fairly simple abstraction for for
+
+187
+00:08:57,450 --> 00:09:04,410
+these sub for these butts architectures
+
+188
+00:09:01,310 --> 00:09:07,890
+now when is now suppose you do a load
+
+189
+00:09:04,410 --> 00:09:12,390
+operation like move move queue the eight
+
+190
+00:09:07,890 --> 00:09:14,340
+bytes at address a into our ax okay so
+
+191
+00:09:12,390 --> 00:09:16,290
+we call that a load because we're we're
+
+192
+00:09:14,340 --> 00:09:19,110
+loading from from the point of view of
+
+193
+00:09:16,290 --> 00:09:21,660
+the CPU we're loading data into the the
+
+194
+00:09:19,110 --> 00:09:26,150
+CPU but we're loading and we're loading
+
+195
+00:09:21,660 --> 00:09:28,890
+data from memory into the CPU so when
+
+196
+00:09:26,150 --> 00:09:31,590
+when the CPU executes the move
+
+197
+00:09:28,890 --> 00:09:37,460
+instruction like this it first places
+
+198
+00:09:31,590 --> 00:09:40,260
+the address of a on the memory bus and
+
+199
+00:09:37,460 --> 00:09:42,990
+then the main main memory senses that
+
+200
+00:09:40,260 --> 00:09:46,200
+address and it reads the contents the
+
+201
+00:09:42,990 --> 00:09:48,960
+eight bytes at address a so it retrieves
+
+202
+00:09:46,200 --> 00:09:51,800
+the word eight byte word from address a
+
+203
+00:09:48,960 --> 00:09:56,370
+and places it back on the bus
+
+204
+00:09:51,800 --> 00:10:00,360
+the those bits travel through the i/o
+
+205
+00:09:56,370 --> 00:10:03,990
+bridge to the bus interface and then the
+
+206
+00:10:00,360 --> 00:10:05,430
+the CPU reads that the word X from the
+
+207
+00:10:03,990 --> 00:10:08,030
+data word X from the bus and then
+
+208
+00:10:05,430 --> 00:10:13,530
+competent into register Ras okay so it's
+
+209
+00:10:08,030 --> 00:10:15,750
+now writing is is is similar again so
+
+210
+00:10:13,530 --> 00:10:19,620
+here we're doing a move instruction move
+
+211
+00:10:15,750 --> 00:10:22,980
+q from our ax in to address a in main
+
+212
+00:10:19,620 --> 00:10:25,200
+memory okay so the the CPU start as
+
+213
+00:10:22,980 --> 00:10:28,950
+before by placing the address a on the
+
+214
+00:10:25,200 --> 00:10:31,110
+bus main memory reads that address and
+
+215
+00:10:28,950 --> 00:10:33,230
+then it waits for the data to arrive on
+
+216
+00:10:31,110 --> 00:10:36,600
+the bus so the CPU then places the
+
+217
+00:10:33,230 --> 00:10:39,410
+contents of our a X on the bus those
+
+218
+00:10:36,600 --> 00:10:42,660
+contents travel across to main memory
+
+219
+00:10:39,410 --> 00:10:44,850
+which then reads the reads that word
+
+220
+00:10:42,660 --> 00:10:47,490
+from the bus and stores it at address a
+
+221
+00:10:44,850 --> 00:10:52,650
+okay so the the point of all this is
+
+222
+00:10:47,490 --> 00:10:56,460
+that operations that occur you know
+
+223
+00:10:52,650 --> 00:10:58,380
+reads and writes of registers because
+
+224
+00:10:56,460 --> 00:11:01,110
+the register file is very close to the
+
+225
+00:10:58,380 --> 00:11:01,950
+ALU these happen in on the order of a
+
+226
+00:11:01,110 --> 00:11:03,860
+few cycles
+
+227
+00:11:01,950 --> 00:11:06,800
+okay register the regice
+
+228
+00:11:03,860 --> 00:11:09,529
+it's very close to the to the ALU so
+
+229
+00:11:06,800 --> 00:11:13,579
+those operations are very happened very
+
+230
+00:11:09,529 --> 00:11:16,130
+quickly whereas memories actually this
+
+231
+00:11:13,579 --> 00:11:20,959
+is a set of chips that are very far away
+
+232
+00:11:16,130 --> 00:11:23,029
+relatively speaking from the CT you can
+
+233
+00:11:20,959 --> 00:11:25,190
+there's a lot going on in when if you
+
+234
+00:11:23,029 --> 00:11:27,140
+have to read or write memory there's it
+
+235
+00:11:25,190 --> 00:11:29,959
+you have to do multiple operations on
+
+236
+00:11:27,140 --> 00:11:31,550
+the bus data has to travel propagate
+
+237
+00:11:29,959 --> 00:11:34,310
+across that bus all this stuff takes
+
+238
+00:11:31,550 --> 00:11:38,570
+time so memory operations reads and
+
+239
+00:11:34,310 --> 00:11:41,050
+writes are typically you know maybe 50
+
+240
+00:11:38,570 --> 00:11:44,120
+nanoseconds 100 nanoseconds whereas
+
+241
+00:11:41,050 --> 00:11:48,950
+operations that occur between registers
+
+242
+00:11:44,120 --> 00:11:51,709
+are sub nanosecond okay on the order so
+
+243
+00:11:48,950 --> 00:11:54,410
+you're talking about a 1 to 2 orders of
+
+244
+00:11:51,709 --> 00:11:56,209
+magnitude difference if you have to go
+
+245
+00:11:54,410 --> 00:11:59,000
+off chip 2 to retrieve something from
+
+246
+00:11:56,209 --> 00:12:03,640
+memory ok so that's the first sort of
+
+247
+00:11:59,000 --> 00:12:06,800
+big takeaway item about memory systems
+
+248
+00:12:03,640 --> 00:12:09,709
+now another popular storage technology
+
+249
+00:12:06,800 --> 00:12:11,390
+is rotating disks and I don't know if
+
+250
+00:12:09,709 --> 00:12:12,800
+you've ever torn one apart they're kind
+
+251
+00:12:11,390 --> 00:12:16,519
+of interesting there's a series of
+
+252
+00:12:12,800 --> 00:12:21,829
+platters each platter is coated with a
+
+253
+00:12:16,519 --> 00:12:24,230
+magnetic material and then bits ones and
+
+254
+00:12:21,829 --> 00:12:26,570
+zeros are encoded in that in that
+
+255
+00:12:24,230 --> 00:12:31,750
+magnetic material and then there's this
+
+256
+00:12:26,570 --> 00:12:34,850
+arm that can it's it's hinged right here
+
+257
+00:12:31,750 --> 00:12:37,070
+and then it can it can it floats over
+
+258
+00:12:34,850 --> 00:12:38,980
+the platter so it floats on a thin layer
+
+259
+00:12:37,070 --> 00:12:41,269
+of air over the platter and there's a
+
+260
+00:12:38,980 --> 00:12:42,920
+read/write head at the very end that can
+
+261
+00:12:41,269 --> 00:12:46,670
+sense the changes in the magnetic field
+
+262
+00:12:42,920 --> 00:12:48,649
+that encode the disk okay so these
+
+263
+00:12:46,670 --> 00:12:51,019
+platters are spinning around like like
+
+264
+00:12:48,649 --> 00:12:53,570
+counterclockwise like this and this this
+
+265
+00:12:51,019 --> 00:12:55,970
+arm can go back and forth so there's a
+
+266
+00:12:53,570 --> 00:12:59,449
+lot of mechanical gear so this is all
+
+267
+00:12:55,970 --> 00:13:01,610
+mechanical so the mechanical nature of a
+
+268
+00:12:59,449 --> 00:13:05,000
+rotating disc needs it's going to be
+
+269
+00:13:01,610 --> 00:13:07,640
+slower right then then D Rams and NS
+
+270
+00:13:05,000 --> 00:13:10,399
+Rams and there's also electronics like
+
+271
+00:13:07,640 --> 00:13:14,089
+it's like a little computer in firmware
+
+272
+00:13:10,399 --> 00:13:16,040
+that that actually controls the the
+
+273
+00:13:14,089 --> 00:13:17,120
+operation of this drive like controls
+
+274
+00:13:16,040 --> 00:13:20,540
+how this
+
+275
+00:13:17,120 --> 00:13:23,200
+arm goes back and forth and and and
+
+276
+00:13:20,540 --> 00:13:26,570
+controls how the data is read off of the
+
+277
+00:13:23,200 --> 00:13:30,310
+read/write head so just in a little more
+
+278
+00:13:26,570 --> 00:13:32,810
+detail we can think of these disks
+
+279
+00:13:30,310 --> 00:13:35,200
+consists of platters each platter has
+
+280
+00:13:32,810 --> 00:13:37,880
+two services the top and the bottom and
+
+281
+00:13:35,200 --> 00:13:41,150
+then each surface consists of these
+
+282
+00:13:37,880 --> 00:13:45,830
+transfers are concentric rings called
+
+283
+00:13:41,150 --> 00:13:49,220
+tracks and then each track consists of
+
+284
+00:13:45,830 --> 00:13:49,910
+us it consists of sectors which contain
+
+285
+00:13:49,220 --> 00:13:58,520
+the data
+
+286
+00:13:49,910 --> 00:14:02,660
+so typically 512 512 bits or I'm sorry
+
+287
+00:13:58,520 --> 00:14:05,720
+bytes and and then except these tracks
+
+288
+00:14:02,660 --> 00:14:07,910
+are separated by gaps that goat that
+
+289
+00:14:05,720 --> 00:14:13,610
+these gaps like right here that don't
+
+290
+00:14:07,910 --> 00:14:16,040
+contain now data now platters are
+
+291
+00:14:13,610 --> 00:14:19,250
+aligned on top of each other on top on
+
+292
+00:14:16,040 --> 00:14:22,310
+this spindle and so tracks that are
+
+293
+00:14:19,250 --> 00:14:25,279
+aligned on the different surfaces such
+
+294
+00:14:22,310 --> 00:14:28,010
+as this track here on those the
+
+295
+00:14:25,279 --> 00:14:30,080
+collection of those tracks formal we
+
+296
+00:14:28,010 --> 00:14:33,980
+call a cylinder okay because it has a
+
+297
+00:14:30,080 --> 00:14:36,800
+cylindrical shape now the capacity of
+
+298
+00:14:33,980 --> 00:14:41,390
+disks is that the number of bits that
+
+299
+00:14:36,800 --> 00:14:44,750
+can be stored and vendors kind of they
+
+300
+00:14:41,390 --> 00:14:46,610
+all dis vendors use that they quote the
+
+301
+00:14:44,750 --> 00:14:51,260
+capacity in gigabytes but where a
+
+302
+00:14:46,610 --> 00:14:55,850
+gigabyte is 10 to the ninth bytes right
+
+303
+00:14:51,260 --> 00:14:59,690
+instead of 2 to the 20th okay like like
+
+304
+00:14:55,850 --> 00:15:03,230
+you would expect so what it I'm not sure
+
+305
+00:14:59,690 --> 00:15:06,440
+why they do this but it allows by by
+
+306
+00:15:03,230 --> 00:15:10,190
+quoting their capacity and gigabytes in
+
+307
+00:15:06,440 --> 00:15:14,120
+ten to the ninth bytes it it's a bigger
+
+308
+00:15:10,190 --> 00:15:15,620
+number right so it looks better it looks
+
+309
+00:15:14,120 --> 00:15:18,470
+like there's more information it's a
+
+310
+00:15:15,620 --> 00:15:21,350
+little I don't really know why they do
+
+311
+00:15:18,470 --> 00:15:23,089
+it but I think that's why it is and it's
+
+312
+00:15:21,350 --> 00:15:24,760
+so it's one of those little bit of
+
+313
+00:15:23,089 --> 00:15:28,130
+annoying things that we just have to
+
+314
+00:15:24,760 --> 00:15:30,650
+just know about and get used to now the
+
+315
+00:15:28,130 --> 00:15:35,930
+capacity is determined by two
+
+316
+00:15:30,650 --> 00:15:39,530
+independent technology factors one is
+
+317
+00:15:35,930 --> 00:15:43,210
+the recording density so that's how many
+
+318
+00:15:39,530 --> 00:15:49,520
+bits can you pack into a single sector
+
+319
+00:15:43,210 --> 00:15:54,020
+or for us or at least a portion of the
+
+320
+00:15:49,520 --> 00:15:55,670
+other track and then the track density
+
+321
+00:15:54,020 --> 00:15:57,950
+which is sort of how close can you put
+
+322
+00:15:55,670 --> 00:15:59,540
+those tracks together and then the
+
+323
+00:15:57,950 --> 00:16:01,220
+product of those two is what's called
+
+324
+00:15:59,540 --> 00:16:03,200
+the areal density and that determines
+
+325
+00:16:01,220 --> 00:16:06,860
+the overall capacity of the disc so the
+
+326
+00:16:03,200 --> 00:16:09,470
+higher the areal capacity the more bits
+
+327
+00:16:06,860 --> 00:16:15,830
+you can squeeze on to that onto that
+
+328
+00:16:09,470 --> 00:16:19,280
+surface now in the old days when aerial
+
+329
+00:16:15,830 --> 00:16:21,260
+densities were fairly low each each
+
+330
+00:16:19,280 --> 00:16:24,080
+track on the surface would have the same
+
+331
+00:16:21,260 --> 00:16:26,900
+number of sectors okay so there was a
+
+332
+00:16:24,080 --> 00:16:30,380
+constant number of sectors per track so
+
+333
+00:16:26,900 --> 00:16:33,230
+now what happens as you as your tracks
+
+334
+00:16:30,380 --> 00:16:35,810
+go from the you know near near the whole
+
+335
+00:16:33,230 --> 00:16:38,300
+by the spindle as they go as they move
+
+336
+00:16:35,810 --> 00:16:40,940
+outward right if you have the same
+
+337
+00:16:38,300 --> 00:16:45,380
+number of sectors with the same with the
+
+338
+00:16:40,940 --> 00:16:48,080
+same track bit density that the gaps
+
+339
+00:16:45,380 --> 00:16:50,000
+between sectors are going to get bigger
+
+340
+00:16:48,080 --> 00:16:51,380
+and bigger as you go out and you're
+
+341
+00:16:50,000 --> 00:16:55,370
+going to be wasting more and more of
+
+342
+00:16:51,380 --> 00:16:57,430
+your of your space so at when aerial
+
+343
+00:16:55,370 --> 00:16:59,840
+densities were fairly low this was okay
+
+344
+00:16:57,430 --> 00:17:02,090
+but after a while it just became not
+
+345
+00:16:59,840 --> 00:17:04,250
+okay to waste that much room so what
+
+346
+00:17:02,090 --> 00:17:06,920
+modern systems do is they they partition
+
+347
+00:17:04,250 --> 00:17:10,040
+the tracks into these so called rook
+
+348
+00:17:06,920 --> 00:17:12,620
+recording zones where each each
+
+349
+00:17:10,040 --> 00:17:14,959
+recording zone such as this right here
+
+350
+00:17:12,620 --> 00:17:19,640
+each recording zone has a constant
+
+351
+00:17:14,959 --> 00:17:21,350
+number of sectors so each track in a
+
+352
+00:17:19,640 --> 00:17:23,720
+recording zone has the same number of
+
+353
+00:17:21,350 --> 00:17:26,750
+sectors and of course as you move
+
+354
+00:17:23,720 --> 00:17:29,360
+outward if you move outward in the
+
+355
+00:17:26,750 --> 00:17:31,670
+recording zone you're going to have
+
+356
+00:17:29,360 --> 00:17:34,370
+bigger and bigger gaps but then but then
+
+357
+00:17:31,670 --> 00:17:38,480
+you start a new recording zone that will
+
+358
+00:17:34,370 --> 00:17:40,140
+have more sectors per track and then
+
+359
+00:17:38,480 --> 00:17:42,510
+within that
+
+360
+00:17:40,140 --> 00:17:45,179
+so you can see in this outer in this
+
+361
+00:17:42,510 --> 00:17:48,290
+outer zone you have more you have more
+
+362
+00:17:45,179 --> 00:17:50,490
+sectors than you do on this inner zone
+
+363
+00:17:48,290 --> 00:17:53,910
+okay so that's a way to kind of deal
+
+364
+00:17:50,490 --> 00:17:56,190
+with that sort of that that that growth
+
+365
+00:17:53,910 --> 00:17:59,010
+in the gaps to keep it from getting too
+
+366
+00:17:56,190 --> 00:18:02,670
+large and so because we don't really
+
+367
+00:17:59,010 --> 00:18:05,400
+have the number of sectors per track
+
+368
+00:18:02,670 --> 00:18:08,040
+isn't constant we'll use an average the
+
+369
+00:18:05,400 --> 00:18:10,559
+average sectors per track across all
+
+370
+00:18:08,040 --> 00:18:14,100
+recording zones when we do sort of our
+
+371
+00:18:10,559 --> 00:18:16,470
+capacity estimates okay so you can
+
+372
+00:18:14,100 --> 00:18:17,790
+imagine the formula for computing the
+
+373
+00:18:16,470 --> 00:18:21,679
+disk capacity is fairly straightforward
+
+374
+00:18:17,790 --> 00:18:24,179
+it's the number of bytes per sector
+
+375
+00:18:21,679 --> 00:18:27,210
+times the average number of sectors per
+
+376
+00:18:24,179 --> 00:18:29,309
+track times the average number of tracks
+
+377
+00:18:27,210 --> 00:18:31,559
+per surface times the number of surfaces
+
+378
+00:18:29,309 --> 00:18:36,720
+per platter times the number of platters
+
+379
+00:18:31,559 --> 00:18:40,559
+per disk okay now let's look at how just
+
+380
+00:18:36,720 --> 00:18:42,870
+work so these these surfaces are
+
+381
+00:18:40,559 --> 00:18:46,049
+spinning at a fixed rotational rate now
+
+382
+00:18:42,870 --> 00:18:51,240
+a typical rate may be 7200 rpm is a
+
+383
+00:18:46,049 --> 00:18:56,090
+fairly common rotational rate so the
+
+384
+00:18:51,240 --> 00:18:56,090
+disk is spinning around you can see this
+
+385
+00:18:56,360 --> 00:19:01,320
+pretty proud of that
+
+386
+00:18:59,210 --> 00:19:05,760
+so it's spinning around a counter
+
+387
+00:19:01,320 --> 00:19:09,140
+clockwise and then the arm moves
+
+388
+00:19:05,760 --> 00:19:09,140
+radially here we go
+
+389
+00:19:10,150 --> 00:19:17,090
+the arm moves radially and it can go
+
+390
+00:19:13,010 --> 00:19:23,120
+over any of the tracks okay all right
+
+391
+00:19:17,090 --> 00:19:27,559
+that's enough okay now when you have
+
+392
+00:19:23,120 --> 00:19:28,850
+multiple platters each one of these each
+
+393
+00:19:27,559 --> 00:19:30,740
+one of these there's actually multiple
+
+394
+00:19:28,850 --> 00:19:35,480
+arms and there's a read/write head on
+
+395
+00:19:30,740 --> 00:19:39,799
+each surface so if the platters has to -
+
+396
+00:19:35,480 --> 00:19:42,919
+if to each side of the platter is coated
+
+397
+00:19:39,799 --> 00:19:44,450
+with this magnetic material then you'll
+
+398
+00:19:42,919 --> 00:19:47,299
+have you have a read/write head on each
+
+399
+00:19:44,450 --> 00:19:48,529
+side and then these are all connected
+
+400
+00:19:47,299 --> 00:19:51,830
+they kind of moved together
+
+401
+00:19:48,529 --> 00:19:54,830
+now originally they these read/write
+
+402
+00:19:51,830 --> 00:19:56,480
+heads would be they were rigid right
+
+403
+00:19:54,830 --> 00:19:58,880
+because the densities track densities
+
+404
+00:19:56,480 --> 00:20:00,860
+weren't that high so they could they
+
+405
+00:19:58,880 --> 00:20:03,500
+could just sort of licks and even though
+
+406
+00:20:00,860 --> 00:20:06,740
+the tracks didn't line perfectly now
+
+407
+00:20:03,500 --> 00:20:09,140
+they could just sort of they could they
+
+408
+00:20:06,740 --> 00:20:11,270
+could still cover the the read/write
+
+409
+00:20:09,140 --> 00:20:14,539
+heads could still cover the tracks with
+
+410
+00:20:11,270 --> 00:20:17,149
+these fixed with these fixed arms but
+
+411
+00:20:14,539 --> 00:20:20,210
+nowadays that that the densities are so
+
+412
+00:20:17,149 --> 00:20:22,010
+high that they actually the controller
+
+413
+00:20:20,210 --> 00:20:23,779
+can actually move the read/write heads a
+
+414
+00:20:22,010 --> 00:20:26,270
+little bit so that it matches up with
+
+415
+00:20:23,779 --> 00:20:31,640
+that all of the tracks on all of the
+
+416
+00:20:26,270 --> 00:20:38,020
+surfaces okay so let's look at how this
+
+417
+00:20:31,640 --> 00:20:41,120
+works how we read data so we have our
+
+418
+00:20:38,020 --> 00:20:42,860
+this is our this is our arm and the tip
+
+419
+00:20:41,120 --> 00:20:45,789
+of the arrow is the read/write head and
+
+420
+00:20:42,860 --> 00:20:49,490
+it's positioned and the platter is
+
+421
+00:20:45,789 --> 00:20:51,830
+rotating counterclockwise and it's
+
+422
+00:20:49,490 --> 00:20:55,730
+positioned just ready to read the blue
+
+423
+00:20:51,830 --> 00:20:58,940
+sector so it as the blue sector spins
+
+424
+00:20:55,730 --> 00:21:00,260
+underneath the read/write head it senses
+
+425
+00:20:58,940 --> 00:21:01,880
+those bits and sends them up to the
+
+426
+00:21:00,260 --> 00:21:05,750
+controller which passes them back up to
+
+427
+00:21:01,880 --> 00:21:08,690
+the CPU and now the CPU is requested
+
+428
+00:21:05,750 --> 00:21:12,289
+that the disk it's requested the red
+
+429
+00:21:08,690 --> 00:21:14,149
+data from the red sector so we have to
+
+430
+00:21:12,289 --> 00:21:17,409
+take the controller takes that
+
+431
+00:21:14,149 --> 00:21:19,660
+read/write head moves it back to red
+
+432
+00:21:17,409 --> 00:21:23,580
+track
+
+433
+00:21:19,660 --> 00:21:23,580
+and then waits for it to spin around and
+
+434
+00:21:23,880 --> 00:21:33,810
+to the to the read/write head and then
+
+435
+00:21:29,470 --> 00:21:36,220
+it reads that that red that red sector
+
+436
+00:21:33,810 --> 00:21:38,140
+okay so when we first so there's really
+
+437
+00:21:36,220 --> 00:21:40,330
+three components going on here that
+
+438
+00:21:38,140 --> 00:21:44,170
+determine how long it takes to read one
+
+439
+00:21:40,330 --> 00:21:44,880
+of these sectors the when we move the
+
+440
+00:21:44,170 --> 00:21:48,220
+head
+
+441
+00:21:44,880 --> 00:21:51,430
+that's called a seek when we waited for
+
+442
+00:21:48,220 --> 00:21:53,020
+the red track to to sort of rotate
+
+443
+00:21:51,430 --> 00:21:56,140
+around that's called the rotational
+
+444
+00:21:53,020 --> 00:22:00,550
+latency so however long it takes on
+
+445
+00:21:56,140 --> 00:22:03,730
+average it will be half of the half of
+
+446
+00:22:00,550 --> 00:22:06,550
+the time it takes for the entire to
+
+447
+00:22:03,730 --> 00:22:09,100
+circle all the way around and then
+
+448
+00:22:06,550 --> 00:22:11,320
+there's the data transfer which is sort
+
+449
+00:22:09,100 --> 00:22:15,000
+of how long it takes for that for that
+
+450
+00:22:11,320 --> 00:22:17,440
+track to pass under the read/write head
+
+451
+00:22:15,000 --> 00:22:20,320
+now the reason the reason it's important
+
+452
+00:22:17,440 --> 00:22:21,700
+to know this is that these three
+
+453
+00:22:20,320 --> 00:22:24,220
+components you add them together and
+
+454
+00:22:21,700 --> 00:22:27,610
+that's the that's what your average time
+
+455
+00:22:24,220 --> 00:22:31,120
+it takes to access data that time is
+
+456
+00:22:27,610 --> 00:22:32,860
+dominated by the seek time so seek times
+
+457
+00:22:31,120 --> 00:22:34,230
+are measured in milliseconds right so
+
+458
+00:22:32,860 --> 00:22:37,540
+we're moving this head there's this
+
+459
+00:22:34,230 --> 00:22:40,780
+there's a servo that has to fire up and
+
+460
+00:22:37,540 --> 00:22:44,170
+there's actual mechanical motion and
+
+461
+00:22:40,780 --> 00:22:47,740
+that that takes time and it's on the
+
+462
+00:22:44,170 --> 00:22:51,160
+order of three to nine milliseconds and
+
+463
+00:22:47,740 --> 00:22:53,710
+this has been true for decades right so
+
+464
+00:22:51,160 --> 00:22:55,260
+this this value is not changing right
+
+465
+00:22:53,710 --> 00:23:00,250
+there's just sort of fundamental
+
+466
+00:22:55,260 --> 00:23:03,390
+mechanical limits that make it very
+
+467
+00:23:00,250 --> 00:23:09,400
+difficult to to decrease this this value
+
+468
+00:23:03,390 --> 00:23:13,720
+now the rotational latency the time that
+
+469
+00:23:09,400 --> 00:23:16,690
+it takes to spin around will we'll call
+
+470
+00:23:13,720 --> 00:23:19,120
+that the T average rotation and then the
+
+471
+00:23:16,690 --> 00:23:21,460
+time it takes to read the bits will call
+
+472
+00:23:19,120 --> 00:23:24,720
+T average transfer okay so we have T
+
+473
+00:23:21,460 --> 00:23:29,740
+average seek which is this seek time
+
+474
+00:23:24,720 --> 00:23:32,440
+rotational latency and transfer time and
+
+475
+00:23:29,740 --> 00:23:36,640
+now if we just take some typical numbers
+
+476
+00:23:32,440 --> 00:23:40,000
+and plug those in you see that our seek
+
+477
+00:23:36,640 --> 00:23:41,800
+time is on the order of milliseconds the
+
+478
+00:23:40,000 --> 00:23:43,210
+rotational rate is also on the order of
+
+479
+00:23:41,800 --> 00:23:45,130
+milliseconds right so there's there's
+
+480
+00:23:43,210 --> 00:23:49,240
+also mechanical limits and how fast you
+
+481
+00:23:45,130 --> 00:23:52,050
+can you can spin these around the access
+
+482
+00:23:49,240 --> 00:23:54,610
+time and the transfer the transfer time
+
+483
+00:23:52,050 --> 00:23:57,160
+is very small so it's orders of
+
+484
+00:23:54,610 --> 00:23:58,930
+magnitude smaller because you just you
+
+485
+00:23:57,160 --> 00:24:03,730
+just have to read a few the bits that
+
+486
+00:23:58,930 --> 00:24:05,530
+are in one sector okay so if you if you
+
+487
+00:24:03,730 --> 00:24:08,340
+look you can you can see that the total
+
+488
+00:24:05,530 --> 00:24:11,890
+access time is dominated by seek and
+
+489
+00:24:08,340 --> 00:24:13,090
+rotational latency so you know a good
+
+490
+00:24:11,890 --> 00:24:14,950
+rule of thumb just for sort of
+
+491
+00:24:13,090 --> 00:24:16,960
+estimating how long it takes to read
+
+492
+00:24:14,950 --> 00:24:18,730
+from a disk is just take twice the seek
+
+493
+00:24:16,960 --> 00:24:22,960
+the seek time and you'll be you'll be
+
+494
+00:24:18,730 --> 00:24:27,070
+pretty close and basically the transfer
+
+495
+00:24:22,960 --> 00:24:28,690
+time is you get that for free now here's
+
+496
+00:24:27,070 --> 00:24:33,250
+the here's the important thing to know
+
+497
+00:24:28,690 --> 00:24:36,420
+about disks we SRAM access times about
+
+498
+00:24:33,250 --> 00:24:42,270
+four nanoseconds to get a double word
+
+499
+00:24:36,420 --> 00:24:44,770
+DRAM is about 60 nanoseconds so DRAM is
+
+500
+00:24:42,270 --> 00:24:49,540
+about an order of magnitude slower than
+
+501
+00:24:44,770 --> 00:24:52,720
+SRAM but disk is 40,000 times slower
+
+502
+00:24:49,540 --> 00:24:55,810
+than SRAM so that's 4,000 orders of
+
+503
+00:24:52,720 --> 00:25:00,100
+magnitude difference that's huge and
+
+504
+00:24:55,810 --> 00:25:05,530
+it's it's 250 times orders of magnitude
+
+505
+00:25:00,100 --> 00:25:07,510
+slower than T Rams so the the there's a
+
+506
+00:25:05,530 --> 00:25:12,190
+big gap between DRAM and SRAM and
+
+507
+00:25:07,510 --> 00:25:16,230
+there's an even bigger gap between disk
+
+508
+00:25:12,190 --> 00:25:19,570
+and and other other memory types
+
+509
+00:25:16,230 --> 00:25:25,330
+now modern disks present a much simpler
+
+510
+00:25:19,570 --> 00:25:30,070
+view than so we then this this track
+
+511
+00:25:25,330 --> 00:25:32,640
+cylinder sector geometry so modern
+
+512
+00:25:30,070 --> 00:25:35,350
+modern disk controllers actually present
+
+513
+00:25:32,640 --> 00:25:38,080
+to the CPU they present the disk is a
+
+514
+00:25:35,350 --> 00:25:40,510
+sequence of logical blocks where each
+
+515
+00:25:38,080 --> 00:25:42,220
+block is is a multiple of a sector side
+
+516
+00:25:40,510 --> 00:25:44,620
+so this in the simplest case the block
+
+517
+00:25:42,220 --> 00:25:46,480
+is just think of a logical block is one
+
+518
+00:25:44,620 --> 00:25:48,460
+sector and then blocks are
+
+519
+00:25:46,480 --> 00:25:51,660
+starting at zero and they just go all
+
+520
+00:25:48,460 --> 00:25:55,630
+the way up to some to some large number
+
+521
+00:25:51,660 --> 00:25:57,490
+and then the the disk controller keeps
+
+522
+00:25:55,630 --> 00:25:59,440
+the mapping maintains the mapping
+
+523
+00:25:57,490 --> 00:26:04,630
+between logical blocks and the actual
+
+524
+00:25:59,440 --> 00:26:06,669
+physical sectors so as as in the old
+
+525
+00:26:04,630 --> 00:26:08,530
+saying is you know most most interesting
+
+526
+00:26:06,669 --> 00:26:10,690
+ideas in computer science are involve
+
+527
+00:26:08,530 --> 00:26:13,660
+some form of indirection so this is a
+
+528
+00:26:10,690 --> 00:26:15,309
+level of indirection that provides you
+
+529
+00:26:13,660 --> 00:26:17,740
+know this mapping between logical blocks
+
+530
+00:26:15,309 --> 00:26:19,750
+and physical blocks so it allows disk
+
+531
+00:26:17,740 --> 00:26:22,179
+controllers to take some cylinders and
+
+532
+00:26:19,750 --> 00:26:24,160
+reserve them as spare cylinders that
+
+533
+00:26:22,179 --> 00:26:27,460
+aren't mapped in e logical blocks and
+
+534
+00:26:24,160 --> 00:26:30,520
+then if there's if one of the sectors
+
+535
+00:26:27,460 --> 00:26:34,780
+goes bad in a cylinder that the disk
+
+536
+00:26:30,520 --> 00:26:37,090
+controller can can just copy copy the
+
+537
+00:26:34,780 --> 00:26:39,250
+data over to a spare cylinder and then
+
+538
+00:26:37,090 --> 00:26:41,559
+just keep going right so this and so
+
+539
+00:26:39,250 --> 00:26:43,270
+this is why your 4matic capacity is is
+
+540
+00:26:41,559 --> 00:26:45,429
+less than sort of the if you know if you
+
+541
+00:26:43,270 --> 00:26:46,210
+counted the number of actual cylinders
+
+542
+00:26:45,429 --> 00:26:48,340
+on the disk
+
+543
+00:26:46,210 --> 00:26:50,290
+the 4matic capacity is less than the
+
+544
+00:26:48,340 --> 00:26:52,900
+maximum capacity because some of those
+
+545
+00:26:50,290 --> 00:27:00,760
+cylinders are being reserved for
+
+546
+00:26:52,900 --> 00:27:03,580
+failures now devices like disks are
+
+547
+00:27:00,760 --> 00:27:08,110
+connected to the to the CPU and the
+
+548
+00:27:03,580 --> 00:27:12,880
+memory via the i/o bridge over another
+
+549
+00:27:08,110 --> 00:27:14,740
+kind of bus called an i/o bus this what
+
+550
+00:27:12,880 --> 00:27:18,370
+I'm showing you what I'm showing you now
+
+551
+00:27:14,740 --> 00:27:20,650
+is is actually not representative of
+
+552
+00:27:18,370 --> 00:27:22,990
+modern systems it's representative of
+
+553
+00:27:20,650 --> 00:27:27,700
+what was called the PCI bus about five
+
+554
+00:27:22,990 --> 00:27:30,010
+years ago modern buses now are the PCI
+
+555
+00:27:27,700 --> 00:27:34,110
+bus is a broadcast bus meaning it's just
+
+556
+00:27:30,010 --> 00:27:37,360
+a single set of wires so if any device
+
+557
+00:27:34,110 --> 00:27:39,700
+changes the values on those wires every
+
+558
+00:27:37,360 --> 00:27:42,940
+device on that bus can see those values
+
+559
+00:27:39,700 --> 00:27:45,040
+okay that's called the broadcast bus and
+
+560
+00:27:42,940 --> 00:27:49,750
+it's a simplest kind of way to hook
+
+561
+00:27:45,040 --> 00:27:52,540
+things together modern systems use a bus
+
+562
+00:27:49,750 --> 00:27:54,520
+structure called PCI Express which
+
+563
+00:27:52,540 --> 00:27:56,140
+although it has the word PCI and it's
+
+564
+00:27:54,520 --> 00:27:58,630
+completely different it's point-to-point
+
+565
+00:27:56,140 --> 00:28:00,190
+so devices are connected by a set of
+
+566
+00:27:58,630 --> 00:28:03,640
+point-to-point connections
+
+567
+00:28:00,190 --> 00:28:06,490
+arbitrated by uh by some kind of a
+
+568
+00:28:03,640 --> 00:28:09,130
+switch and we won't go into it it's the
+
+569
+00:28:06,490 --> 00:28:13,600
+same idea it's a much more efficient
+
+570
+00:28:09,130 --> 00:28:15,310
+design it's much faster and but it
+
+571
+00:28:13,600 --> 00:28:18,100
+provides the same capability mainly it
+
+572
+00:28:15,310 --> 00:28:21,270
+just attaches up it allows you to attach
+
+573
+00:28:18,100 --> 00:28:24,160
+all of your devices to your to your CPU
+
+574
+00:28:21,270 --> 00:28:26,890
+so just think of this bus as this sort
+
+575
+00:28:24,160 --> 00:28:30,640
+of a single set of wires where each wire
+
+576
+00:28:26,890 --> 00:28:32,770
+carries a bit and every device attached
+
+577
+00:28:30,640 --> 00:28:37,030
+to it can see all the values of all the
+
+578
+00:28:32,770 --> 00:28:38,860
+wires and so it there's some devices
+
+579
+00:28:37,030 --> 00:28:40,510
+that are just built it directly into the
+
+580
+00:28:38,860 --> 00:28:42,760
+motherboard and they attach to the bus
+
+581
+00:28:40,510 --> 00:28:46,930
+like you know disk to just plug directly
+
+582
+00:28:42,760 --> 00:28:49,750
+into sockets on a motherboard and you
+
+583
+00:28:46,930 --> 00:28:52,060
+know your graphics adapter and the USB
+
+584
+00:28:49,750 --> 00:28:53,710
+controller and then the system presents
+
+585
+00:28:52,060 --> 00:28:56,370
+an interface so you can plug mouse
+
+586
+00:28:53,710 --> 00:29:00,850
+things like Mouse's mice and keyboards
+
+587
+00:28:56,370 --> 00:29:03,390
+into the USB controller and then there's
+
+588
+00:29:00,850 --> 00:29:06,100
+expansion slots that allow you that
+
+589
+00:29:03,390 --> 00:29:07,740
+connect to the wires and in the bus that
+
+590
+00:29:06,100 --> 00:29:10,030
+allow you to add other devices like
+
+591
+00:29:07,740 --> 00:29:14,380
+maybe networking oh if you want to put a
+
+592
+00:29:10,030 --> 00:29:15,820
+network adapter in there now what
+
+593
+00:29:14,380 --> 00:29:19,180
+happens when we want to read a disk
+
+594
+00:29:15,820 --> 00:29:22,120
+sector well the CPU initiates this read
+
+595
+00:29:19,180 --> 00:29:23,710
+by writing a triple so it writes three
+
+596
+00:29:22,120 --> 00:29:27,250
+different values it writes a command
+
+597
+00:29:23,710 --> 00:29:29,620
+like say read it writes a logical block
+
+598
+00:29:27,250 --> 00:29:32,200
+number so I want to read a logical block
+
+599
+00:29:29,620 --> 00:29:34,090
+number and I want to place the contents
+
+600
+00:29:32,200 --> 00:29:37,950
+of that logical block at a certain
+
+601
+00:29:34,090 --> 00:29:41,260
+address in memory okay so it's a command
+
+602
+00:29:37,950 --> 00:29:46,660
+logical block number and a memory
+
+603
+00:29:41,260 --> 00:29:48,730
+address the disk controller reads the
+
+604
+00:29:46,660 --> 00:29:51,630
+whatever sector corresponds to that
+
+605
+00:29:48,730 --> 00:29:54,010
+logical block so we'll assume that
+
+606
+00:29:51,630 --> 00:29:57,400
+logical blocks are consists of one
+
+607
+00:29:54,010 --> 00:29:59,950
+sector and then it does this interesting
+
+608
+00:29:57,400 --> 00:30:02,860
+thing it copies it takes control of the
+
+609
+00:29:59,950 --> 00:30:05,140
+bus and it copies the data this is the
+
+610
+00:30:02,860 --> 00:30:06,970
+disk controller now copies the data
+
+611
+00:30:05,140 --> 00:30:08,800
+across the i/o bus through the i/o
+
+612
+00:30:06,970 --> 00:30:12,640
+bridge and directly to main memory
+
+613
+00:30:08,800 --> 00:30:13,600
+without ever notifying the CPU so the
+
+614
+00:30:12,640 --> 00:30:18,700
+CPU is complete
+
+615
+00:30:13,600 --> 00:30:23,140
+the oblivious to the fact that this
+
+616
+00:30:18,700 --> 00:30:24,730
+transfer is going on and then once it's
+
+617
+00:30:23,140 --> 00:30:28,059
+once it's transferred the data it's a
+
+618
+00:30:24,730 --> 00:30:30,400
+main memory then it notifies the CPU
+
+619
+00:30:28,059 --> 00:30:33,820
+using this mechanism called an interrupt
+
+620
+00:30:30,400 --> 00:30:37,419
+so it actually asserts a pin on the the
+
+621
+00:30:33,820 --> 00:30:40,809
+actual CPU chip itself so it changes the
+
+622
+00:30:37,419 --> 00:30:43,480
+value of that pin from 0 to 1 and that
+
+623
+00:30:40,809 --> 00:30:47,409
+trigger is an interrupt and which
+
+624
+00:30:43,480 --> 00:30:50,500
+notifies the CPU that that that that
+
+625
+00:30:47,409 --> 00:30:53,470
+sector has been copied ok so then the
+
+626
+00:30:50,500 --> 00:30:55,360
+CPU if there's some program somewhere
+
+627
+00:30:53,470 --> 00:30:58,419
+waiting for that data to be read into
+
+628
+00:30:55,360 --> 00:31:00,820
+memory so now now the CPU can can
+
+629
+00:30:58,419 --> 00:31:04,179
+execute that program and deal with that
+
+630
+00:31:00,820 --> 00:31:07,630
+memory so what this what this mechanism
+
+631
+00:31:04,179 --> 00:31:10,150
+allows and the reason they do this is
+
+632
+00:31:07,630 --> 00:31:16,330
+because this there's just so god-awful
+
+633
+00:31:10,150 --> 00:31:18,190
+slow the within 10 milliseconds a system
+
+634
+00:31:16,330 --> 00:31:20,140
+could be executing millions and millions
+
+635
+00:31:18,190 --> 00:31:21,429
+of instructions the CPU could be
+
+636
+00:31:20,140 --> 00:31:23,679
+executing millions of millions of
+
+637
+00:31:21,429 --> 00:31:25,809
+instructions it will be a terrible waste
+
+638
+00:31:23,679 --> 00:31:29,220
+that the CPU waited for that data to
+
+639
+00:31:25,809 --> 00:31:32,320
+come off the disk so what it does is it
+
+640
+00:31:29,220 --> 00:31:34,809
+it issues this request to the disk
+
+641
+00:31:32,320 --> 00:31:37,090
+controller and then while that well that
+
+642
+00:31:34,809 --> 00:31:40,090
+really slow laborious process is going
+
+643
+00:31:37,090 --> 00:31:41,440
+on the CPU can be executing other
+
+644
+00:31:40,090 --> 00:31:47,650
+instructions and during the other useful
+
+645
+00:31:41,440 --> 00:31:49,120
+work so this is really essential to sort
+
+646
+00:31:47,650 --> 00:31:51,250
+of getting reasonable performance and
+
+647
+00:31:49,120 --> 00:31:54,120
+from keeping this really slow disk
+
+648
+00:31:51,250 --> 00:32:00,190
+system from slowing the system down
+
+649
+00:31:54,120 --> 00:32:01,960
+now there's another interesting hype
+
+650
+00:32:00,190 --> 00:32:04,590
+kind of disc called a solid-state disk
+
+651
+00:32:01,960 --> 00:32:08,860
+which is kind of halfway between
+
+652
+00:32:04,590 --> 00:32:12,270
+rotating rotating disks and a dram
+
+653
+00:32:08,860 --> 00:32:14,860
+memories and a solid-state disk to the
+
+654
+00:32:12,270 --> 00:32:16,690
+to the CPU it looks exactly like a
+
+655
+00:32:14,860 --> 00:32:20,740
+rotating disk it has the same socket
+
+656
+00:32:16,690 --> 00:32:22,840
+plug it has the same physical interface
+
+657
+00:32:20,740 --> 00:32:26,020
+that has the same packaging okay it
+
+658
+00:32:22,840 --> 00:32:27,640
+looked like a rotating disc but instead
+
+659
+00:32:26,020 --> 00:32:29,880
+of having all these mechanical
+
+660
+00:32:27,640 --> 00:32:35,290
+it's actually built entirely out of
+
+661
+00:32:29,880 --> 00:32:38,230
+flash memory and firmware that acts as
+
+662
+00:32:35,290 --> 00:32:41,260
+the the controller so inside of a
+
+663
+00:32:38,230 --> 00:32:43,299
+solid-state disk there's a firmware a
+
+664
+00:32:41,260 --> 00:32:45,490
+set of firmware called the flash
+
+665
+00:32:43,299 --> 00:32:47,500
+translation layer which serves the
+
+666
+00:32:45,490 --> 00:32:54,700
+purpose as the same purpose as the disk
+
+667
+00:32:47,500 --> 00:32:58,570
+controller does in a rotating disc the
+
+668
+00:32:54,700 --> 00:33:01,630
+and then the memory itself the read data
+
+669
+00:32:58,570 --> 00:33:04,299
+can be read read and written from the
+
+670
+00:33:01,630 --> 00:33:07,210
+flash memory in units of pages which
+
+671
+00:33:04,299 --> 00:33:13,179
+depending on the technology can be 512
+
+672
+00:33:07,210 --> 00:33:16,540
+Kbytes to 4 K bytes and then a sequence
+
+673
+00:33:13,179 --> 00:33:18,940
+of pages forms a block now these these
+
+674
+00:33:16,540 --> 00:33:21,549
+these blocks are different from the
+
+675
+00:33:18,940 --> 00:33:25,740
+logical blocks that the CPU does so it's
+
+676
+00:33:21,549 --> 00:33:32,260
+kind of an unfortunate overlap of terms
+
+677
+00:33:25,740 --> 00:33:34,270
+but the the trick is or the I guess the
+
+678
+00:33:32,260 --> 00:33:37,720
+limitation is that data is written in
+
+679
+00:33:34,270 --> 00:33:40,240
+units of pages but a page can only be
+
+680
+00:33:37,720 --> 00:33:45,340
+written after the entire block is been
+
+681
+00:33:40,240 --> 00:33:46,690
+erased okay so that's that seems kind of
+
+682
+00:33:45,340 --> 00:33:49,000
+weird but that's that's the way it works
+
+683
+00:33:46,690 --> 00:33:55,120
+so what that means is if you want to
+
+684
+00:33:49,000 --> 00:33:56,590
+write if you want to write to a page you
+
+685
+00:33:55,120 --> 00:34:00,010
+have to find a block somewhere that's
+
+686
+00:33:56,590 --> 00:34:02,230
+been erased you have to copy all of the
+
+687
+00:34:00,010 --> 00:34:04,600
+other pages in your in your target block
+
+688
+00:34:02,230 --> 00:34:07,929
+over to that new block and then you can
+
+689
+00:34:04,600 --> 00:34:11,409
+do the right okay so you can see that
+
+690
+00:34:07,929 --> 00:34:14,429
+writes now become fairly complex
+
+691
+00:34:11,409 --> 00:34:19,090
+operation read you can read anything and
+
+692
+00:34:14,429 --> 00:34:20,440
+then like all flash a so it's kind of an
+
+693
+00:34:19,090 --> 00:34:24,070
+efficient right because you're writing
+
+694
+00:34:20,440 --> 00:34:25,750
+one page but to do that you have to sort
+
+695
+00:34:24,070 --> 00:34:28,179
+of copy all the other pages in that
+
+696
+00:34:25,750 --> 00:34:30,550
+block and you have to be race the whole
+
+697
+00:34:28,179 --> 00:34:32,649
+and then when you finish then you erase
+
+698
+00:34:30,550 --> 00:34:34,870
+this block so it can be used for for
+
+699
+00:34:32,649 --> 00:34:36,910
+other writes yes
+
+700
+00:34:34,870 --> 00:34:40,270
+so eventually after a hundred thousand
+
+701
+00:34:36,910 --> 00:34:42,340
+repeated rights these wear out now the
+
+702
+00:34:40,270 --> 00:34:44,950
+flash translation layer Zin
+
+703
+00:34:42,340 --> 00:34:48,490
+modern systems do all kinds of fancy
+
+704
+00:34:44,950 --> 00:34:51,160
+proprietary algorithms to sort of extend
+
+705
+00:34:48,490 --> 00:34:53,470
+the life they use cashing and and
+
+706
+00:34:51,160 --> 00:34:56,110
+various tricks to extend the life of
+
+707
+00:34:53,470 --> 00:34:58,180
+these SSD so in practice it's not really
+
+708
+00:34:56,110 --> 00:35:00,880
+a problem which I'll show you in a
+
+709
+00:34:58,180 --> 00:35:04,990
+second so the performance
+
+710
+00:35:00,880 --> 00:35:07,480
+characteristics of SSDs now you can
+
+711
+00:35:04,990 --> 00:35:10,480
+think of a typical hard drive you might
+
+712
+00:35:07,480 --> 00:35:12,190
+be able to get you know I mean what if
+
+713
+00:35:10,480 --> 00:35:14,590
+when I measure them when I measure my
+
+714
+00:35:12,190 --> 00:35:16,350
+drives that may be 40 50 megabytes per
+
+715
+00:35:14,590 --> 00:35:20,770
+second that would be a typical rate
+
+716
+00:35:16,350 --> 00:35:21,130
+okay these SSDs are 10 times faster than
+
+717
+00:35:20,770 --> 00:35:23,500
+that
+
+718
+00:35:21,130 --> 00:35:27,370
+so for sequential reads you can get
+
+719
+00:35:23,500 --> 00:35:31,960
+about 500 50 megabytes sequential writes
+
+720
+00:35:27,370 --> 00:35:33,610
+are a little bit slower random access
+
+721
+00:35:31,960 --> 00:35:35,860
+whether you're reading or writing is a
+
+722
+00:35:33,610 --> 00:35:38,860
+little bit slower than sequential access
+
+723
+00:35:35,860 --> 00:35:41,350
+and as we'll see this is that this is
+
+724
+00:35:38,860 --> 00:35:42,910
+fairly common if it's in memory systems
+
+725
+00:35:41,350 --> 00:35:47,790
+it's almost always better to do things
+
+726
+00:35:42,910 --> 00:35:50,560
+sequentially than to jump around and
+
+727
+00:35:47,790 --> 00:35:53,260
+erasing random writes are slower because
+
+728
+00:35:50,560 --> 00:35:55,750
+erase erasing takes about a millisecond
+
+729
+00:35:53,260 --> 00:35:58,720
+right so now we're back up to that that
+
+730
+00:35:55,750 --> 00:36:01,570
+millisecond range which is which is slow
+
+731
+00:35:58,720 --> 00:36:04,990
+and as I mentioned yet if you modify one
+
+732
+00:36:01,570 --> 00:36:08,160
+one one page after all the other pages
+
+733
+00:36:04,990 --> 00:36:11,260
+in that block have to be copy now
+
+734
+00:36:08,160 --> 00:36:16,990
+earlier SSDs had a huge gap between
+
+735
+00:36:11,260 --> 00:36:21,100
+random writes and and and sequential
+
+736
+00:36:16,990 --> 00:36:22,270
+leads but they because of sort of
+
+737
+00:36:21,100 --> 00:36:25,510
+improvements in the flash translation
+
+738
+00:36:22,270 --> 00:36:26,950
+layer these aren't really that that
+
+739
+00:36:25,510 --> 00:36:29,860
+difference right reading and writing
+
+740
+00:36:26,950 --> 00:36:31,990
+it's writing is slower but they're doing
+
+741
+00:36:29,860 --> 00:36:34,710
+all kinds of interesting amazing things
+
+742
+00:36:31,990 --> 00:36:38,020
+to get these numbers fairly close
+
+743
+00:36:34,710 --> 00:36:40,270
+ok so art when we have a model of SSDs
+
+744
+00:36:38,020 --> 00:36:43,890
+we really don't need to distinguish
+
+745
+00:36:40,270 --> 00:36:43,890
+anymore that between reads and writes
+
+746
+00:36:44,380 --> 00:36:49,839
+okay so SSDs because they have no moving
+
+747
+00:36:47,410 --> 00:36:52,359
+parts there the faster they take less
+
+748
+00:36:49,839 --> 00:36:54,509
+power they're more rugged you know which
+
+749
+00:36:52,359 --> 00:36:58,269
+is why they're good for thumb drives and
+
+750
+00:36:54,509 --> 00:37:00,900
+you know iPods and things like that
+
+751
+00:36:58,269 --> 00:37:04,660
+but they have this potential to wear out
+
+752
+00:37:00,900 --> 00:37:06,819
+which could be a problem but in practice
+
+753
+00:37:04,660 --> 00:37:09,809
+it's not for example Intel guarantees
+
+754
+00:37:06,819 --> 00:37:14,170
+that you can do 128 petabytes of writes
+
+755
+00:37:09,809 --> 00:37:15,910
+before your SSD is no longer good so
+
+756
+00:37:14,170 --> 00:37:17,549
+that's a lot of data to write I mean
+
+757
+00:37:15,910 --> 00:37:23,529
+think about how many years it would take
+
+758
+00:37:17,549 --> 00:37:26,410
+to write that much data and as of 20
+
+759
+00:37:23,529 --> 00:37:28,509
+2015 as of now there are a lot more
+
+760
+00:37:26,410 --> 00:37:32,049
+expensive per byte than rotating disks
+
+761
+00:37:28,509 --> 00:37:34,690
+so rotating disks are much bigger but
+
+762
+00:37:32,049 --> 00:37:42,039
+they're slower SSDs are smaller and
+
+763
+00:37:34,690 --> 00:37:43,509
+they're faster now if you take if you
+
+764
+00:37:42,039 --> 00:37:46,180
+look at the performance characteristics
+
+765
+00:37:43,509 --> 00:37:49,509
+of these different storage devices
+
+766
+00:37:46,180 --> 00:37:54,249
+relative to CPU over time you get this
+
+767
+00:37:49,509 --> 00:37:59,609
+really interesting graph now this this
+
+768
+00:37:54,249 --> 00:38:03,549
+graph shows on the y-axis access time in
+
+769
+00:37:59,609 --> 00:38:07,719
+nanoseconds in a log scale okay so each
+
+770
+00:38:03,549 --> 00:38:10,960
+each one of these each change in units
+
+771
+00:38:07,719 --> 00:38:14,039
+from 1,000 to 10,000 represents a order
+
+772
+00:38:10,960 --> 00:38:19,390
+of magnitude difference in access time
+
+773
+00:38:14,039 --> 00:38:26,309
+on the x axis I plotted time going from
+
+774
+00:38:19,390 --> 00:38:30,039
+1985 to 2015 and then I plotted the 30
+
+775
+00:38:26,309 --> 00:38:33,190
+the access time or the cycle time of the
+
+776
+00:38:30,039 --> 00:38:36,960
+access time of the these devices disk
+
+777
+00:38:33,190 --> 00:38:39,430
+SSD DRAM and SRAM and the cycle time of
+
+778
+00:38:36,960 --> 00:38:42,150
+processors so let's look at on the
+
+779
+00:38:39,430 --> 00:38:45,849
+bottom we have the cycle time of
+
+780
+00:38:42,150 --> 00:38:47,589
+processors over time and what you see is
+
+781
+00:38:45,849 --> 00:38:51,900
+it's going down at the sort of
+
+782
+00:38:47,589 --> 00:38:54,430
+exponential rate from 1985 to 2003
+
+783
+00:38:51,900 --> 00:38:56,280
+there's there's a doubling basically
+
+784
+00:38:54,430 --> 00:38:59,250
+every 18 months or two years
+
+785
+00:38:56,280 --> 00:39:04,050
+and in in clock frequency and a
+
+786
+00:38:59,250 --> 00:39:08,460
+resulting having of the cycle time over
+
+787
+00:39:04,050 --> 00:39:12,690
+this 18-month 2 to 2 year period so this
+
+788
+00:39:08,460 --> 00:39:16,500
+so what what manufacturers did until
+
+789
+00:39:12,690 --> 00:39:17,640
+2003 to make their processors faster was
+
+790
+00:39:16,500 --> 00:39:20,310
+they would they would just double the
+
+791
+00:39:17,640 --> 00:39:22,590
+clock frequency they decreased the
+
+792
+00:39:20,310 --> 00:39:25,650
+feature size of the chips that they were
+
+793
+00:39:22,590 --> 00:39:28,140
+making and that would allow them to put
+
+794
+00:39:25,650 --> 00:39:32,490
+things closer together and then have
+
+795
+00:39:28,140 --> 00:39:36,930
+that and then increase the clock
+
+796
+00:39:32,490 --> 00:39:40,050
+frequency by a proportional amount now
+
+797
+00:39:36,930 --> 00:39:44,609
+this all ended 2003 was an interesting
+
+798
+00:39:40,050 --> 00:39:46,890
+year in computer history because of this
+
+799
+00:39:44,609 --> 00:39:48,830
+there's a sort of unfortunate property
+
+800
+00:39:46,890 --> 00:39:51,180
+that the power that you consume is
+
+801
+00:39:48,830 --> 00:39:53,640
+proportional to your frequency okay so
+
+802
+00:39:51,180 --> 00:39:56,490
+the more power I mean the higher the
+
+803
+00:39:53,640 --> 00:39:59,790
+frequency the more power you consume by
+
+804
+00:39:56,490 --> 00:40:02,430
+2003 the processor that Intel was
+
+805
+00:39:59,790 --> 00:40:06,900
+getting ready to ship was going to burn
+
+806
+00:40:02,430 --> 00:40:11,339
+about 800 watts of power think about 800
+
+807
+00:40:06,900 --> 00:40:13,920
+watt light bulbs inside your laptop and
+
+808
+00:40:11,339 --> 00:40:18,980
+I actually saw an early prototype of one
+
+809
+00:40:13,920 --> 00:40:22,770
+of these devices and the the heatsink to
+
+810
+00:40:18,980 --> 00:40:24,900
+absorb the power from the chip was about
+
+811
+00:40:22,770 --> 00:40:27,180
+this big it was about 4 square inches
+
+812
+00:40:24,900 --> 00:40:31,950
+it's a giant thing just sitting on the
+
+813
+00:40:27,180 --> 00:40:34,560
+motherboard so that's what we what we
+
+814
+00:40:31,950 --> 00:40:37,220
+say is that processor design hit the
+
+815
+00:40:34,560 --> 00:40:39,810
+power wall in 2003 they could no longer
+
+816
+00:40:37,220 --> 00:40:44,730
+just continue to increase clock
+
+817
+00:40:39,810 --> 00:40:47,310
+frequencies to to get faster to make
+
+818
+00:40:44,730 --> 00:40:50,010
+faster computers and what so what they
+
+819
+00:40:47,310 --> 00:40:52,440
+had to do after 2003 instead of
+
+820
+00:40:50,010 --> 00:40:55,160
+increasing the clock frequency and try
+
+821
+00:40:52,440 --> 00:40:58,920
+instead of doubling the clock frequency
+
+822
+00:40:55,160 --> 00:41:02,640
+they put more processor cores onto the
+
+823
+00:40:58,920 --> 00:41:05,400
+chips so now they subdivided a CPU chip
+
+824
+00:41:02,640 --> 00:41:08,940
+into individual processor cores each one
+
+825
+00:41:05,400 --> 00:41:12,779
+could execute its own instructions
+
+826
+00:41:08,940 --> 00:41:15,210
+and then so and by running in parallel
+
+827
+00:41:12,779 --> 00:41:18,000
+you could do more effective work so the
+
+828
+00:41:15,210 --> 00:41:18,599
+effective cycle time could continue to
+
+829
+00:41:18,000 --> 00:41:20,279
+go down
+
+830
+00:41:18,599 --> 00:41:22,529
+so what I what I've plotted here on the
+
+831
+00:41:20,279 --> 00:41:25,259
+bottom is the effective cycle time so
+
+832
+00:41:22,529 --> 00:41:28,619
+basically the the cycle time divided by
+
+833
+00:41:25,259 --> 00:41:31,410
+the number of cores so here in 2005 that
+
+834
+00:41:28,619 --> 00:41:33,269
+the first systems use two cores so now
+
+835
+00:41:31,410 --> 00:41:36,329
+you can run two independent threads or
+
+836
+00:41:33,269 --> 00:41:38,069
+two independent programs and currently
+
+837
+00:41:36,329 --> 00:41:40,670
+it's about four cores server class
+
+838
+00:41:38,069 --> 00:41:44,700
+systems you can get eight cores and
+
+839
+00:41:40,670 --> 00:41:46,170
+there's even some twelve core chips so
+
+840
+00:41:44,700 --> 00:41:48,299
+in the future what's going to happen is
+
+841
+00:41:46,170 --> 00:41:51,240
+that the clock frequencies are going to
+
+842
+00:41:48,299 --> 00:41:55,170
+stay fairly constant so you can see the
+
+843
+00:41:51,240 --> 00:41:56,579
+site you can see the cycle time sir they
+
+844
+00:41:55,170 --> 00:41:59,250
+actually increased a little bit here and
+
+845
+00:41:56,579 --> 00:42:03,210
+then they're slowly going down but it's
+
+846
+00:41:59,250 --> 00:42:05,039
+generally flat and so the only way to
+
+847
+00:42:03,210 --> 00:42:06,420
+really get more performance going
+
+848
+00:42:05,039 --> 00:42:12,029
+forward is to increase the number of
+
+849
+00:42:06,420 --> 00:42:15,599
+independent cores and that's just that's
+
+850
+00:42:12,029 --> 00:42:17,400
+just the way it's got to be now here in
+
+851
+00:42:15,599 --> 00:42:19,710
+the the black circle the second line I
+
+852
+00:42:17,400 --> 00:42:23,220
+plotted the access time for SRAM over
+
+853
+00:42:19,710 --> 00:42:26,519
+time and you can see that SRAM is
+
+854
+00:42:23,220 --> 00:42:29,339
+tracking CPU pretty good and there's
+
+855
+00:42:26,519 --> 00:42:33,660
+it's an order of magnitude slower but
+
+856
+00:42:29,339 --> 00:42:34,109
+it's tracking the CPU performance pretty
+
+857
+00:42:33,660 --> 00:42:37,259
+well
+
+858
+00:42:34,109 --> 00:42:39,509
+DRAM you can see there's a huge gap
+
+859
+00:42:37,259 --> 00:42:42,269
+between the CPU and the DRAM several
+
+860
+00:42:39,509 --> 00:42:43,470
+orders of magnitude and in the last few
+
+861
+00:42:42,269 --> 00:42:46,170
+years derails have gotten a little
+
+862
+00:42:43,470 --> 00:42:54,299
+better but they've proven surprisingly
+
+863
+00:42:46,170 --> 00:42:56,460
+difficult to to make faster SSDs are
+
+864
+00:42:54,299 --> 00:42:59,400
+kind of in between disks and DRAM and
+
+865
+00:42:56,460 --> 00:43:01,559
+then disks up here you can see at a
+
+866
+00:42:59,400 --> 00:43:03,359
+million nanoseconds that's that's a
+
+867
+00:43:01,559 --> 00:43:07,859
+millisecond so you can see disks are
+
+868
+00:43:03,359 --> 00:43:11,759
+sort of in this in this sort of
+
+869
+00:43:07,859 --> 00:43:13,769
+millisecond range with access times and
+
+870
+00:43:11,759 --> 00:43:17,279
+those those that they've gone down a
+
+871
+00:43:13,769 --> 00:43:18,960
+little bit but not really too much so
+
+872
+00:43:17,279 --> 00:43:21,690
+the point I want to make is that there's
+
+873
+00:43:18,960 --> 00:43:25,869
+this huge gap between DRAM
+
+874
+00:43:21,690 --> 00:43:27,730
+SSD disk and CPUs and in some cases
+
+875
+00:43:25,869 --> 00:43:32,980
+that's even getting worse as time goes
+
+876
+00:43:27,730 --> 00:43:35,589
+by so that's a problem right how our
+
+877
+00:43:32,980 --> 00:43:39,250
+programs all need data our data is
+
+878
+00:43:35,589 --> 00:43:42,160
+stored in memory and disk so if our if
+
+879
+00:43:39,250 --> 00:43:45,490
+our computers are getting faster and our
+
+880
+00:43:42,160 --> 00:43:48,940
+storage devices are staying relatively
+
+881
+00:43:45,490 --> 00:43:51,069
+the same or relatively slower then we've
+
+882
+00:43:48,940 --> 00:43:53,559
+got a problem right increases in in our
+
+883
+00:43:51,069 --> 00:43:55,690
+in computer performance won't it'll be
+
+884
+00:43:53,559 --> 00:43:57,880
+hard to make our programs run faster
+
+885
+00:43:55,690 --> 00:44:01,210
+because we'll be limited by the time it
+
+886
+00:43:57,880 --> 00:44:02,470
+takes to to access the data okay so
+
+887
+00:44:01,210 --> 00:44:04,119
+that's that that's sort of the
+
+888
+00:44:02,470 --> 00:44:07,589
+fundamental problem that we have to deal
+
+889
+00:44:04,119 --> 00:44:10,540
+with and it turns out that the key to
+
+890
+00:44:07,589 --> 00:44:15,549
+bridging this this gap between the CPU
+
+891
+00:44:10,540 --> 00:44:17,500
+and a memory is this is this very basic
+
+892
+00:44:15,549 --> 00:44:21,490
+fundamental property of programs called
+
+893
+00:44:17,500 --> 00:44:24,280
+locality ok and so this is an essential
+
+894
+00:44:21,490 --> 00:44:26,700
+sort of fundamental enduring property of
+
+895
+00:44:24,280 --> 00:44:26,700
+programs
+
+896
+00:44:31,000 --> 00:44:37,420
+so we say that done so programs have
+
+897
+00:44:34,180 --> 00:44:41,590
+this property called locality and what
+
+898
+00:44:37,420 --> 00:44:43,390
+this means is that I'm sorry I'll just I
+
+899
+00:44:41,590 --> 00:44:45,550
+have to read it committed it's really
+
+900
+00:44:43,390 --> 00:44:49,420
+accurate definition so programs tend to
+
+901
+00:44:45,550 --> 00:44:51,910
+use data and instructions whose
+
+902
+00:44:49,420 --> 00:44:55,420
+addresses are near or equal to those
+
+903
+00:44:51,910 --> 00:44:58,480
+that they have used recently okay so if
+
+904
+00:44:55,420 --> 00:45:01,510
+a program accesses a data item the
+
+905
+00:44:58,480 --> 00:45:04,630
+chances are very high that it's going to
+
+906
+00:45:01,510 --> 00:45:08,250
+access that data item or a nearby data
+
+907
+00:45:04,630 --> 00:45:10,870
+item sometime in the near future okay
+
+908
+00:45:08,250 --> 00:45:12,850
+that likelihood that the program is
+
+909
+00:45:10,870 --> 00:45:16,230
+going to access that data item or a
+
+910
+00:45:12,850 --> 00:45:21,130
+nearby a data item in the near future is
+
+911
+00:45:16,230 --> 00:45:23,470
+this property called locality so well
+
+912
+00:45:21,130 --> 00:45:25,660
+this we typically distinguish two two
+
+913
+00:45:23,470 --> 00:45:29,410
+different kinds of locality temporal
+
+914
+00:45:25,660 --> 00:45:31,330
+locality is the property that recently
+
+915
+00:45:29,410 --> 00:45:33,880
+referenced items are likely to be
+
+916
+00:45:31,330 --> 00:45:36,550
+referenced again in the near future ksdc
+
+917
+00:45:33,880 --> 00:45:38,190
+so if you read a variable chances are
+
+918
+00:45:36,550 --> 00:45:41,230
+you're going to read that variable again
+
+919
+00:45:38,190 --> 00:45:43,180
+for example suppose you're summing into
+
+920
+00:45:41,230 --> 00:45:44,730
+a variable inside of a loop each loop
+
+921
+00:45:43,180 --> 00:45:50,200
+iteration you're going to access that
+
+922
+00:45:44,730 --> 00:45:53,890
+that variable okay spatial locality is
+
+923
+00:45:50,200 --> 00:45:57,580
+that the tendency for items with nearby
+
+924
+00:45:53,890 --> 00:45:59,830
+addresses up that items if we access if
+
+925
+00:45:57,580 --> 00:46:04,530
+we access one item chances are high
+
+926
+00:45:59,830 --> 00:46:04,530
+we're going to access a nearby item okay
+
+927
+00:46:04,860 --> 00:46:11,170
+so let's look at this little snippet of
+
+928
+00:46:09,070 --> 00:46:13,680
+code and see if we can identify all the
+
+929
+00:46:11,170 --> 00:46:15,820
+different kinds of locality in this code
+
+930
+00:46:13,680 --> 00:46:17,980
+so we have two different kinds of
+
+931
+00:46:15,820 --> 00:46:20,350
+references there's data references and
+
+932
+00:46:17,980 --> 00:46:21,910
+then there's instructions right so we're
+
+933
+00:46:20,350 --> 00:46:24,090
+reading instructions out of memory and
+
+934
+00:46:21,910 --> 00:46:28,330
+those instructions are referencing data
+
+935
+00:46:24,090 --> 00:46:30,880
+okay so first of all notice that we're
+
+936
+00:46:28,330 --> 00:46:34,090
+we're referencing the elements of an
+
+937
+00:46:30,880 --> 00:46:36,760
+array in succession so we're increasing
+
+938
+00:46:34,090 --> 00:46:38,710
+AI by one each time and then we're so
+
+939
+00:46:36,760 --> 00:46:41,250
+we're incrementing I each each iteration
+
+940
+00:46:38,710 --> 00:46:43,350
+through the loop and we're reading AI
+
+941
+00:46:41,250 --> 00:46:45,150
+okay so
+
+942
+00:46:43,350 --> 00:46:47,730
+is called a stride one reference pattern
+
+943
+00:46:45,150 --> 00:46:51,000
+the stride is how much we're
+
+944
+00:46:47,730 --> 00:46:52,920
+incrementing this this index so we're
+
+945
+00:46:51,000 --> 00:46:55,560
+since we're incrementing it by one we
+
+946
+00:46:52,920 --> 00:46:59,090
+call that a stride one pattern so what
+
+947
+00:46:55,560 --> 00:47:04,380
+kind of what kind of locality is the
+
+948
+00:46:59,090 --> 00:47:08,640
+repeated references to AI spatial or
+
+949
+00:47:04,380 --> 00:47:12,360
+temporal spatial right because we're
+
+950
+00:47:08,640 --> 00:47:14,730
+accessing nearby items okay what about
+
+951
+00:47:12,360 --> 00:47:19,620
+the referencing this this variable some
+
+952
+00:47:14,730 --> 00:47:23,010
+inside the loop that's temporal now what
+
+953
+00:47:19,620 --> 00:47:24,480
+about instructions so we're we're
+
+954
+00:47:23,010 --> 00:47:26,520
+referencing where each loop iteration
+
+955
+00:47:24,480 --> 00:47:29,250
+we're reference we're executing a
+
+956
+00:47:26,520 --> 00:47:34,620
+sequence of instructions so what kind of
+
+957
+00:47:29,250 --> 00:47:35,810
+locality is that within each loop
+
+958
+00:47:34,620 --> 00:47:37,890
+iteration
+
+959
+00:47:35,810 --> 00:47:39,210
+no that's spatial right because we're
+
+960
+00:47:37,890 --> 00:47:42,800
+just executing a sequence of
+
+961
+00:47:39,210 --> 00:47:44,910
+instructions within each loop iteration
+
+962
+00:47:42,800 --> 00:47:49,770
+but then we cycle through the loop
+
+963
+00:47:44,910 --> 00:47:51,420
+repeatedly so we'll chances so each loop
+
+964
+00:47:49,770 --> 00:47:53,970
+iteration we're going to access each of
+
+965
+00:47:51,420 --> 00:47:56,250
+those instructions that we access the
+
+966
+00:47:53,970 --> 00:47:57,990
+previous loop iteration make sure we go
+
+967
+00:47:56,250 --> 00:48:00,180
+up we just keep at we're just going to
+
+968
+00:47:57,990 --> 00:48:01,950
+keep executing the same assembly
+
+969
+00:48:00,180 --> 00:48:04,590
+language instructions that implement
+
+970
+00:48:01,950 --> 00:48:05,580
+this loop body now in this simple
+
+971
+00:48:04,590 --> 00:48:07,950
+example it's probably just one
+
+972
+00:48:05,580 --> 00:48:12,020
+instruction but in general your loop can
+
+973
+00:48:07,950 --> 00:48:12,020
+have multiple instructions
+
+974
+00:48:12,800 --> 00:48:18,710
+now when I claim to you I'm one of the
+
+975
+00:48:16,430 --> 00:48:22,730
+one of the main sort of points of this
+
+976
+00:48:18,710 --> 00:48:25,340
+just this whole course is that as a
+
+977
+00:48:22,730 --> 00:48:28,160
+professional programmer it's an
+
+978
+00:48:25,340 --> 00:48:30,440
+essential skill that that you be able to
+
+979
+00:48:28,160 --> 00:48:33,230
+look at code and so get a qualitative
+
+980
+00:48:30,440 --> 00:48:33,680
+sense of its locality because as we'll
+
+981
+00:48:33,230 --> 00:48:35,870
+see
+
+982
+00:48:33,680 --> 00:48:38,330
+good locality turns into good
+
+983
+00:48:35,870 --> 00:48:41,480
+performance the way that systems are
+
+984
+00:48:38,330 --> 00:48:43,640
+built these days so as a programmer it's
+
+985
+00:48:41,480 --> 00:48:45,440
+very important for you to be able to
+
+986
+00:48:43,640 --> 00:48:48,290
+kind of look at code and get some
+
+987
+00:48:45,440 --> 00:48:50,570
+qualitative sense like and that's pretty
+
+988
+00:48:48,290 --> 00:48:52,970
+good locality that's terrible locality
+
+989
+00:48:50,570 --> 00:48:55,210
+right that's and what you want to do is
+
+990
+00:48:52,970 --> 00:48:58,390
+avoid the terrible locality in your code
+
+991
+00:48:55,210 --> 00:49:01,760
+so let's look at a simple example here
+
+992
+00:48:58,390 --> 00:49:04,880
+to see what I mean by this so what I'm
+
+993
+00:49:01,760 --> 00:49:08,150
+doing is I'm taking an array a
+
+994
+00:49:04,880 --> 00:49:13,160
+two-dimensional array a with M M rows
+
+995
+00:49:08,150 --> 00:49:17,690
+and n columns and within a doubly nested
+
+996
+00:49:13,160 --> 00:49:18,940
+loop iterating on I and J I'm summing
+
+997
+00:49:17,690 --> 00:49:21,830
+the elements of that array
+
+998
+00:49:18,940 --> 00:49:29,360
+it seems this a very simple operation
+
+999
+00:49:21,830 --> 00:49:31,220
+what could go wrong right so it turns
+
+1000
+00:49:29,360 --> 00:49:35,090
+out if you write this code to have to
+
+1001
+00:49:31,220 --> 00:49:39,260
+add locality it'll run order of
+
+1002
+00:49:35,090 --> 00:49:41,300
+magnitude slower so just look at this if
+
+1003
+00:49:39,260 --> 00:49:44,330
+you look at this do you think this has
+
+1004
+00:49:41,300 --> 00:49:48,530
+good locality or bad locality now let's
+
+1005
+00:49:44,330 --> 00:49:50,950
+look at the with respect to the accesses
+
+1006
+00:49:48,530 --> 00:49:50,950
+of a
+
+1007
+00:49:53,160 --> 00:50:06,930
+good or bad well so how is how is a laid
+
+1008
+00:50:03,210 --> 00:50:10,860
+out in memory right it's row line right
+
+1009
+00:50:06,930 --> 00:50:13,080
+so see uses used lays out a raised row
+
+1010
+00:50:10,860 --> 00:50:15,150
+lies so the first all the elements of
+
+1011
+00:50:13,080 --> 00:50:17,430
+the first row followed by all the
+
+1012
+00:50:15,150 --> 00:50:21,090
+elements of the second row followed by
+
+1013
+00:50:17,430 --> 00:50:23,370
+all the elements of the third row okay
+
+1014
+00:50:21,090 --> 00:50:27,630
+so how are we accessing this array look
+
+1015
+00:50:23,370 --> 00:50:31,110
+at we're accessing a IJ and we're
+
+1016
+00:50:27,630 --> 00:50:34,110
+varying J the fastest so we hold eye
+
+1017
+00:50:31,110 --> 00:50:36,900
+constant and then we vary J and then we
+
+1018
+00:50:34,110 --> 00:50:40,380
+access all so we hold eye constant to
+
+1019
+00:50:36,900 --> 00:50:44,880
+access row I and then we vary J to
+
+1020
+00:50:40,380 --> 00:50:47,730
+access all the columns in that row okay
+
+1021
+00:50:44,880 --> 00:50:52,590
+so each each hitter and then we increase
+
+1022
+00:50:47,730 --> 00:50:56,910
+and then we go back and increase I so
+
+1023
+00:50:52,590 --> 00:51:00,180
+now we're accessing the next row okay so
+
+1024
+00:50:56,910 --> 00:51:03,270
+if we were to look at the addresses of a
+
+1025
+00:51:00,180 --> 00:51:06,300
+IJ the sequence of addresses that are
+
+1026
+00:51:03,270 --> 00:51:08,160
+being read those would correspond to a
+
+1027
+00:51:06,300 --> 00:51:11,000
+stride one access and so we'd be
+
+1028
+00:51:08,160 --> 00:51:14,280
+accessing all the elements those of a
+
+1029
+00:51:11,000 --> 00:51:17,040
+sequentially in order okay so that's
+
+1030
+00:51:14,280 --> 00:51:18,650
+really good spatial locality right
+
+1031
+00:51:17,040 --> 00:51:22,800
+that's the best you can do
+
+1032
+00:51:18,650 --> 00:51:25,080
+now what about what about and then we
+
+1033
+00:51:22,800 --> 00:51:27,720
+have temporal locality on some so that's
+
+1034
+00:51:25,080 --> 00:51:32,340
+good right so everything about this is
+
+1035
+00:51:27,720 --> 00:51:34,680
+pretty good so this is a good case now
+
+1036
+00:51:32,340 --> 00:51:37,470
+what about this what I've done I've
+
+1037
+00:51:34,680 --> 00:51:42,450
+taken the same program and I've just
+
+1038
+00:51:37,470 --> 00:51:46,500
+inverted the loops so I loop on J first
+
+1039
+00:51:42,450 --> 00:51:49,370
+and then on I and then I just have the
+
+1040
+00:51:46,500 --> 00:51:49,370
+same inner loop body
+
+1041
+00:51:52,150 --> 00:51:56,050
+now what does that do to this what does
+
+1042
+00:51:53,470 --> 00:52:01,060
+that do to the spatial locality of our
+
+1043
+00:51:56,050 --> 00:52:04,570
+accesses okay yeah terrible because it's
+
+1044
+00:52:01,060 --> 00:52:08,410
+going you should be offended when you
+
+1045
+00:52:04,570 --> 00:52:12,430
+see this isn't awful but it's terrible
+
+1046
+00:52:08,410 --> 00:52:13,890
+right because look at so we're now we're
+
+1047
+00:52:12,430 --> 00:52:17,080
+holding Jay
+
+1048
+00:52:13,890 --> 00:52:19,180
+we're holding Jay constant and then
+
+1049
+00:52:17,080 --> 00:52:23,850
+we're iterating through the jth element
+
+1050
+00:52:19,180 --> 00:52:26,860
+of each row so that's skipping we have n
+
+1051
+00:52:23,850 --> 00:52:29,670
+we have n elements in each row so we're
+
+1052
+00:52:26,860 --> 00:52:33,550
+doing a stride n access through memory
+
+1053
+00:52:29,670 --> 00:52:35,110
+so we're going like this and then we're
+
+1054
+00:52:33,550 --> 00:52:37,090
+incrementing then we're looking then
+
+1055
+00:52:35,110 --> 00:52:38,460
+we're incrementing the column by one and
+
+1056
+00:52:37,090 --> 00:52:41,200
+then we're doing this again
+
+1057
+00:52:38,460 --> 00:52:43,120
+so it's terrible spatial locality this
+
+1058
+00:52:41,200 --> 00:52:49,090
+is the worst spatial locality we could
+
+1059
+00:52:43,120 --> 00:52:52,900
+get now let's look at a three
+
+1060
+00:52:49,090 --> 00:52:56,560
+dimensional array and let me ask you to
+
+1061
+00:52:52,900 --> 00:52:58,180
+let me post the following question can
+
+1062
+00:52:56,560 --> 00:53:01,090
+you based on this sort of qualitative
+
+1063
+00:52:58,180 --> 00:53:02,550
+idea that this idea that you want you
+
+1064
+00:53:01,090 --> 00:53:06,280
+want to try to get a stride one
+
+1065
+00:53:02,550 --> 00:53:10,630
+reference pattern okay so how would you
+
+1066
+00:53:06,280 --> 00:53:13,750
+permute these givenness given this inter
+
+1067
+00:53:10,630 --> 00:53:15,820
+body a kij
+
+1068
+00:53:13,750 --> 00:53:18,430
+how would you promote permute these
+
+1069
+00:53:15,820 --> 00:53:24,640
+these loop indices to give a stride one
+
+1070
+00:53:18,430 --> 00:53:27,910
+reference pattern okay that's right ki
+
+1071
+00:53:24,640 --> 00:53:29,590
+J's is right so what in general we want
+
+1072
+00:53:27,910 --> 00:53:33,160
+to do is we want to go going from right
+
+1073
+00:53:29,590 --> 00:53:36,850
+to left we want we want those indices to
+
+1074
+00:53:33,160 --> 00:53:38,710
+be changing the fastest so we want J we
+
+1075
+00:53:36,850 --> 00:53:41,470
+want K and I to be held constant and
+
+1076
+00:53:38,710 --> 00:53:44,770
+then we want to change J then we want to
+
+1077
+00:53:41,470 --> 00:53:47,680
+increment I and then for that value that
+
+1078
+00:53:44,770 --> 00:53:50,200
+those values of K and I we want to want
+
+1079
+00:53:47,680 --> 00:53:53,940
+a sequence through all the values of J
+
+1080
+00:53:50,200 --> 00:53:53,940
+again okay
+
+1081
+00:53:56,259 --> 00:54:02,380
+okay so we've looked at properties of
+
+1082
+00:53:59,599 --> 00:54:04,690
+Technology of storage technologies and
+
+1083
+00:54:02,380 --> 00:54:06,910
+what we and there's this sort of basic
+
+1084
+00:54:04,690 --> 00:54:11,720
+sort of fundamental principle that
+
+1085
+00:54:06,910 --> 00:54:17,299
+cheaper storage the bigger storage
+
+1086
+00:54:11,720 --> 00:54:19,880
+higher capacity storage is cheaper more
+
+1087
+00:54:17,299 --> 00:54:21,200
+expensive storage is smaller because we
+
+1088
+00:54:19,880 --> 00:54:27,799
+just don't have that we can't spend
+
+1089
+00:54:21,200 --> 00:54:30,499
+enough money there's this gap there's
+
+1090
+00:54:27,799 --> 00:54:34,670
+this gap between our storage devices and
+
+1091
+00:54:30,499 --> 00:54:38,660
+the CPU that is at least in the case of
+
+1092
+00:54:34,670 --> 00:54:43,240
+disks are getting bigger and we have
+
+1093
+00:54:38,660 --> 00:54:46,269
+programs that exhibit locality ok so
+
+1094
+00:54:43,240 --> 00:54:49,369
+these three things these properties of
+
+1095
+00:54:46,269 --> 00:54:52,130
+storage technologies and properties of
+
+1096
+00:54:49,369 --> 00:54:55,730
+our programs complement each other in
+
+1097
+00:54:52,130 --> 00:54:58,160
+this beautiful way to suggest and inform
+
+1098
+00:54:55,730 --> 00:55:00,769
+the design of our storage systems and
+
+1099
+00:54:58,160 --> 00:55:04,999
+this design is something called the
+
+1100
+00:55:00,769 --> 00:55:10,369
+memory hierarchy ok here's the idea of a
+
+1101
+00:55:04,999 --> 00:55:13,279
+memory hierarchy you layer instead of a
+
+1102
+00:55:10,369 --> 00:55:15,170
+flat memory system you now you create
+
+1103
+00:55:13,279 --> 00:55:19,460
+your memory system as a hierarchy of
+
+1104
+00:55:15,170 --> 00:55:22,369
+devices and at the top of the at the top
+
+1105
+00:55:19,460 --> 00:55:25,220
+of this hierarchy you have your smaller
+
+1106
+00:55:22,369 --> 00:55:27,650
+faster and more expensive storage
+
+1107
+00:55:25,220 --> 00:55:31,069
+devices so at the very top you have
+
+1108
+00:55:27,650 --> 00:55:34,579
+registers which are which can be
+
+1109
+00:55:31,069 --> 00:55:37,640
+accessed and within one cycle right one
+
+1110
+00:55:34,579 --> 00:55:39,529
+instruction while that instruction is
+
+1111
+00:55:37,640 --> 00:55:40,190
+executing can access read and write into
+
+1112
+00:55:39,529 --> 00:55:42,769
+a register
+
+1113
+00:55:40,190 --> 00:55:45,200
+okay so registers are at the top of the
+
+1114
+00:55:42,769 --> 00:55:46,880
+hierarchy but because those are in
+
+1115
+00:55:45,200 --> 00:55:49,400
+custom silicon they're very expensive
+
+1116
+00:55:46,880 --> 00:55:52,160
+right the fabrication plants to make
+
+1117
+00:55:49,400 --> 00:55:53,980
+processors cost billions of dollars ok
+
+1118
+00:55:52,160 --> 00:55:55,940
+so this is the most expensive and
+
+1119
+00:55:53,980 --> 00:55:58,460
+because of that it's also the smallest
+
+1120
+00:55:55,940 --> 00:56:02,230
+we've only got 16 registers at the top
+
+1121
+00:55:58,460 --> 00:56:06,019
+of the hierarchy now below that we put
+
+1122
+00:56:02,230 --> 00:56:07,700
+one or more SRAM memories remember SRAM
+
+1123
+00:56:06,019 --> 00:56:10,140
+is faster
+
+1124
+00:56:07,700 --> 00:56:12,650
+it's the fastest kind of memory so we
+
+1125
+00:56:10,140 --> 00:56:15,890
+put one or more so-called
+
+1126
+00:56:12,650 --> 00:56:23,610
+caches cache memories built out of SRAM
+
+1127
+00:56:15,890 --> 00:56:25,920
+in the processor chip itself and then
+
+1128
+00:56:23,610 --> 00:56:28,280
+and these caches because they're made
+
+1129
+00:56:25,920 --> 00:56:31,440
+out of SRAM they're on the order of
+
+1130
+00:56:28,280 --> 00:56:32,880
+megabytes in size okay they're much
+
+1131
+00:56:31,440 --> 00:56:37,770
+bigger than registers but they're
+
+1132
+00:56:32,880 --> 00:56:40,560
+they're megabytes okay which if we look
+
+1133
+00:56:37,770 --> 00:56:42,480
+and then beneath that is our main memory
+
+1134
+00:56:40,560 --> 00:56:45,960
+which is built out of DRAM and those can
+
+1135
+00:56:42,480 --> 00:56:48,540
+be gigabytes tens of gigabytes on on
+
+1136
+00:56:45,960 --> 00:56:51,330
+modern systems and then below that is
+
+1137
+00:56:48,540 --> 00:56:54,210
+our local disks and we can even have
+
+1138
+00:56:51,330 --> 00:56:56,370
+lower layers like web servers that are
+
+1139
+00:56:54,210 --> 00:56:58,920
+storing you know for storing stuff on
+
+1140
+00:56:56,370 --> 00:57:02,820
+google that you can think of that as
+
+1141
+00:56:58,920 --> 00:57:04,350
+just part of our hierarchy now here's
+
+1142
+00:57:02,820 --> 00:57:08,430
+the here's the key idea in a higher
+
+1143
+00:57:04,350 --> 00:57:11,790
+Inlet in a memory hierarchy each level
+
+1144
+00:57:08,430 --> 00:57:14,750
+in this hierarchy holds data that's
+
+1145
+00:57:11,790 --> 00:57:18,570
+retrieved from the next lower level
+
+1146
+00:57:14,750 --> 00:57:22,080
+okay so caches hold registers hold data
+
+1147
+00:57:18,570 --> 00:57:25,830
+that's that's stored in the l1 cache the
+
+1148
+00:57:22,080 --> 00:57:28,770
+l1 cache holds data that's retrieved
+
+1149
+00:57:25,830 --> 00:57:31,740
+from the l2 cache the l3 cache holds
+
+1150
+00:57:28,770 --> 00:57:33,420
+data that's restored that's that's
+
+1151
+00:57:31,740 --> 00:57:35,850
+retrieved from main memory main memory
+
+1152
+00:57:33,420 --> 00:57:39,780
+holds data that's retrieved from
+
+1153
+00:57:35,850 --> 00:57:42,600
+secondary disk and so on now
+
+1154
+00:57:39,780 --> 00:57:45,390
+as we'll see the that the reason memory
+
+1155
+00:57:42,600 --> 00:57:49,670
+systems are designed like this is that
+
+1156
+00:57:45,390 --> 00:57:49,670
+they when you have this kind of system
+
+1157
+00:57:50,630 --> 00:57:57,529
+this you can access in general you can
+
+1158
+00:57:53,960 --> 00:58:00,049
+access your data at the speed of the
+
+1159
+00:57:57,529 --> 00:58:02,650
+fastest item of the day and at the top
+
+1160
+00:58:00,049 --> 00:58:07,069
+of the hierarchy so that's the fastest
+
+1161
+00:58:02,650 --> 00:58:11,450
+but with the cost of the storage at the
+
+1162
+00:58:07,069 --> 00:58:14,000
+lower part of the hierarchy okay so this
+
+1163
+00:58:11,450 --> 00:58:20,990
+this works all because of an idea called
+
+1164
+00:58:14,000 --> 00:58:23,869
+caching so a cache in compute 2 took it
+
+1165
+00:58:20,990 --> 00:58:26,990
+to a computer scientist is a it's a
+
+1166
+00:58:23,869 --> 00:58:30,740
+smaller faster storage device that acts
+
+1167
+00:58:26,990 --> 00:58:33,890
+as a staging area for the data in a
+
+1168
+00:58:30,740 --> 00:58:35,329
+larger slower device so just like like
+
+1169
+00:58:33,890 --> 00:58:38,240
+here you can think of your main memory
+
+1170
+00:58:35,329 --> 00:58:40,099
+is a cache for data that's stored on
+
+1171
+00:58:38,240 --> 00:58:42,589
+disk right you read memory from disk and
+
+1172
+00:58:40,099 --> 00:58:43,970
+then you store it in a memory ok you can
+
+1173
+00:58:42,589 --> 00:58:47,779
+think of the main memory as a staging
+
+1174
+00:58:43,970 --> 00:58:49,670
+area so once you get the data from the
+
+1175
+00:58:47,779 --> 00:58:51,410
+disk you don't access it again on the
+
+1176
+00:58:49,670 --> 00:58:54,019
+disk access to the memory which is much
+
+1177
+00:58:51,410 --> 00:59:00,980
+faster ok so this idea propagates all
+
+1178
+00:58:54,019 --> 00:59:04,309
+the way up the hierarchy ok so we you
+
+1179
+00:59:00,980 --> 00:59:08,930
+can think of a cache on one way to think
+
+1180
+00:59:04,309 --> 00:59:09,950
+of a cache is imagine your backpack when
+
+1181
+00:59:08,930 --> 00:59:12,619
+you're getting ready to come to school
+
+1182
+00:59:09,950 --> 00:59:14,180
+in the morning so you're in your
+
+1183
+00:59:12,619 --> 00:59:17,869
+apartment which is kind of far away from
+
+1184
+00:59:14,180 --> 00:59:20,119
+school so before you come into school
+
+1185
+00:59:17,869 --> 00:59:22,490
+you take items from from your house and
+
+1186
+00:59:20,119 --> 00:59:25,400
+you put them in your backpack because
+
+1187
+00:59:22,490 --> 00:59:26,869
+and then then when and then you walk
+
+1188
+00:59:25,400 --> 00:59:29,509
+then you come to school if you need
+
+1189
+00:59:26,869 --> 00:59:31,279
+those items they're in your backpack you
+
+1190
+00:59:29,509 --> 00:59:32,690
+know if you didn't do that every time
+
+1191
+00:59:31,279 --> 00:59:35,240
+you needed something you'd have to walk
+
+1192
+00:59:32,690 --> 00:59:35,720
+back home and get it and walk back to
+
+1193
+00:59:35,240 --> 00:59:39,019
+school
+
+1194
+00:59:35,720 --> 00:59:40,519
+it so the idea of caching is very you
+
+1195
+00:59:39,019 --> 00:59:42,559
+know it's a very familiar kind of simple
+
+1196
+00:59:40,519 --> 00:59:45,099
+notion but it turns out to be quite
+
+1197
+00:59:42,559 --> 00:59:51,769
+powerful and it shows up in all parts of
+
+1198
+00:59:45,099 --> 00:59:53,509
+the computer system okay so so what we
+
+1199
+00:59:51,769 --> 00:59:56,480
+say is that for each level K in the
+
+1200
+00:59:53,509 --> 00:59:59,509
+hierarchy the the faster smaller device
+
+1201
+00:59:56,480 --> 01:00:02,570
+of level K serves as a cache for the
+
+1202
+00:59:59,509 --> 01:00:06,420
+larger slower device at level K plus-1
+
+1203
+01:00:02,570 --> 01:00:09,119
+remember our levels go from so L zero
+
+1204
+01:00:06,420 --> 01:00:11,550
+it's the highest of the smallest lowest
+
+1205
+01:00:09,119 --> 01:00:13,260
+level is actually the highest the
+
+1206
+01:00:11,550 --> 01:00:15,020
+further stuff in the camp in the
+
+1207
+01:00:13,260 --> 01:00:21,330
+hierarchy and as we increase the levels
+
+1208
+01:00:15,020 --> 01:00:24,000
+we're going down the hierarchy now why
+
+1209
+01:00:21,330 --> 01:00:26,610
+do they work so this is this is a really
+
+1210
+01:00:24,000 --> 01:00:31,830
+fundamental idea they work because of
+
+1211
+01:00:26,610 --> 01:00:33,690
+locality so because of locality programs
+
+1212
+01:00:31,830 --> 01:00:37,770
+tend to access data that's stored at
+
+1213
+01:00:33,690 --> 01:00:41,790
+level K more often than they access data
+
+1214
+01:00:37,770 --> 01:00:45,300
+at level K plus-1 okay so if we access
+
+1215
+01:00:41,790 --> 01:00:47,970
+an item at level K plus-1 we can move it
+
+1216
+01:00:45,300 --> 01:00:50,210
+up to level K chances are because of
+
+1217
+01:00:47,970 --> 01:00:53,490
+locality we're going to access it again
+
+1218
+01:00:50,210 --> 01:00:57,869
+okay so now we're accessing the data at
+
+1219
+01:00:53,490 --> 01:01:00,990
+level K multiple times at the at the
+
+1220
+01:00:57,869 --> 01:01:03,590
+rate at the speed of level K not at the
+
+1221
+01:01:00,990 --> 01:01:06,720
+speed of level k plus one okay so that's
+
+1222
+01:01:03,590 --> 01:01:09,240
+that's the fun the fundal fundamental
+
+1223
+01:01:06,720 --> 01:01:11,760
+idea and because because we're not
+
+1224
+01:01:09,240 --> 01:01:14,570
+accessing data at level K plus-1 as
+
+1225
+01:01:11,760 --> 01:01:18,810
+often we can we can afford to use slower
+
+1226
+01:01:14,570 --> 01:01:22,710
+storage devices which are cheaper okay
+
+1227
+01:01:18,810 --> 01:01:27,119
+in this and thus we can make them bigger
+
+1228
+01:01:22,710 --> 01:01:29,220
+and cheaper predict so what this does is
+
+1229
+01:01:27,119 --> 01:01:31,890
+the hierarchy creates a large pool of
+
+1230
+01:01:29,220 --> 01:01:35,250
+storage that's roughly about the size of
+
+1231
+01:01:31,890 --> 01:01:38,840
+the lowest level that can be accessed at
+
+1232
+01:01:35,250 --> 01:01:38,840
+the speed at the highest level
+
+1233
+01:01:40,890 --> 01:01:46,840
+all right look let's look at how caching
+
+1234
+01:01:44,230 --> 01:01:50,230
+works in a general way and then we'll
+
+1235
+01:01:46,840 --> 01:01:51,970
+see on Thursday how these hardware cache
+
+1236
+01:01:50,230 --> 01:01:54,730
+memories work okay but like I said
+
+1237
+01:01:51,970 --> 01:01:56,890
+caching is a very general idea that can
+
+1238
+01:01:54,730 --> 01:02:01,030
+be applied at all levels in the in the
+
+1239
+01:01:56,890 --> 01:02:04,150
+hierarchy so here we have a cache so the
+
+1240
+01:02:01,030 --> 01:02:07,690
+in all kinds of most caches there's some
+
+1241
+01:02:04,150 --> 01:02:11,140
+kind of transfer unit to go from one
+
+1242
+01:02:07,690 --> 01:02:16,090
+level to the next so here we have at
+
+1243
+01:02:11,140 --> 01:02:17,740
+this at this upper level we have a what
+
+1244
+01:02:16,090 --> 01:02:22,240
+we'll call the cache that can hold for
+
+1245
+01:02:17,740 --> 01:02:24,820
+blocks so our our memory and then at the
+
+1246
+01:02:22,240 --> 01:02:27,130
+lower level we have memory and this
+
+1247
+01:02:24,820 --> 01:02:29,950
+memory is partitioned into blocks of
+
+1248
+01:02:27,130 --> 01:02:33,790
+some fixed size that's this that's the
+
+1249
+01:02:29,950 --> 01:02:38,560
+way cache is near the near the upper
+
+1250
+01:02:33,790 --> 01:02:40,560
+part of the hierarchy work now at the
+
+1251
+01:02:38,560 --> 01:02:45,280
+lower levels like if you're accessing
+
+1252
+01:02:40,560 --> 01:02:47,620
+data say from a web server then the data
+
+1253
+01:02:45,280 --> 01:02:49,540
+is partitioned into files typically okay
+
+1254
+01:02:47,620 --> 01:02:51,100
+but in other levels the data is
+
+1255
+01:02:49,540 --> 01:02:54,730
+partitioned into blocks so just suppose
+
+1256
+01:02:51,100 --> 01:02:56,950
+this is main memory and then above that
+
+1257
+01:02:54,730 --> 01:03:00,450
+we have a that consists of a bunch of
+
+1258
+01:02:56,950 --> 01:03:04,240
+these blocks so we just take the memory
+
+1259
+01:03:00,450 --> 01:03:06,870
+and partition ins blocks where each
+
+1260
+01:03:04,240 --> 01:03:09,310
+block is the same number of bytes and
+
+1261
+01:03:06,870 --> 01:03:11,680
+then data will be transferred between
+
+1262
+01:03:09,310 --> 01:03:14,170
+memory and the cache in block size
+
+1263
+01:03:11,680 --> 01:03:16,600
+transfer units okay so if you need data
+
+1264
+01:03:14,170 --> 01:03:18,340
+from the memory if the cache needs data
+
+1265
+01:03:16,600 --> 01:03:22,420
+from the memory it'll grab a whole block
+
+1266
+01:03:18,340 --> 01:03:25,480
+and then at any point in time the cache
+
+1267
+01:03:22,420 --> 01:03:29,920
+holds a subset of the blocks in main
+
+1268
+01:03:25,480 --> 01:03:34,680
+memory okay so this this cache is much
+
+1269
+01:03:29,920 --> 01:03:34,680
+faster but it's also much slower
+
+1270
+01:03:35,580 --> 01:03:40,770
+and because of that and it's much
+
+1271
+01:03:37,830 --> 01:03:42,990
+smaller I'm sorry it's much faster but
+
+1272
+01:03:40,770 --> 01:03:45,420
+it's it's much more expensive because
+
+1273
+01:03:42,990 --> 01:03:46,800
+it's faster it's more expensive and
+
+1274
+01:03:45,420 --> 01:03:57,000
+because it's more expensive it's smaller
+
+1275
+01:03:46,800 --> 01:03:59,550
+now suppose suppose the cash once that
+
+1276
+01:03:57,000 --> 01:04:05,070
+reference say that the CPU asks for data
+
+1277
+01:03:59,550 --> 01:04:07,860
+that's contained in block four so it
+
+1278
+01:04:05,070 --> 01:04:09,930
+looks it looks to see if the data is in
+
+1279
+01:04:07,860 --> 01:04:13,290
+the cache it's not so the cache asks the
+
+1280
+01:04:09,930 --> 01:04:16,470
+memory to give it block four so that
+
+1281
+01:04:13,290 --> 01:04:19,050
+block is copied from memory into the
+
+1282
+01:04:16,470 --> 01:04:21,000
+cache overwriting the one of the
+
+1283
+01:04:19,050 --> 01:04:24,210
+existing in this case block eight it
+
+1284
+01:04:21,000 --> 01:04:29,850
+will overwrite blockade so now now block
+
+1285
+01:04:24,210 --> 01:04:32,850
+four is in our cache now suppose now now
+
+1286
+01:04:29,850 --> 01:04:37,200
+suppose the CPU s for a some data that's
+
+1287
+01:04:32,850 --> 01:04:41,100
+in block ten that gets copied up and and
+
+1288
+01:04:37,200 --> 01:04:43,050
+we overwrite that that block now the
+
+1289
+01:04:41,100 --> 01:04:44,430
+whole idea of storing it in the cache is
+
+1290
+01:04:43,050 --> 01:04:47,130
+that we're hoping that to seek the
+
+1291
+01:04:44,430 --> 01:04:48,960
+program that's executing on the CPU will
+
+1292
+01:04:47,130 --> 01:04:50,970
+reuse one of those blocks we just spent
+
+1293
+01:04:48,960 --> 01:04:54,300
+all the time we went to all this trouble
+
+1294
+01:04:50,970 --> 01:04:58,500
+to copy it from memory to to this cache
+
+1295
+01:04:54,300 --> 01:05:05,220
+and we know that's slow so now suppose
+
+1296
+01:04:58,500 --> 01:05:09,330
+that the CPU needs some data in Block B
+
+1297
+01:05:05,220 --> 01:05:11,370
+in this case fourteen okay so it needs
+
+1298
+01:05:09,330 --> 01:05:13,680
+it needs the more memory word that's
+
+1299
+01:05:11,370 --> 01:05:18,360
+stored that was originally stored in
+
+1300
+01:05:13,680 --> 01:05:21,690
+memory it in block fourteen well now
+
+1301
+01:05:18,360 --> 01:05:24,210
+this cache can just return that's what
+
+1302
+01:05:21,690 --> 01:05:26,940
+we call a hit right so the block that we
+
+1303
+01:05:24,210 --> 01:05:29,910
+access is in the cache so that's good
+
+1304
+01:05:26,940 --> 01:05:34,830
+hits are good because now we can return
+
+1305
+01:05:29,910 --> 01:05:36,990
+that block directly to CTU and this this
+
+1306
+01:05:34,830 --> 01:05:39,090
+memory is much faster than if we had to
+
+1307
+01:05:36,990 --> 01:05:42,150
+go all the way to main memory to the
+
+1308
+01:05:39,090 --> 01:05:44,730
+DRAM okay so the SRAM much faster than
+
+1309
+01:05:42,150 --> 01:05:47,220
+the DRAM so they see to you gets that
+
+1310
+01:05:44,730 --> 01:05:49,050
+block fourteen much faster than it would
+
+1311
+01:05:47,220 --> 01:05:54,900
+have if it just gone all the way to
+
+1312
+01:05:49,050 --> 01:05:58,110
+memory okay these sort of other the the
+
+1313
+01:05:54,900 --> 01:06:01,710
+opposite of a hit is a Miss so suppose
+
+1314
+01:05:58,110 --> 01:06:03,780
+the CPU s for block twelve the cache
+
+1315
+01:06:01,710 --> 01:06:07,440
+looks for that block can't find it
+
+1316
+01:06:03,780 --> 01:06:09,750
+that's a Miss so the the cache has to
+
+1317
+01:06:07,440 --> 01:06:12,450
+ask that the main memory of the DRAM for
+
+1318
+01:06:09,750 --> 01:06:16,380
+block twelve where it gets copied into
+
+1319
+01:06:12,450 --> 01:06:18,420
+the cache and then it can return that so
+
+1320
+01:06:16,380 --> 01:06:21,180
+that takes longer right so the CT has to
+
+1321
+01:06:18,420 --> 01:06:23,700
+wait for that block to be X to be
+
+1322
+01:06:21,180 --> 01:06:25,470
+searched from memory and so misses are
+
+1323
+01:06:23,700 --> 01:06:27,810
+slow so hits are good because they're
+
+1324
+01:06:25,470 --> 01:06:31,800
+fast misses are bad because they're
+
+1325
+01:06:27,810 --> 01:06:35,190
+they're slow now we typically
+
+1326
+01:06:31,800 --> 01:06:37,800
+distinguish between several different
+
+1327
+01:06:35,190 --> 01:06:40,670
+kinds of caches so the first kind of
+
+1328
+01:06:37,800 --> 01:06:43,530
+miss is a cold miss or a compulsory miss
+
+1329
+01:06:40,670 --> 01:06:44,580
+which is caused because there's just
+
+1330
+01:06:43,530 --> 01:06:46,350
+nothing in the cache
+
+1331
+01:06:44,580 --> 01:06:49,740
+initially caches they're empty they have
+
+1332
+01:06:46,350 --> 01:06:51,300
+no blocks and as we fetch as we fetch
+
+1333
+01:06:49,740 --> 01:06:53,130
+blocks from the lower level from the
+
+1334
+01:06:51,300 --> 01:06:56,250
+next the next level and put them in the
+
+1335
+01:06:53,130 --> 01:06:58,350
+cache the cache will slowly fill up with
+
+1336
+01:06:56,250 --> 01:07:00,480
+blocks and we'll get and that will
+
+1337
+01:06:58,350 --> 01:07:01,470
+increase the likelihood of Hibbs but
+
+1338
+01:07:00,480 --> 01:07:03,420
+when the cache is empty
+
+1339
+01:07:01,470 --> 01:07:05,280
+we're going to miss every time right so
+
+1340
+01:07:03,420 --> 01:07:07,800
+this there's just no way to avoid cold
+
+1341
+01:07:05,280 --> 01:07:09,540
+misses right you got a so this is called
+
+1342
+01:07:07,800 --> 01:07:12,270
+warming up your cache so as you load
+
+1343
+01:07:09,540 --> 01:07:14,250
+data items into the cache initially it's
+
+1344
+01:07:12,270 --> 01:07:15,750
+cold and as you add more items you're
+
+1345
+01:07:14,250 --> 01:07:21,140
+warming it up meaning that you're
+
+1346
+01:07:15,750 --> 01:07:26,190
+increasing the likelihood of a hit now
+
+1347
+01:07:21,140 --> 01:07:28,320
+there's a there's another sort of
+
+1348
+01:07:26,190 --> 01:07:30,840
+symmetric kind of myth which is called
+
+1349
+01:07:28,320 --> 01:07:33,660
+the capacity miss and these misses are
+
+1350
+01:07:30,840 --> 01:07:35,910
+due to the fact that the cache is just a
+
+1351
+01:07:33,660 --> 01:07:37,650
+certain size right you just can't in the
+
+1352
+01:07:35,910 --> 01:07:42,150
+example we looked at we only had four
+
+1353
+01:07:37,650 --> 01:07:46,160
+blocks so if we're if we're trying if
+
+1354
+01:07:42,150 --> 01:07:49,260
+our if our if our temporal locality
+
+1355
+01:07:46,160 --> 01:07:51,500
+involves eight blocks you know say it's
+
+1356
+01:07:49,260 --> 01:07:55,890
+a loop that we're accessing is is
+
+1357
+01:07:51,500 --> 01:07:57,570
+accessing elements an array that that
+
+1358
+01:07:55,890 --> 01:07:59,280
+consists of eight blocks there's just
+
+1359
+01:07:57,570 --> 01:08:01,470
+not enough room to store eight blocks
+
+1360
+01:07:59,280 --> 01:08:02,000
+and therefore block cache so we're going
+
+1361
+01:08:01,470 --> 01:08:04,920
+to get
+
+1362
+01:08:02,000 --> 01:08:06,809
+right we would need a bigger cache to be
+
+1363
+01:08:04,920 --> 01:08:09,650
+able to satisfy and store those eight
+
+1364
+01:08:06,809 --> 01:08:11,910
+blocks and if we had a big enough cache
+
+1365
+01:08:09,650 --> 01:08:15,390
+then we get good hit rate right if we
+
+1366
+01:08:11,910 --> 01:08:18,299
+could store all the blocks in our cache
+
+1367
+01:08:15,390 --> 01:08:20,310
+then we then then the cache could take
+
+1368
+01:08:18,299 --> 01:08:23,819
+advantage of the the spatial and
+
+1369
+01:08:20,310 --> 01:08:25,440
+temporal locality within that program so
+
+1370
+01:08:23,819 --> 01:08:27,509
+in general what we call this set of
+
+1371
+01:08:25,440 --> 01:08:30,179
+blocks at any point in time when a
+
+1372
+01:08:27,509 --> 01:08:32,310
+program is running we call the set of
+
+1373
+01:08:30,179 --> 01:08:34,460
+blocks that are sort of being accessed
+
+1374
+01:08:32,310 --> 01:08:37,500
+over and over again the working set and
+
+1375
+01:08:34,460 --> 01:08:39,000
+so your working set and the working set
+
+1376
+01:08:37,500 --> 01:08:43,080
+will change you know as you go from loop
+
+1377
+01:08:39,000 --> 01:08:45,140
+to loop from function to function but at
+
+1378
+01:08:43,080 --> 01:08:47,520
+a point in time in your program when it
+
+1379
+01:08:45,140 --> 01:08:49,230
+you have this idea of a working set
+
+1380
+01:08:47,520 --> 01:08:53,299
+which is sort of the blocks that you
+
+1381
+01:08:49,230 --> 01:08:55,589
+need to have stored in your cache okay
+
+1382
+01:08:53,299 --> 01:08:58,020
+and so when you're working set size
+
+1383
+01:08:55,589 --> 01:09:00,870
+exceeds your cache size then you get
+
+1384
+01:08:58,020 --> 01:09:03,770
+capacity misses there's this other kind
+
+1385
+01:09:00,870 --> 01:09:06,960
+of weird miss called a conflict miss
+
+1386
+01:09:03,770 --> 01:09:10,469
+which has to do with the way that caches
+
+1387
+01:09:06,960 --> 01:09:13,350
+are often implemented so the idea is
+
+1388
+01:09:10,469 --> 01:09:15,060
+that most cash especially hardware
+
+1389
+01:09:13,350 --> 01:09:20,850
+caches because they're they have to be
+
+1390
+01:09:15,060 --> 01:09:24,920
+simple they have they limit where a
+
+1391
+01:09:20,850 --> 01:09:27,319
+block can be placed to some small set of
+
+1392
+01:09:24,920 --> 01:09:30,989
+positions in the cache
+
+1393
+01:09:27,319 --> 01:09:35,759
+so like one of the simplest models is to
+
+1394
+01:09:30,989 --> 01:09:40,259
+just take block I can only be placed in
+
+1395
+01:09:35,759 --> 01:09:42,150
+block I mod the cache size so in our
+
+1396
+01:09:40,259 --> 01:09:46,770
+that that little cache we saw that had
+
+1397
+01:09:42,150 --> 01:09:48,630
+four blocks we would take we would take
+
+1398
+01:09:46,770 --> 01:09:51,270
+block I from memory and we would stick
+
+1399
+01:09:48,630 --> 01:09:55,199
+it at block I mod 4 so block zero would
+
+1400
+01:09:51,270 --> 01:09:59,820
+go at block 0 in our cache as would
+
+1401
+01:09:55,199 --> 01:10:03,050
+block 4 and as would block 8 block 9
+
+1402
+01:09:59,820 --> 01:10:06,050
+would go into block 1 in the cache and
+
+1403
+01:10:03,050 --> 01:10:06,050
+that's
+
+1404
+01:10:06,340 --> 01:10:14,750
+when that happens suppose suppose we use
+
+1405
+01:10:12,020 --> 01:10:17,120
+that model so we're going to take block
+
+1406
+01:10:14,750 --> 01:10:21,790
+I and we're going to put it we can only
+
+1407
+01:10:17,120 --> 01:10:25,130
+place it in the cache at block I mod for
+
+1408
+01:10:21,790 --> 01:10:28,640
+now suppose our suppose our reference
+
+1409
+01:10:25,130 --> 01:10:31,640
+pattern involves from memory block zero
+
+1410
+01:10:28,640 --> 01:10:34,429
+block four and block eight it's only
+
+1411
+01:10:31,640 --> 01:10:37,520
+three blocks so we have we have enough
+
+1412
+01:10:34,429 --> 01:10:39,890
+room in the cache to store those three
+
+1413
+01:10:37,520 --> 01:10:42,080
+blocks but because of the way we've
+
+1414
+01:10:39,890 --> 01:10:45,980
+decided to place blocks each block will
+
+1415
+01:10:42,080 --> 01:10:49,030
+be will evict when we access block four
+
+1416
+01:10:45,980 --> 01:10:52,010
+it'll go into block zero in the cache
+
+1417
+01:10:49,030 --> 01:10:55,190
+when we access block for in the cache
+
+1418
+01:10:52,010 --> 01:10:57,520
+it'll overwrite that block and it'll go
+
+1419
+01:10:55,190 --> 01:11:01,070
+into block zero in the cache and so
+
+1420
+01:10:57,520 --> 01:11:03,290
+because of this it's really the access
+
+1421
+01:11:01,070 --> 01:11:04,969
+pattern conspiring with the the
+
+1422
+01:11:03,290 --> 01:11:07,910
+algorithm that we're using for placing
+
+1423
+01:11:04,969 --> 01:11:10,040
+blocks okay so because of this we have
+
+1424
+01:11:07,910 --> 01:11:13,000
+plenty of room in the cache but because
+
+1425
+01:11:10,040 --> 01:11:15,140
+of this sort of the access pattern
+
+1426
+01:11:13,000 --> 01:11:19,760
+conspiring with the placement algorithm
+
+1427
+01:11:15,140 --> 01:11:22,040
+we get misses every time we'll see how
+
+1428
+01:11:19,760 --> 01:11:24,140
+we'll see how conflict nurses work in
+
+1429
+01:11:22,040 --> 01:11:30,100
+detail when we study your caches
+
+1430
+01:11:24,140 --> 01:11:30,100
+tomorrow so
+
+1431
+01:11:31,500 --> 01:11:39,510
+so this is these caches exist everywhere
+
+1432
+01:11:34,590 --> 01:11:41,510
+in the memory hierarchy and see all of
+
+1433
+01:11:39,510 --> 01:11:43,830
+them are caches of one form or another
+
+1434
+01:11:41,510 --> 01:11:45,420
+right so you can think of the registers
+
+1435
+01:11:43,830 --> 01:11:48,470
+as a type of cache
+
+1436
+01:11:45,420 --> 01:11:51,570
+what are they cache for eight byte words
+
+1437
+01:11:48,470 --> 01:11:54,690
+okay where's it cached it's cached
+
+1438
+01:11:51,570 --> 01:11:57,750
+right on the CPU itself what's the
+
+1439
+01:11:54,690 --> 01:12:00,840
+latency it's instant and happens within
+
+1440
+01:11:57,750 --> 01:12:01,260
+an instruction and then who manages the
+
+1441
+01:12:00,840 --> 01:12:02,850
+cache
+
+1442
+01:12:01,260 --> 01:12:05,220
+somebody has to manage the cache when
+
+1443
+01:12:02,850 --> 01:12:07,250
+when there's a request to load an item
+
+1444
+01:12:05,220 --> 01:12:09,450
+from the lower level in the hierarchy
+
+1445
+01:12:07,250 --> 01:12:11,310
+something has to decide what to do with
+
+1446
+01:12:09,450 --> 01:12:13,560
+that where to put it in the cache that's
+
+1447
+01:12:11,310 --> 01:12:16,920
+called managing the cache well in this
+
+1448
+01:12:13,560 --> 01:12:19,170
+case the compiler manages the cache when
+
+1449
+01:12:16,920 --> 01:12:21,900
+you when you compile your C code the
+
+1450
+01:12:19,170 --> 01:12:23,460
+compiler figures out which register data
+
+1451
+01:12:21,900 --> 01:12:30,120
+items from memory are going to go into
+
+1452
+01:12:23,460 --> 01:12:32,660
+okay so good TLB this is something this
+
+1453
+01:12:30,120 --> 01:12:34,950
+is a cache that's used in virtual memory
+
+1454
+01:12:32,660 --> 01:12:39,300
+then there's these hardware caches
+
+1455
+01:12:34,950 --> 01:12:42,860
+called l1 and l2 caches so they store 64
+
+1456
+01:12:39,300 --> 01:12:46,410
+byte blocks on modern Intel systems and
+
+1457
+01:12:42,860 --> 01:12:49,080
+they're cached on the CPU chip itself in
+
+1458
+01:12:46,410 --> 01:12:52,920
+in s ramps that are built right into the
+
+1459
+01:12:49,080 --> 01:12:56,910
+CPU chip and depending on whether l1
+
+1460
+01:12:52,920 --> 01:13:00,330
+caches to on core i7s have a latency of
+
+1461
+01:12:56,910 --> 01:13:03,720
+4 cycles and l2 has a latency of 10
+
+1462
+01:13:00,330 --> 01:13:06,900
+cycles and both of these are managed by
+
+1463
+01:13:03,720 --> 01:13:09,090
+Hardware so when you when the CPU
+
+1464
+01:13:06,900 --> 01:13:12,630
+fetches an item from the l1 cache
+
+1465
+01:13:09,090 --> 01:13:14,760
+Hardware Figg finds it and if there's a
+
+1466
+01:13:12,630 --> 01:13:16,710
+miss and a block is loaded from l2
+
+1467
+01:13:14,760 --> 01:13:18,660
+Hardware in the l1 cache figures out
+
+1468
+01:13:16,710 --> 01:13:23,930
+where to put it okay so all this is done
+
+1469
+01:13:18,660 --> 01:13:27,270
+without any intervention by Hardware
+
+1470
+01:13:23,930 --> 01:13:29,850
+disks contain buffer operating systems
+
+1471
+01:13:27,270 --> 01:13:33,420
+maintain buffer caches so in this case
+
+1472
+01:13:29,850 --> 01:13:36,680
+what's cached is portions of files okay
+
+1473
+01:13:33,420 --> 01:13:40,410
+and they're cached in main memory and
+
+1474
+01:13:36,680 --> 01:13:42,880
+latency to 2 main memory is about a
+
+1475
+01:13:40,410 --> 01:13:44,860
+hundred cycles or so
+
+1476
+01:13:42,880 --> 01:13:47,290
+and these are managed by the operating
+
+1477
+01:13:44,860 --> 01:13:49,599
+system so the operating system reserves
+
+1478
+01:13:47,290 --> 01:13:52,599
+the portion of memory to store files
+
+1479
+01:13:49,599 --> 01:13:54,790
+that you've loaded so so the operating
+
+1480
+01:13:52,599 --> 01:13:59,639
+system exploits locality if you if you
+
+1481
+01:13:54,790 --> 01:14:01,780
+read a file and then start reading
+
+1482
+01:13:59,639 --> 01:14:04,300
+referencing bytes from that file it will
+
+1483
+01:14:01,780 --> 01:14:08,889
+actually be served from the file cache
+
+1484
+01:14:04,300 --> 01:14:13,420
+and it won't go out to disk network
+
+1485
+01:14:08,889 --> 01:14:16,800
+networks maintain caches by things like
+
+1486
+01:14:13,420 --> 01:14:19,270
+NFS and SS maintain local caches on disk
+
+1487
+01:14:16,800 --> 01:14:23,770
+your browser has a cache so when it
+
+1488
+01:14:19,270 --> 01:14:25,869
+fetches files from from servers it
+
+1489
+01:14:23,770 --> 01:14:27,369
+stores those files locally on disk so if
+
+1490
+01:14:25,869 --> 01:14:29,889
+you reference those web pages again
+
+1491
+01:14:27,369 --> 01:14:31,210
+they're served from can be local disk
+
+1492
+01:14:29,889 --> 01:14:35,579
+rather than going all the way across the
+
+1493
+01:14:31,210 --> 01:14:38,590
+network ok so the point is that these
+
+1494
+01:14:35,579 --> 01:14:40,540
+caches exist everywhere in the memory
+
+1495
+01:14:38,590 --> 01:14:42,280
+hierarchy and they're all based on the
+
+1496
+01:14:40,540 --> 01:14:48,340
+same principles they're just implemented
+
+1497
+01:14:42,280 --> 01:14:49,659
+in different ways ok so just to
+
+1498
+01:14:48,340 --> 01:14:53,199
+summarize what we've what we've done
+
+1499
+01:14:49,659 --> 01:14:54,940
+today we've seen that there's there's a
+
+1500
+01:14:53,199 --> 01:14:57,300
+gap between the CPU and our storage
+
+1501
+01:14:54,940 --> 01:15:00,130
+devices that continues to increase
+
+1502
+01:14:57,300 --> 01:15:04,030
+we've seen that well-written programs
+
+1503
+01:15:00,130 --> 01:15:07,659
+have this property called locality and
+
+1504
+01:15:04,030 --> 01:15:09,730
+we've seen that caching by taking by
+
+1505
+01:15:07,659 --> 01:15:11,320
+using caching we can build a memory
+
+1506
+01:15:09,730 --> 01:15:14,290
+hierarchy that takes advantage of
+
+1507
+01:15:11,320 --> 01:15:16,480
+locality and programs and allows us to
+
+1508
+01:15:14,290 --> 01:15:18,849
+build storage systems that where we can
+
+1509
+01:15:16,480 --> 01:15:22,210
+access data at the rate of the fastest
+
+1510
+01:15:18,849 --> 01:15:25,199
+device but at the cost and capacity of
+
+1511
+01:15:22,210 --> 01:15:28,989
+the devices at the lowest level
+
+1512
+01:15:25,199 --> 01:15:31,869
+ok so Thursday we're going to look at a
+
+1513
+01:15:28,989 --> 01:15:35,159
+very specific part of the hierarchy
+
+1514
+01:15:31,869 --> 01:15:35,159
+called cache memory
+

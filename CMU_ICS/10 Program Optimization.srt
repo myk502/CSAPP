@@ -1,0 +1,5812 @@
+1
+00:00:00,030 --> 00:00:05,279
+so we've now gotten through all the
+
+2
+00:00:02,730 --> 00:00:08,130
+lectures on machine code and we're
+
+3
+00:00:05,279 --> 00:00:09,840
+starting to talk about okay now that you
+
+4
+00:00:08,130 --> 00:00:13,950
+know this stuff what can you do with it
+
+5
+00:00:09,840 --> 00:00:16,170
+and this lecture is along the lines of
+
+6
+00:00:13,950 --> 00:00:19,109
+that this is sort of what you are now
+
+7
+00:00:16,170 --> 00:00:21,720
+empowered to do now that you can look at
+
+8
+00:00:19,109 --> 00:00:24,600
+and understand machine code this
+
+9
+00:00:21,720 --> 00:00:26,730
+material is a little it's actually
+
+10
+00:00:24,600 --> 00:00:29,160
+there's a whole chapter of the book
+
+11
+00:00:26,730 --> 00:00:30,480
+chapter 5 on performance optimization
+
+12
+00:00:29,160 --> 00:00:33,079
+and we're only going to do one lecture
+
+13
+00:00:30,480 --> 00:00:35,790
+on it and we don't have any labs
+
+14
+00:00:33,079 --> 00:00:37,980
+unfortunately that really get you to
+
+15
+00:00:35,790 --> 00:00:39,149
+push your limits on this which is too
+
+16
+00:00:37,980 --> 00:00:41,280
+bad because it's a very interesting
+
+17
+00:00:39,149 --> 00:00:44,520
+topic and one I think you'd find
+
+18
+00:00:41,280 --> 00:00:47,730
+yourself well equipped for there are
+
+19
+00:00:44,520 --> 00:00:49,530
+typically a few small exam problems that
+
+20
+00:00:47,730 --> 00:00:52,070
+are sort of based on some of the
+
+21
+00:00:49,530 --> 00:00:54,660
+material here you'll find in old exams
+
+22
+00:00:52,070 --> 00:00:59,129
+but really the idea is how can I make
+
+23
+00:00:54,660 --> 00:01:02,670
+programs run fast given that I sort of
+
+24
+00:00:59,129 --> 00:01:06,000
+know what algorithm I'm using and I've
+
+25
+00:01:02,670 --> 00:01:10,189
+perhaps gotten a program that runs how
+
+26
+00:01:06,000 --> 00:01:13,590
+can I make it run faster and one of the
+
+27
+00:01:10,189 --> 00:01:16,140
+the themes of it is you can sort of do
+
+28
+00:01:13,590 --> 00:01:22,520
+this in layers you can sort of first of
+
+29
+00:01:16,140 --> 00:01:25,350
+all do this stuff to avoid sort of
+
+30
+00:01:22,520 --> 00:01:28,200
+things that make programs run slow
+
+31
+00:01:25,350 --> 00:01:31,049
+across a wide variety of machines and
+
+32
+00:01:28,200 --> 00:01:33,689
+just make your and I would describe it
+
+33
+00:01:31,049 --> 00:01:35,280
+as making your code more compiler
+
+34
+00:01:33,689 --> 00:01:37,619
+friendly and we'll talk about what that
+
+35
+00:01:35,280 --> 00:01:39,420
+means and you have to have some
+
+36
+00:01:37,619 --> 00:01:41,579
+understanding and appreciation for what
+
+37
+00:01:39,420 --> 00:01:44,159
+compilers are good at and what they're
+
+38
+00:01:41,579 --> 00:01:46,290
+not good at to be able to do that and I
+
+39
+00:01:44,159 --> 00:01:48,259
+describe these as the kind of things
+
+40
+00:01:46,290 --> 00:01:50,700
+that you should just be in the habit of
+
+41
+00:01:48,259 --> 00:01:52,590
+when you write programs writing this
+
+42
+00:01:50,700 --> 00:01:56,520
+code that I'll describe is compiler
+
+43
+00:01:52,590 --> 00:02:00,479
+friendly and then the next level is okay
+
+44
+00:01:56,520 --> 00:02:01,799
+given that I've sort of taken away the
+
+45
+00:02:00,479 --> 00:02:04,110
+things that really should have been
+
+46
+00:02:01,799 --> 00:02:06,420
+there in the first place now how can I
+
+47
+00:02:04,110 --> 00:02:08,989
+make my programs run faster in
+
+48
+00:02:06,420 --> 00:02:11,970
+particular how can I adapt it to the
+
+49
+00:02:08,989 --> 00:02:13,200
+capabilities of the the types of
+
+50
+00:02:11,970 --> 00:02:15,480
+machines that this program
+
+51
+00:02:13,200 --> 00:02:17,250
+going to run on and that can again go
+
+52
+00:02:15,480 --> 00:02:19,920
+from ones that will generally make
+
+53
+00:02:17,250 --> 00:02:22,860
+programs run fast across a wide variety
+
+54
+00:02:19,920 --> 00:02:25,950
+of machines to ones that become very
+
+55
+00:02:22,860 --> 00:02:28,260
+specific and very specific is a risky
+
+56
+00:02:25,950 --> 00:02:31,349
+thing because even in the world of say
+
+57
+00:02:28,260 --> 00:02:33,480
+x86 machines there's quite a variety of
+
+58
+00:02:31,349 --> 00:02:36,180
+them that are available at any given
+
+59
+00:02:33,480 --> 00:02:39,269
+point in time and they evolve over time
+
+60
+00:02:36,180 --> 00:02:42,330
+as well so you can make a program run
+
+61
+00:02:39,269 --> 00:02:46,290
+really fast on one particular model of
+
+62
+00:02:42,330 --> 00:02:48,930
+one x86 processor but it might not that
+
+63
+00:02:46,290 --> 00:02:50,610
+if you're trying too hard you'll find
+
+64
+00:02:48,930 --> 00:02:52,470
+your effort is sort of wasted when you
+
+65
+00:02:50,610 --> 00:02:53,700
+move it to another on the other hand
+
+66
+00:02:52,470 --> 00:02:56,340
+these general ideas I'm going to
+
+67
+00:02:53,700 --> 00:02:59,610
+describe actually work across quite a
+
+68
+00:02:56,340 --> 00:03:05,130
+range of machines so and I'll talk about
+
+69
+00:02:59,610 --> 00:03:06,690
+that more as we go along so it used to
+
+70
+00:03:05,130 --> 00:03:08,549
+be in the bad old days that if you
+
+71
+00:03:06,690 --> 00:03:10,680
+wanted to program to run fast you had to
+
+72
+00:03:08,549 --> 00:03:12,510
+write an assembly code and that's just
+
+73
+00:03:10,680 --> 00:03:14,849
+plain not true anymore and if anyone
+
+74
+00:03:12,510 --> 00:03:17,579
+tells you it's true it's because they're
+
+75
+00:03:14,849 --> 00:03:19,950
+full of it it's just not true unless
+
+76
+00:03:17,579 --> 00:03:22,109
+except for the exceptional case where
+
+77
+00:03:19,950 --> 00:03:25,950
+you're running on a very small resource
+
+78
+00:03:22,109 --> 00:03:30,329
+constrained machine such as a very small
+
+79
+00:03:25,950 --> 00:03:31,620
+underpowered embedded system so let's
+
+80
+00:03:30,329 --> 00:03:33,690
+just assume that we're going to use a
+
+81
+00:03:31,620 --> 00:03:35,310
+compiler and we'll assume for this
+
+82
+00:03:33,690 --> 00:03:37,230
+course we're going to use GCC because
+
+83
+00:03:35,310 --> 00:03:39,000
+it's generally available it's not
+
+84
+00:03:37,230 --> 00:03:43,109
+actually the best compiler out there
+
+85
+00:03:39,000 --> 00:03:45,989
+Intel makes a compiler that costs money
+
+86
+00:03:43,109 --> 00:03:48,510
+to license and stuff but it it really
+
+87
+00:03:45,989 --> 00:03:51,209
+can do some amazing things and other
+
+88
+00:03:48,510 --> 00:03:55,579
+compilers exist but GCC is sort of a
+
+89
+00:03:51,209 --> 00:03:55,579
+good enough compiler for most people
+
+90
+00:03:55,910 --> 00:04:01,680
+but there's some features of some things
+
+91
+00:03:59,940 --> 00:04:04,109
+that sort of puzzle compilers that they
+
+92
+00:04:01,680 --> 00:04:06,269
+don't really understand compilers don't
+
+93
+00:04:04,109 --> 00:04:09,030
+really understand for example that the
+
+94
+00:04:06,269 --> 00:04:11,639
+numbers you're using when you say it's
+
+95
+00:04:09,030 --> 00:04:15,720
+an INT might actually range over a much
+
+96
+00:04:11,639 --> 00:04:17,639
+smaller set of values and they have a
+
+97
+00:04:15,720 --> 00:04:20,039
+very hard time understanding memory
+
+98
+00:04:17,639 --> 00:04:22,910
+referencing patterns and the effect of
+
+99
+00:04:20,039 --> 00:04:22,910
+procedure calls
+
+100
+00:04:24,830 --> 00:04:32,990
+and so in general what happens with the
+
+101
+00:04:28,350 --> 00:04:36,060
+compiler is it has a whole sort of
+
+102
+00:04:32,990 --> 00:04:38,460
+cookbook of optimization strategies and
+
+103
+00:04:36,060 --> 00:04:42,360
+some recipes for how to try out
+
+104
+00:04:38,460 --> 00:04:44,580
+different strategies and apply them but
+
+105
+00:04:42,360 --> 00:04:47,220
+in general if it ever feels like this
+
+106
+00:04:44,580 --> 00:04:48,780
+code is something that it doesn't feel
+
+107
+00:04:47,220 --> 00:04:50,880
+confident about being able to make
+
+108
+00:04:48,780 --> 00:04:53,670
+certain transformations but it just
+
+109
+00:04:50,880 --> 00:04:55,710
+won't it will keep things to a more
+
+110
+00:04:53,670 --> 00:04:58,350
+direct implementation of exactly what
+
+111
+00:04:55,710 --> 00:05:01,980
+you described and we'll show examples of
+
+112
+00:04:58,350 --> 00:05:04,260
+that as we go along so the thing about
+
+113
+00:05:01,980 --> 00:05:06,060
+optimizing compilers it always has a
+
+114
+00:05:04,260 --> 00:05:09,030
+fallback position which is to not
+
+115
+00:05:06,060 --> 00:05:10,980
+optimize and sometimes that will get in
+
+116
+00:05:09,030 --> 00:05:15,960
+trouble if you want your program to run
+
+117
+00:05:10,980 --> 00:05:17,970
+faster and the compiler just in its own
+
+118
+00:05:15,960 --> 00:05:20,310
+conservative Y decides not to do that
+
+119
+00:05:17,970 --> 00:05:22,890
+optimization and one of the tricks that
+
+120
+00:05:20,310 --> 00:05:24,900
+you'll find is pretty useful now that
+
+121
+00:05:22,890 --> 00:05:27,570
+you can read assembly code is you run
+
+122
+00:05:24,900 --> 00:05:30,360
+the compiler you see what optimizations
+
+123
+00:05:27,570 --> 00:05:32,010
+it does and if it doesn't make something
+
+124
+00:05:30,360 --> 00:05:34,440
+that you expect it to be able to do you
+
+125
+00:05:32,010 --> 00:05:38,280
+go back and figure it out so it's very
+
+126
+00:05:34,440 --> 00:05:42,870
+common by the way to rewrite your
+
+127
+00:05:38,280 --> 00:05:47,490
+program in in the same language instead
+
+128
+00:05:42,870 --> 00:05:49,830
+of tune it and up to make it run faster
+
+129
+00:05:47,490 --> 00:05:51,840
+to make it more compiler friendly that
+
+130
+00:05:49,830 --> 00:05:53,460
+there's nothing wrong with that as long
+
+131
+00:05:51,840 --> 00:05:54,840
+as you don't then just totally
+
+132
+00:05:53,460 --> 00:05:59,070
+obliterate the program and make it
+
+133
+00:05:54,840 --> 00:06:01,590
+totally illegible so let's just describe
+
+134
+00:05:59,070 --> 00:06:04,320
+some sort of general optimizations and
+
+135
+00:06:01,590 --> 00:06:06,150
+you've actually seen versions of this in
+
+136
+00:06:04,320 --> 00:06:10,500
+some of the assembly code we've already
+
+137
+00:06:06,150 --> 00:06:13,440
+looked at oh and I'll use mostly sort of
+
+138
+00:06:10,500 --> 00:06:15,350
+examples from multi-dimensional arrays
+
+139
+00:06:13,440 --> 00:06:18,690
+because those are actually fairly easy
+
+140
+00:06:15,350 --> 00:06:20,820
+optimization type of tasks but these
+
+141
+00:06:18,690 --> 00:06:25,440
+applied to other types of program as
+
+142
+00:06:20,820 --> 00:06:28,200
+well so you saw before when we described
+
+143
+00:06:25,440 --> 00:06:32,099
+how to do array indexing in
+
+144
+00:06:28,200 --> 00:06:35,670
+multi-dimensional arrays that the old
+
+145
+00:06:32,099 --> 00:06:37,770
+style of code was if you had a variable
+
+146
+00:06:35,670 --> 00:06:41,160
+eyes array it was up to you the
+
+147
+00:06:37,770 --> 00:06:44,340
+programmer to write the formula of how
+
+148
+00:06:41,160 --> 00:06:47,580
+you convert row I column J into a
+
+149
+00:06:44,340 --> 00:06:49,500
+position in a one-dimensional array so
+
+150
+00:06:47,580 --> 00:06:52,050
+remember it's just the number of columns
+
+151
+00:06:49,500 --> 00:06:54,630
+times the row number plus the column
+
+152
+00:06:52,050 --> 00:06:57,540
+numbers standard one so that would give
+
+153
+00:06:54,630 --> 00:07:00,210
+up this would be pretty typical code
+
+154
+00:06:57,540 --> 00:07:03,330
+then it would give you a notation like
+
+155
+00:07:00,210 --> 00:07:07,080
+this if you wanted to set one rail row
+
+156
+00:07:03,330 --> 00:07:12,360
+in array a to the values in one
+
+157
+00:07:07,080 --> 00:07:15,120
+dimensional row of B this is the code
+
+158
+00:07:12,360 --> 00:07:17,490
+you'd write and the main observation is
+
+159
+00:07:15,120 --> 00:07:21,300
+within this loop the only variable
+
+160
+00:07:17,490 --> 00:07:24,630
+that's changing is J and so from the
+
+161
+00:07:21,300 --> 00:07:26,970
+array perspective your this computation
+
+162
+00:07:24,630 --> 00:07:29,610
+n times I if it gets repeated over and
+
+163
+00:07:26,970 --> 00:07:33,030
+over again within this loop then you're
+
+164
+00:07:29,610 --> 00:07:35,490
+just wasting it's a wasted effort so you
+
+165
+00:07:33,030 --> 00:07:39,360
+can do what's called code motion which
+
+166
+00:07:35,490 --> 00:07:41,700
+is to pre compute the value of n times I
+
+167
+00:07:39,360 --> 00:07:44,400
+outside of the loop and then use it over
+
+168
+00:07:41,700 --> 00:07:48,780
+and over again inside and compilers will
+
+169
+00:07:44,400 --> 00:07:51,780
+generally do this when they can detect
+
+170
+00:07:48,780 --> 00:07:54,240
+for example that it's a array access
+
+171
+00:07:51,780 --> 00:07:57,180
+code and it has this technique it will
+
+172
+00:07:54,240 --> 00:08:00,420
+generally do optimizations like this if
+
+173
+00:07:57,180 --> 00:08:08,550
+you set say an optimization level of 1
+
+174
+00:08:00,420 --> 00:08:11,250
+or higher to GCC and we can see this in
+
+175
+00:08:08,550 --> 00:08:14,850
+fact this is this code and I ran it
+
+176
+00:08:11,250 --> 00:08:16,740
+through GCC using optimization 1 and you
+
+177
+00:08:14,850 --> 00:08:18,810
+see as this read instruction shows it
+
+178
+00:08:16,740 --> 00:08:22,610
+boosted this multiplication outside of
+
+179
+00:08:18,810 --> 00:08:25,800
+the loop and it's a little as if you
+
+180
+00:08:22,610 --> 00:08:27,510
+actually this code does even more it
+
+181
+00:08:25,800 --> 00:08:30,780
+turns the code into something that looks
+
+182
+00:08:27,510 --> 00:08:34,890
+more like a pointer code accessing array
+
+183
+00:08:30,780 --> 00:08:40,680
+a and stepping through that element by
+
+184
+00:08:34,890 --> 00:08:43,650
+element of the array another one and
+
+185
+00:08:40,680 --> 00:08:46,200
+we've seen this already that when GCC
+
+186
+00:08:43,650 --> 00:08:47,529
+turns a multiplication or division by
+
+187
+00:08:46,200 --> 00:08:50,319
+shifting and AD
+
+188
+00:08:47,529 --> 00:08:51,899
+and operations like that multiplication
+
+189
+00:08:50,319 --> 00:08:54,310
+or division by constants
+
+190
+00:08:51,899 --> 00:09:03,160
+we've seen an example to that and the
+
+191
+00:08:54,310 --> 00:09:08,230
+similar one would happen if if we took
+
+192
+00:09:03,160 --> 00:09:11,410
+that program I showed before and applied
+
+193
+00:09:08,230 --> 00:09:13,600
+it to every row so we want to set for
+
+194
+00:09:11,410 --> 00:09:15,579
+array a we wanted to set every one of
+
+195
+00:09:13,600 --> 00:09:21,490
+its rows to the value of the one
+
+196
+00:09:15,579 --> 00:09:23,230
+dimensional array B then again if we we
+
+197
+00:09:21,490 --> 00:09:27,519
+took that code we boosted the end times
+
+198
+00:09:23,230 --> 00:09:29,829
+I in there so now the inner loop is good
+
+199
+00:09:27,519 --> 00:09:31,930
+but you realize that this multiplication
+
+200
+00:09:29,829 --> 00:09:34,660
+isn't necessary either because what
+
+201
+00:09:31,930 --> 00:09:37,569
+we're doing from I equals 0 to I equals
+
+202
+00:09:34,660 --> 00:09:40,839
+1 to I equals 2 is we're just increasing
+
+203
+00:09:37,569 --> 00:09:45,069
+the parameter ni by we're adding end to
+
+204
+00:09:40,839 --> 00:09:46,809
+it so we can and that's called a
+
+205
+00:09:45,069 --> 00:09:48,309
+reduction in strength we've taken a
+
+206
+00:09:46,809 --> 00:09:49,779
+multiplication and turned it into
+
+207
+00:09:48,309 --> 00:09:52,809
+addition because there's some
+
+208
+00:09:49,779 --> 00:09:56,980
+predictable pattern of how this variable
+
+209
+00:09:52,809 --> 00:09:59,410
+ni is going to be updated another
+
+210
+00:09:56,980 --> 00:10:03,100
+example and again array indexing is a
+
+211
+00:09:59,410 --> 00:10:08,139
+good example for optimizations imagine
+
+212
+00:10:03,100 --> 00:10:10,360
+we had a image that we represent as a
+
+213
+00:10:08,139 --> 00:10:14,290
+two-dimensional array of pixel values
+
+214
+00:10:10,360 --> 00:10:16,360
+and we want to do something that what a
+
+215
+00:10:14,290 --> 00:10:19,870
+filtering operation where we want to
+
+216
+00:10:16,360 --> 00:10:22,180
+take the sum of the four neighbors of a
+
+217
+00:10:19,870 --> 00:10:25,839
+given pixel north south east and west
+
+218
+00:10:22,180 --> 00:10:29,529
+and average those together or sum them
+
+219
+00:10:25,839 --> 00:10:35,399
+together and so the natural way you'd
+
+220
+00:10:29,529 --> 00:10:39,490
+write this and see is to say I want
+
+221
+00:10:35,399 --> 00:10:43,689
+usually in images you count from the top
+
+222
+00:10:39,490 --> 00:10:46,959
+down and so you'd say this is the the
+
+223
+00:10:43,689 --> 00:10:48,699
+pixel above this is the pixel below this
+
+224
+00:10:46,959 --> 00:10:54,189
+is the pixel to the left and this is the
+
+225
+00:10:48,699 --> 00:10:56,579
+pixel to the right and if you do this in
+
+226
+00:10:54,189 --> 00:10:59,800
+and just compile it straight through
+
+227
+00:10:56,579 --> 00:11:01,379
+unfortunately it appears as if there's
+
+228
+00:10:59,800 --> 00:11:06,169
+three different multiplication
+
+229
+00:11:01,379 --> 00:11:09,660
+by n I minus 1 I plus 1 and I and if the
+
+230
+00:11:06,169 --> 00:11:11,939
+compilers into clever it won't realize
+
+231
+00:11:09,660 --> 00:11:13,529
+that these are related to each other and
+
+232
+00:11:11,939 --> 00:11:15,660
+it will issue three different multiply
+
+233
+00:11:13,529 --> 00:11:18,029
+operations just to do this one pixel
+
+234
+00:11:15,660 --> 00:11:21,049
+thing whereas if I'm a little more
+
+235
+00:11:18,029 --> 00:11:23,669
+clever and this is one where I manually
+
+236
+00:11:21,049 --> 00:11:28,739
+rewrote the code so the compiler would
+
+237
+00:11:23,669 --> 00:11:32,970
+pick it up I'd say well if I on so I and
+
+238
+00:11:28,739 --> 00:11:35,970
+J is I times n plus J and I can get the
+
+239
+00:11:32,970 --> 00:11:38,519
+the pixel above the pixel below by
+
+240
+00:11:35,970 --> 00:11:43,229
+shifting that off setting that by a
+
+241
+00:11:38,519 --> 00:11:45,059
+value of n and then it will issue the
+
+242
+00:11:43,229 --> 00:11:47,639
+code this will compile with the code
+
+243
+00:11:45,059 --> 00:11:49,949
+with just one multiply and in general by
+
+244
+00:11:47,639 --> 00:11:52,859
+the way it multiplied used to be a very
+
+245
+00:11:49,949 --> 00:11:54,659
+expensive instruction nowadays is enough
+
+246
+00:11:52,859 --> 00:11:56,669
+hardware resources that it takes about
+
+247
+00:11:54,659 --> 00:11:59,159
+three clock cycles so it's not a huge
+
+248
+00:11:56,669 --> 00:12:01,019
+deal but anytime you can take three
+
+249
+00:11:59,159 --> 00:12:08,639
+multiplies and use just one instead
+
+250
+00:12:01,019 --> 00:12:10,319
+that's generally a good idea question so
+
+251
+00:12:08,639 --> 00:12:12,089
+the question is what if you're trying to
+
+252
+00:12:10,319 --> 00:12:14,819
+optimize your space and there are a lot
+
+253
+00:12:12,089 --> 00:12:18,119
+of optimizations that will make your
+
+254
+00:12:14,819 --> 00:12:19,350
+code be bigger at the expense of in
+
+255
+00:12:18,119 --> 00:12:21,389
+order to go faster right
+
+256
+00:12:19,350 --> 00:12:24,569
+this one though I'd argue this is
+
+257
+00:12:21,389 --> 00:12:26,069
+actually shorter code right and just
+
+258
+00:12:24,569 --> 00:12:29,309
+look at the number of instructions so
+
+259
+00:12:26,069 --> 00:12:31,169
+and usually so code you know that used
+
+260
+00:12:29,309 --> 00:12:33,389
+to be a bigger concern when memory was
+
+261
+00:12:31,169 --> 00:12:37,139
+sort of you know back to the original
+
+262
+00:12:33,389 --> 00:12:40,619
+IBM PC had 640 kilobytes of memory so in
+
+263
+00:12:37,139 --> 00:12:42,929
+its maximum configuration and that was a
+
+264
+00:12:40,619 --> 00:12:45,059
+big deal to actually buy it that much so
+
+265
+00:12:42,929 --> 00:12:47,850
+you know back then that was a big deal
+
+266
+00:12:45,059 --> 00:12:50,039
+memory but nowadays memory that the size
+
+267
+00:12:47,850 --> 00:12:51,329
+of the program is usually a pretty small
+
+268
+00:12:50,039 --> 00:12:55,309
+fraction of what you're dealing with
+
+269
+00:12:51,329 --> 00:12:55,309
+overall but it's a valid question
+
+270
+00:12:56,580 --> 00:13:01,950
+okay so that just shows you an example
+
+271
+00:12:59,220 --> 00:13:04,860
+and in general compilers are pretty good
+
+272
+00:13:01,950 --> 00:13:06,839
+at doing those low-level optimizations
+
+273
+00:13:04,860 --> 00:13:08,940
+like that if you write the code in a way
+
+274
+00:13:06,839 --> 00:13:11,730
+that's reasonable but there's some other
+
+275
+00:13:08,940 --> 00:13:14,250
+ones that the compiler and even a the
+
+276
+00:13:11,730 --> 00:13:16,410
+fanciest compiler you can buy might not
+
+277
+00:13:14,250 --> 00:13:18,690
+be able to figure it out and so I like
+
+278
+00:13:16,410 --> 00:13:21,450
+to illustrate this with when the first
+
+279
+00:13:18,690 --> 00:13:26,279
+term we ever talked to thirteen I was
+
+280
+00:13:21,450 --> 00:13:28,140
+looking at some lab code that some of
+
+281
+00:13:26,279 --> 00:13:30,990
+the students wrote and I was horrified
+
+282
+00:13:28,140 --> 00:13:33,089
+about this code and I showed it to the
+
+283
+00:13:30,990 --> 00:13:34,620
+TAS and none of them figured out what
+
+284
+00:13:33,089 --> 00:13:37,649
+was wrong and I've shown it to many
+
+285
+00:13:34,620 --> 00:13:40,019
+other highly-trained C programmers
+
+286
+00:13:37,649 --> 00:13:44,070
+professionals there we go looks okay to
+
+287
+00:13:40,019 --> 00:13:46,410
+me so let's figure out what why I was
+
+288
+00:13:44,070 --> 00:13:47,760
+horrified by this code so the idea of
+
+289
+00:13:46,410 --> 00:13:50,399
+this code is supposed to be pretty
+
+290
+00:13:47,760 --> 00:13:53,940
+straightforward there's a string s and I
+
+291
+00:13:50,399 --> 00:13:59,760
+want to convert that string all the
+
+292
+00:13:53,940 --> 00:14:01,320
+characters in it to lowercase so I'm
+
+293
+00:13:59,760 --> 00:14:04,440
+just going to read through the string
+
+294
+00:14:01,320 --> 00:14:05,880
+and for each string position test that
+
+295
+00:14:04,440 --> 00:14:09,540
+character and if it's somewhere between
+
+296
+00:14:05,880 --> 00:14:11,130
+upper case a and upper case Z then I'm
+
+297
+00:14:09,540 --> 00:14:13,649
+going to shift it to being between
+
+298
+00:14:11,130 --> 00:14:16,339
+lowercase a and lowercase Z otherwise I
+
+299
+00:14:13,649 --> 00:14:21,180
+will change it so pretty straightforward
+
+300
+00:14:16,339 --> 00:14:25,500
+but if you run this you see that if you
+
+301
+00:14:21,180 --> 00:14:29,550
+go up to half a million characters which
+
+302
+00:14:25,500 --> 00:14:32,670
+might sound like a lot but it takes 240
+
+303
+00:14:29,550 --> 00:14:37,260
+or so so so four minutes to run this
+
+304
+00:14:32,670 --> 00:14:39,300
+code and you go well that's a pretty big
+
+305
+00:14:37,260 --> 00:14:41,209
+string it's really not a big string you
+
+306
+00:14:39,300 --> 00:14:43,589
+should be able to do lowercase
+
+307
+00:14:41,209 --> 00:14:46,140
+conversion of a string and a lot less
+
+308
+00:14:43,589 --> 00:14:47,910
+than four seconds and you also notice
+
+309
+00:14:46,140 --> 00:14:50,820
+this growth is nonlinear it's quadratic
+
+310
+00:14:47,910 --> 00:14:53,220
+it's growing as the square of the string
+
+311
+00:14:50,820 --> 00:14:55,230
+length so this is not good
+
+312
+00:14:53,220 --> 00:14:57,209
+and unfortunately it's the kind and by
+
+313
+00:14:55,230 --> 00:14:59,310
+the way this is one of the it's very
+
+314
+00:14:57,209 --> 00:15:03,300
+easy surprisingly easy to have programs
+
+315
+00:14:59,310 --> 00:15:05,640
+that have some hidden performance bug
+
+316
+00:15:03,300 --> 00:15:09,570
+that makes them run quadratic and you
+
+317
+00:15:05,640 --> 00:15:12,330
+run tests and you test for strings of
+
+318
+00:15:09,570 --> 00:15:14,670
+of 10,000 or less and it doesn't look
+
+319
+00:15:12,330 --> 00:15:17,460
+like a big deal because the runtime is
+
+320
+00:15:14,670 --> 00:15:20,670
+insignificant so but then all of a
+
+321
+00:15:17,460 --> 00:15:26,340
+sudden it hits a really bad case so this
+
+322
+00:15:20,670 --> 00:15:28,910
+is a there's something wrong here so
+
+323
+00:15:26,340 --> 00:15:33,900
+what's so bad about this program well
+
+324
+00:15:28,910 --> 00:15:38,520
+the key is went in a test like this of
+
+325
+00:15:33,900 --> 00:15:40,140
+calling sterlin so the way it's
+
+326
+00:15:38,520 --> 00:15:43,230
+determining whether it's reached the end
+
+327
+00:15:40,140 --> 00:15:45,890
+of the string is by calling sterlin to
+
+328
+00:15:43,230 --> 00:15:49,530
+figure out how long the string is and
+
+329
+00:15:45,890 --> 00:15:53,310
+the now and remember if we do the
+
+330
+00:15:49,530 --> 00:15:55,350
+conversion of a for loop into a go to
+
+331
+00:15:53,310 --> 00:15:58,590
+form like you've seen there's various
+
+332
+00:15:55,350 --> 00:16:02,280
+ways to convert it but all of them the
+
+333
+00:15:58,590 --> 00:16:05,850
+test gets built into the loop so the
+
+334
+00:16:02,280 --> 00:16:08,220
+main feature of that is this call to
+
+335
+00:16:05,850 --> 00:16:12,120
+sterlin will happen every time you go
+
+336
+00:16:08,220 --> 00:16:16,410
+through the loop and people overlook
+
+337
+00:16:12,120 --> 00:16:18,720
+that fact when you look at the different
+
+338
+00:16:16,410 --> 00:16:21,960
+parts of a for loop the initialization
+
+339
+00:16:18,720 --> 00:16:26,220
+only gets executed once but both the
+
+340
+00:16:21,960 --> 00:16:28,440
+test and the update get incremented get
+
+341
+00:16:26,220 --> 00:16:32,370
+applied every time you run through the
+
+342
+00:16:28,440 --> 00:16:34,260
+loop so if that's getting called as many
+
+343
+00:16:32,370 --> 00:16:38,280
+times as there are characters in the
+
+344
+00:16:34,260 --> 00:16:40,230
+loop in the string right and now how did
+
+345
+00:16:38,280 --> 00:16:43,380
+sterlin work remember and see the only
+
+346
+00:16:40,230 --> 00:16:45,750
+way you know how long a string is is to
+
+347
+00:16:43,380 --> 00:16:49,110
+step through the whole thing and find
+
+348
+00:16:45,750 --> 00:16:51,780
+the null character at the end so sterlin
+
+349
+00:16:49,110 --> 00:16:55,470
+itself is a linear time operation in the
+
+350
+00:16:51,780 --> 00:16:58,380
+string and you're doing that and so
+
+351
+00:16:55,470 --> 00:17:01,590
+you're doing end calls to a function
+
+352
+00:16:58,380 --> 00:17:04,490
+that takes time n the string is getting
+
+353
+00:17:01,590 --> 00:17:08,930
+shorter as you go but not very fast so
+
+354
+00:17:04,490 --> 00:17:08,930
+basically that's quadratic performance
+
+355
+00:17:09,430 --> 00:17:15,070
+and that explains why you get that
+
+356
+00:17:11,530 --> 00:17:18,580
+runtime so in particular if I just make
+
+357
+00:17:15,070 --> 00:17:23,410
+the following little change I introduce
+
+358
+00:17:18,580 --> 00:17:25,360
+a local variable called Glen and I pre
+
+359
+00:17:23,410 --> 00:17:27,190
+compute sterlin because the string isn't
+
+360
+00:17:25,360 --> 00:17:28,720
+the length of the string isn't changing
+
+361
+00:17:27,190 --> 00:17:33,250
+I'm just changing the characters in the
+
+362
+00:17:28,720 --> 00:17:36,490
+string um then so the the program will
+
+363
+00:17:33,250 --> 00:17:38,740
+do the same thing but now the runtime is
+
+364
+00:17:36,490 --> 00:17:41,620
+so short it doesn't even show up it's
+
+365
+00:17:38,740 --> 00:17:43,450
+it's maybe a second to do a million
+
+366
+00:17:41,620 --> 00:17:46,150
+characters it's just not a big deal at
+
+367
+00:17:43,450 --> 00:17:50,590
+all as it should be it's just running
+
+368
+00:17:46,150 --> 00:17:52,840
+through and so that's just an example of
+
+369
+00:17:50,590 --> 00:17:56,830
+one of many that I've seen in my career
+
+370
+00:17:52,840 --> 00:17:59,050
+where something that that seems almost
+
+371
+00:17:56,830 --> 00:18:04,510
+insignificant turns out to be a serious
+
+372
+00:17:59,050 --> 00:18:08,200
+performance problem so why couldn't a
+
+373
+00:18:04,510 --> 00:18:14,970
+compiler figure this out why couldn't a
+
+374
+00:18:08,200 --> 00:18:21,580
+smart compiler look at the original code
+
+375
+00:18:14,970 --> 00:18:23,800
+and say well you know this is what the
+
+376
+00:18:21,580 --> 00:18:25,870
+programmer wrote but I know a better way
+
+377
+00:18:23,800 --> 00:18:28,350
+to do it I'll pre compute sterlin in
+
+378
+00:18:25,870 --> 00:18:31,390
+advance whether there's a couple reasons
+
+379
+00:18:28,350 --> 00:18:33,970
+one is actually if you look at the code
+
+380
+00:18:31,390 --> 00:18:38,230
+for sterlin you see that it's actually
+
+381
+00:18:33,970 --> 00:18:40,060
+modifying the string and sterlin I mean
+
+382
+00:18:38,230 --> 00:18:41,890
+the the code here is modifying the
+
+383
+00:18:40,060 --> 00:18:45,400
+string and we're calling stern land on
+
+384
+00:18:41,890 --> 00:18:47,410
+it so you'd have to be pretty careful to
+
+385
+00:18:45,400 --> 00:18:49,630
+do the analysis the compiler would to
+
+386
+00:18:47,410 --> 00:18:52,900
+figure out that even though the string
+
+387
+00:18:49,630 --> 00:18:54,790
+is changing the result you're going to
+
+388
+00:18:52,900 --> 00:19:04,510
+get from sterlin is not going to change
+
+389
+00:18:54,790 --> 00:19:09,040
+right so that's a one reason and the
+
+390
+00:19:04,510 --> 00:19:11,740
+second is well and how do how does the
+
+391
+00:19:09,040 --> 00:19:14,220
+can the compiler which version of
+
+392
+00:19:11,740 --> 00:19:17,140
+sterlin is actually going to get used
+
+393
+00:19:14,220 --> 00:19:19,900
+remember and see each of the files gets
+
+394
+00:19:17,140 --> 00:19:22,690
+compiled separately and only afterwards
+
+395
+00:19:19,900 --> 00:19:23,260
+does it all get brought together in the
+
+396
+00:19:22,690 --> 00:19:25,450
+linking
+
+397
+00:19:23,260 --> 00:19:28,300
+and some of that even happens after the
+
+398
+00:19:25,450 --> 00:19:31,480
+program get started so even though
+
+399
+00:19:28,300 --> 00:19:33,610
+there's a standard sterlin function it's
+
+400
+00:19:31,480 --> 00:19:35,260
+not necessarily the case that that's the
+
+401
+00:19:33,610 --> 00:19:38,830
+one that will actually get used in the
+
+402
+00:19:35,260 --> 00:19:40,810
+final program so the compiler really
+
+403
+00:19:38,830 --> 00:19:43,780
+can't be sure of that
+
+404
+00:19:40,810 --> 00:19:46,510
+in particular imagine I provided a sort
+
+405
+00:19:43,780 --> 00:19:50,830
+of customized sterlin function like this
+
+406
+00:19:46,510 --> 00:19:52,330
+that is keeping track of the sum of the
+
+407
+00:19:50,830 --> 00:19:54,910
+lengths of all the strings that it's
+
+408
+00:19:52,330 --> 00:19:59,890
+been called on or some other side effect
+
+409
+00:19:54,910 --> 00:20:01,570
+like that that well that that program
+
+410
+00:19:59,890 --> 00:20:04,930
+would produce a very different result
+
+411
+00:20:01,570 --> 00:20:07,600
+than if if I whether or not I make the
+
+412
+00:20:04,930 --> 00:20:10,390
+optimization so the compiler has to
+
+413
+00:20:07,600 --> 00:20:13,120
+assume that sterlin is just a black box
+
+414
+00:20:10,390 --> 00:20:17,470
+that does whatever it does and can't
+
+415
+00:20:13,120 --> 00:20:19,630
+make any assumptions about what how what
+
+416
+00:20:17,470 --> 00:20:22,540
+side effects it might have and so forth
+
+417
+00:20:19,630 --> 00:20:24,240
+so it won't make that optimization on
+
+418
+00:20:22,540 --> 00:20:27,700
+any machine
+
+419
+00:20:24,240 --> 00:20:33,520
+even with the best compiler so that's
+
+420
+00:20:27,700 --> 00:20:35,230
+just an example that and you can tell
+
+421
+00:20:33,520 --> 00:20:38,410
+that I've gotten kind of sensitized to
+
+422
+00:20:35,230 --> 00:20:44,160
+this so that I spot these but a lot of
+
+423
+00:20:38,410 --> 00:20:52,600
+people don't um so let's look at this
+
+424
+00:20:44,160 --> 00:20:57,370
+let's see oh this is another bad example
+
+425
+00:20:52,600 --> 00:21:02,860
+a bad coding example of imagine I want
+
+426
+00:20:57,370 --> 00:21:07,090
+to compute for a two-dimensional array a
+
+427
+00:21:02,860 --> 00:21:10,930
+in a one-dimensional array B I want to
+
+428
+00:21:07,090 --> 00:21:16,360
+make B be B sub I be the sum of of all
+
+429
+00:21:10,930 --> 00:21:18,490
+the elements in row I of a so again this
+
+430
+00:21:16,360 --> 00:21:22,600
+is a fairly obvious kind of way to write
+
+431
+00:21:18,490 --> 00:21:24,940
+this program that you say well B I cook
+
+432
+00:21:22,600 --> 00:21:26,890
+0 and I'm going to just accumulate it
+
+433
+00:21:24,940 --> 00:21:29,560
+I'll step through the row and accumulate
+
+434
+00:21:26,890 --> 00:21:32,620
+all the values and of course we know now
+
+435
+00:21:29,560 --> 00:21:34,750
+we could improve this by moving I times
+
+436
+00:21:32,620 --> 00:21:36,100
+n out and so forth I'm not trying to
+
+437
+00:21:34,750 --> 00:21:38,230
+illustrate that
+
+438
+00:21:36,100 --> 00:21:41,140
+but what you'll see in the program this
+
+439
+00:21:38,230 --> 00:21:43,539
+is in the inner loop and we'd look
+
+440
+00:21:41,140 --> 00:21:46,120
+briefly at some floating-point
+
+441
+00:21:43,539 --> 00:21:49,059
+instructions and remember that the main
+
+442
+00:21:46,120 --> 00:21:50,530
+feature of them is the move instructions
+
+443
+00:21:49,059 --> 00:21:53,080
+look like the move ones you're familiar
+
+444
+00:21:50,530 --> 00:21:55,150
+with except when we we put
+
+445
+00:21:53,080 --> 00:21:58,780
+floating-point data in one of these xmm
+
+446
+00:21:55,150 --> 00:22:03,610
+registers so the main thing you see here
+
+447
+00:21:58,780 --> 00:22:05,500
+is it's reading from memory it's adding
+
+448
+00:22:03,610 --> 00:22:08,140
+something to it and then it's writing
+
+449
+00:22:05,500 --> 00:22:12,580
+back to memory and what that memory
+
+450
+00:22:08,140 --> 00:22:14,500
+location corresponds to B of I so what
+
+451
+00:22:12,580 --> 00:22:16,480
+it means is every time through this loop
+
+452
+00:22:14,500 --> 00:22:19,990
+it's having to do a memory read and a
+
+453
+00:22:16,480 --> 00:22:23,620
+memory write of B in addition to the
+
+454
+00:22:19,990 --> 00:22:27,700
+memory read of a even though presumably
+
+455
+00:22:23,620 --> 00:22:31,600
+B of AI is the same of value that you
+
+456
+00:22:27,700 --> 00:22:34,240
+just updated it to out in the previous
+
+457
+00:22:31,600 --> 00:22:36,159
+execution of this loop right so why do
+
+458
+00:22:34,240 --> 00:22:38,260
+you have to why do you read it why do
+
+459
+00:22:36,159 --> 00:22:41,110
+you write it out and then read it back
+
+460
+00:22:38,260 --> 00:22:43,000
+in increment it and then again copy it
+
+461
+00:22:41,110 --> 00:22:44,860
+back out why does it have to go keep
+
+462
+00:22:43,000 --> 00:22:48,450
+jumping back and forth between memory
+
+463
+00:22:44,860 --> 00:22:52,120
+and registers over and over again
+
+464
+00:22:48,450 --> 00:22:54,610
+well the reason is because in C you
+
+465
+00:22:52,120 --> 00:22:57,039
+can't be sure that there isn't what's
+
+466
+00:22:54,610 --> 00:23:01,330
+known as aliasing and I'm demonstrating
+
+467
+00:22:57,039 --> 00:23:07,600
+it here imagine if row B is just
+
+468
+00:23:01,330 --> 00:23:09,640
+declared to be that ok so imagine and
+
+469
+00:23:07,600 --> 00:23:13,659
+you can do this in C this is legal C
+
+470
+00:23:09,640 --> 00:23:16,059
+code you can make one memory data
+
+471
+00:23:13,659 --> 00:23:19,169
+structure overlay another data structure
+
+472
+00:23:16,059 --> 00:23:22,090
+that's referred to as aliasing when two
+
+473
+00:23:19,169 --> 00:23:24,039
+separate parts of the program are
+
+474
+00:23:22,090 --> 00:23:26,530
+referring to the same locations in
+
+475
+00:23:24,039 --> 00:23:31,450
+memory and the C compiler has no way of
+
+476
+00:23:26,530 --> 00:23:33,340
+knowing whether there's a lot of work
+
+477
+00:23:31,450 --> 00:23:36,580
+and optimizing compilers to detect
+
+478
+00:23:33,340 --> 00:23:38,890
+racing possibilities but in general as
+
+479
+00:23:36,580 --> 00:23:41,549
+to assume aliasing might happen so
+
+480
+00:23:38,890 --> 00:23:45,880
+imagine this aliasing happened so that
+
+481
+00:23:41,549 --> 00:23:48,730
+array B can correspond to them to this
+
+482
+00:23:45,880 --> 00:23:51,890
+row of array a
+
+483
+00:23:48,730 --> 00:23:53,630
+well then of course its initial value is
+
+484
+00:23:51,890 --> 00:23:55,880
+four eight sixteen but if you trace
+
+485
+00:23:53,630 --> 00:23:58,430
+through what this code will do it has a
+
+486
+00:23:55,880 --> 00:24:02,000
+sort of odd behavior that is probably
+
+487
+00:23:58,430 --> 00:24:05,800
+not useful for anything but it just
+
+488
+00:24:02,000 --> 00:24:10,430
+demonstrates that what will happen is as
+
+489
+00:24:05,800 --> 00:24:13,160
+this as B gets updated it's effectively
+
+490
+00:24:10,430 --> 00:24:18,590
+changing a and it's changing then what's
+
+491
+00:24:13,160 --> 00:24:22,190
+being read during the summation and so
+
+492
+00:24:18,590 --> 00:24:24,140
+this is a real possibility in C and so
+
+493
+00:24:22,190 --> 00:24:28,610
+the compiler when it's given code like
+
+494
+00:24:24,140 --> 00:24:31,460
+this it has to assume that the these two
+
+495
+00:24:28,610 --> 00:24:33,550
+memory locations might court overlap
+
+496
+00:24:31,460 --> 00:24:36,380
+each other so that's why it's carefully
+
+497
+00:24:33,550 --> 00:24:41,420
+writing it out and then reading it back
+
+498
+00:24:36,380 --> 00:24:44,060
+in over and over again and so if I just
+
+499
+00:24:41,420 --> 00:24:47,270
+rewrite this code by introducing again a
+
+500
+00:24:44,060 --> 00:24:50,360
+local variable and accumulating in that
+
+501
+00:24:47,270 --> 00:24:53,870
+local variable and then only at the end
+
+502
+00:24:50,360 --> 00:24:56,120
+do I sign that to B sub I then you'll
+
+503
+00:24:53,870 --> 00:24:58,660
+see this exact same loop all of a sudden
+
+504
+00:24:56,120 --> 00:25:04,420
+gets a lot simpler it's just a read
+
+505
+00:24:58,660 --> 00:25:09,290
+floating point read an ad to do that and
+
+506
+00:25:04,420 --> 00:25:10,940
+we'll see in fact the memory is actually
+
+507
+00:25:09,290 --> 00:25:13,010
+one of the limiting of perform
+
+508
+00:25:10,940 --> 00:25:16,610
+performance limiters in a program so
+
+509
+00:25:13,010 --> 00:25:18,800
+this is will be significantly faster and
+
+510
+00:25:16,610 --> 00:25:21,620
+again that's something that you as a
+
+511
+00:25:18,800 --> 00:25:24,740
+programmer would hardly think is a big
+
+512
+00:25:21,620 --> 00:25:27,140
+deal but the C compiler can't do that in
+
+513
+00:25:24,740 --> 00:25:29,690
+general because it can't determine in
+
+514
+00:25:27,140 --> 00:25:31,840
+advance what possible aliasing there can
+
+515
+00:25:29,690 --> 00:25:31,840
+be
+
+516
+00:25:34,369 --> 00:25:40,320
+so these two examples say so to get in
+
+517
+00:25:38,519 --> 00:25:43,200
+the habit of introducing local variable
+
+518
+00:25:40,320 --> 00:25:46,259
+and using them and it's your way of
+
+519
+00:25:43,200 --> 00:25:48,119
+telling the compiler don't call the same
+
+520
+00:25:46,259 --> 00:25:50,009
+function over and over again don't read
+
+521
+00:25:48,119 --> 00:25:52,379
+and write the same memory location over
+
+522
+00:25:50,009 --> 00:25:54,179
+and over again just hold it in the
+
+523
+00:25:52,379 --> 00:25:55,979
+temporary one and then it will
+
+524
+00:25:54,179 --> 00:25:57,659
+automatically allocate a register and
+
+525
+00:25:55,979 --> 00:26:02,580
+store it in that register and everything
+
+526
+00:25:57,659 --> 00:26:07,589
+will be good okay so that's sort of the
+
+527
+00:26:02,580 --> 00:26:10,709
+the kind of what we call optimization
+
+528
+00:26:07,589 --> 00:26:12,450
+blockers the kind of things that you as
+
+529
+00:26:10,709 --> 00:26:14,099
+a programmer can make a difference on
+
+530
+00:26:12,450 --> 00:26:16,859
+and the main blockers are memory
+
+531
+00:26:14,099 --> 00:26:20,159
+referencing aliasing and function calls
+
+532
+00:26:16,859 --> 00:26:22,889
+and sort of understanding what might
+
+533
+00:26:20,159 --> 00:26:24,239
+happen in that function call and so now
+
+534
+00:26:22,889 --> 00:26:27,200
+what we're going to do is transition
+
+535
+00:26:24,239 --> 00:26:27,200
+questions
+
+536
+00:26:43,390 --> 00:26:55,220
+I think you make the distinction between
+
+537
+00:26:48,310 --> 00:27:00,710
+no no this is Alan C code I'm sure this
+
+538
+00:26:55,220 --> 00:27:04,610
+is LC code because it ran so this is
+
+539
+00:27:00,710 --> 00:27:06,890
+initializing calling it an array B
+
+540
+00:27:04,610 --> 00:27:11,720
+remember these are in stars these aren't
+
+541
+00:27:06,890 --> 00:27:16,520
+two-dimensional arrays right so this is
+
+542
+00:27:11,720 --> 00:27:19,160
+saying a is now a think of it as a
+
+543
+00:27:16,520 --> 00:27:23,960
+linear array of four elements of nine
+
+544
+00:27:19,160 --> 00:27:26,990
+elements and a plus three is just to go
+
+545
+00:27:23,960 --> 00:27:29,660
+in three so this is it is declaring B is
+
+546
+00:27:26,990 --> 00:27:32,300
+not a pointer it's an array but remember
+
+547
+00:27:29,660 --> 00:27:35,090
+with an array you can refuse that the
+
+548
+00:27:32,300 --> 00:27:37,100
+name of that array as a reference to a
+
+549
+00:27:35,090 --> 00:27:45,970
+pointer a readable reference not a
+
+550
+00:27:37,100 --> 00:28:07,220
+writable reference right right for this
+
+551
+00:27:45,970 --> 00:28:11,030
+well so the question is why does he use
+
+552
+00:28:07,220 --> 00:28:12,740
+null terminated strings and it it does
+
+553
+00:28:11,030 --> 00:28:15,560
+and it might be a bad decision for
+
+554
+00:28:12,740 --> 00:28:19,390
+multiple reasons right but I think in
+
+555
+00:28:15,560 --> 00:28:22,820
+general think of C was somebody who had
+
+556
+00:28:19,390 --> 00:28:25,970
+or a couple people who had been writing
+
+557
+00:28:22,820 --> 00:28:28,610
+a lot of assembly code and wanted to
+
+558
+00:28:25,970 --> 00:28:30,080
+lift up that level so they weren't
+
+559
+00:28:28,610 --> 00:28:33,740
+writing the same stuff over and over
+
+560
+00:28:30,080 --> 00:28:36,050
+again but not thinking in terms of how
+
+561
+00:28:33,740 --> 00:28:37,760
+can I be the most abstract possible so
+
+562
+00:28:36,050 --> 00:28:40,580
+they were trying to provide sort of a
+
+563
+00:28:37,760 --> 00:28:42,770
+minimum layer on top of machine level
+
+564
+00:28:40,580 --> 00:28:44,360
+programming that would let them write
+
+565
+00:28:42,770 --> 00:28:46,610
+code that could run from one machine to
+
+566
+00:28:44,360 --> 00:28:48,140
+another so in everything they do they
+
+567
+00:28:46,610 --> 00:28:50,960
+sort of use the most simple
+
+568
+00:28:48,140 --> 00:28:54,200
+representation and don't assume any kind
+
+569
+00:28:50,960 --> 00:28:55,620
+of there's no array of you know most
+
+570
+00:28:54,200 --> 00:28:59,130
+languages
+
+571
+00:28:55,620 --> 00:29:01,740
+would have array bounds checking and
+
+572
+00:28:59,130 --> 00:29:04,800
+array would be a data structure that
+
+573
+00:29:01,740 --> 00:29:07,440
+would include its size you know range of
+
+574
+00:29:04,800 --> 00:29:09,030
+values and stuff and see just doesn't so
+
+575
+00:29:07,440 --> 00:29:12,420
+everything about see is suit at the
+
+576
+00:29:09,030 --> 00:29:21,720
+minimum and you know it's been around
+
+577
+00:29:12,420 --> 00:29:25,140
+for a 40 or something years so no Pascal
+
+578
+00:29:21,720 --> 00:29:27,810
+does not proceed see no as simply not
+
+579
+00:29:25,140 --> 00:29:30,510
+true Pascal was created as a language
+
+580
+00:29:27,810 --> 00:29:33,690
+for teaching by the SONA and Nicko
+
+581
+00:29:30,510 --> 00:29:35,640
+spirit and it was very much an
+
+582
+00:29:33,690 --> 00:29:39,270
+instructional language so it was really
+
+583
+00:29:35,640 --> 00:29:42,360
+designed to help students who needed
+
+584
+00:29:39,270 --> 00:29:46,890
+help and c was designed by professional
+
+585
+00:29:42,360 --> 00:29:49,740
+programmers to let them write their code
+
+586
+00:29:46,890 --> 00:29:51,810
+and not get in their way so they're very
+
+587
+00:29:49,740 --> 00:29:56,270
+different theory between the two
+
+588
+00:29:51,810 --> 00:29:56,270
+languages right yes
+
+589
+00:30:01,269 --> 00:30:14,389
+what's that I'm sorry F oh yes that's a
+
+590
+00:30:10,250 --> 00:30:16,340
+mistake there I'll double-check this or
+
+591
+00:30:14,389 --> 00:30:19,179
+people could check it I'm pretty sure
+
+592
+00:30:16,340 --> 00:30:22,850
+this code is okay too
+
+593
+00:30:19,179 --> 00:30:24,500
+if not you can certainly say double star
+
+594
+00:30:22,850 --> 00:30:37,899
+B equals a plus three and that would
+
+595
+00:30:24,500 --> 00:30:37,899
+work right question you think what
+
+596
+00:30:39,690 --> 00:30:46,930
+you think this is 28 well I'm not going
+
+597
+00:30:45,130 --> 00:30:48,880
+to try in hand execute it here but let's
+
+598
+00:30:46,930 --> 00:30:51,040
+check it you and I will check this code
+
+599
+00:30:48,880 --> 00:30:53,080
+out and we'll fix it if it needs to be
+
+600
+00:30:51,040 --> 00:31:03,250
+fixed okay thanks for pointing it out
+
+601
+00:30:53,080 --> 00:31:07,180
+yeah no that doesn't make any difference
+
+602
+00:31:03,250 --> 00:31:08,650
+at all in this code no know where it's
+
+603
+00:31:07,180 --> 00:31:11,950
+allocated makes no difference at all
+
+604
+00:31:08,650 --> 00:31:14,800
+here so I'll check that might have to be
+
+605
+00:31:11,950 --> 00:31:16,480
+double star B equals 8 plus 3 but I this
+
+606
+00:31:14,800 --> 00:31:22,470
+was a while ago that I wrote this code
+
+607
+00:31:16,480 --> 00:31:22,470
+out double check it though okay so
+
+608
+00:31:22,770 --> 00:31:33,040
+anyways that's the sort of end of the
+
+609
+00:31:25,210 --> 00:31:34,750
+story for for a simple simple optimist
+
+610
+00:31:33,040 --> 00:31:35,860
+and they are simple optimizations it's
+
+611
+00:31:34,750 --> 00:31:40,000
+just you have to give them a habit of
+
+612
+00:31:35,860 --> 00:31:42,010
+doing it okay now what we're going to do
+
+613
+00:31:40,000 --> 00:31:44,470
+is go a little bit fancier than this and
+
+614
+00:31:42,010 --> 00:31:46,420
+as I said this becomes somewhat more
+
+615
+00:31:44,470 --> 00:31:50,940
+system dependent but pretty much
+
+616
+00:31:46,420 --> 00:31:52,990
+nowadays all processors are have similar
+
+617
+00:31:50,940 --> 00:31:57,400
+implementation they all do what's known
+
+618
+00:31:52,990 --> 00:32:00,250
+as out of order execution except for the
+
+619
+00:31:57,400 --> 00:32:02,590
+most primitive microcontrollers and so
+
+620
+00:32:00,250 --> 00:32:07,000
+this is a kind of optimization oh so
+
+621
+00:32:02,590 --> 00:32:08,860
+you'll find well this general approach
+
+622
+00:32:07,000 --> 00:32:13,330
+will work across quite a variety of
+
+623
+00:32:08,860 --> 00:32:16,090
+machines so what I'm going to do is is
+
+624
+00:32:13,330 --> 00:32:18,100
+do this by a series of example starting
+
+625
+00:32:16,090 --> 00:32:19,840
+from some not very efficient code and
+
+626
+00:32:18,100 --> 00:32:25,480
+making it run faster and faster and
+
+627
+00:32:19,840 --> 00:32:29,170
+we'll get a speed-up of around 40 just
+
+628
+00:32:25,480 --> 00:32:31,600
+in doing what we're doing so it all
+
+629
+00:32:29,170 --> 00:32:33,790
+starts by saying well assume I have a
+
+630
+00:32:31,600 --> 00:32:37,720
+data structure that looks like the way
+
+631
+00:32:33,790 --> 00:32:39,810
+Pascal influenced arrays sorry I have
+
+632
+00:32:37,720 --> 00:32:42,450
+nothing against Pascal
+
+633
+00:32:39,810 --> 00:32:46,050
+we used to teach it back in the old days
+
+634
+00:32:42,450 --> 00:32:48,060
+but so a typical way you'd implement an
+
+635
+00:32:46,050 --> 00:32:51,000
+array in a language is you'd provide
+
+636
+00:32:48,060 --> 00:32:52,790
+both the values that are stored in that
+
+637
+00:32:51,000 --> 00:32:55,110
+array and then there'd be other
+
+638
+00:32:52,790 --> 00:32:59,700
+information associated with it for
+
+639
+00:32:55,110 --> 00:33:02,100
+example what size it is and so this is
+
+640
+00:32:59,700 --> 00:33:05,340
+sort of the sort of nice abstract way to
+
+641
+00:33:02,100 --> 00:33:08,730
+do it and you write code that makes sure
+
+642
+00:33:05,340 --> 00:33:12,330
+that if you ever try to exceed the
+
+643
+00:33:08,730 --> 00:33:14,160
+bounds on the array you'd return an
+
+644
+00:33:12,330 --> 00:33:21,150
+error signal and so this particular
+
+645
+00:33:14,160 --> 00:33:23,160
+function you're seeing is what I want to
+
+646
+00:33:21,150 --> 00:33:25,880
+retrieve an element I passed an appoint
+
+647
+00:33:23,160 --> 00:33:29,520
+and then that value the pointer gets
+
+648
+00:33:25,880 --> 00:33:32,130
+used to retrieve the value from the
+
+649
+00:33:29,520 --> 00:33:34,560
+array and the return value of this
+
+650
+00:33:32,130 --> 00:33:37,050
+function is then to 0 or 1 0 meaning
+
+651
+00:33:34,560 --> 00:33:39,450
+failure in one meaning success and I'm
+
+652
+00:33:37,050 --> 00:33:41,940
+writing it this way that I use a data
+
+653
+00:33:39,450 --> 00:33:44,340
+type I'll call data underscore T and
+
+654
+00:33:41,940 --> 00:33:46,980
+that way I can run this I can compile
+
+655
+00:33:44,340 --> 00:33:49,710
+this code using different definitions of
+
+656
+00:33:46,980 --> 00:33:51,870
+data underscore T to get in long floats
+
+657
+00:33:49,710 --> 00:33:53,550
+and doubles and we'll see how the
+
+658
+00:33:51,870 --> 00:33:59,760
+performance characteristics are those
+
+659
+00:33:53,550 --> 00:34:01,740
+shift with the different data types and
+
+660
+00:33:59,760 --> 00:34:06,500
+the benchmark I'm going to use is a
+
+661
+00:34:01,740 --> 00:34:09,780
+fairly simple one it's just to for a an
+
+662
+00:34:06,500 --> 00:34:12,690
+array or one of these vectors
+
+663
+00:34:09,780 --> 00:34:15,330
+I just want to combine all the elements
+
+664
+00:34:12,690 --> 00:34:17,460
+of it either compute their sum or their
+
+665
+00:34:15,330 --> 00:34:21,480
+product and again I'm going to use
+
+666
+00:34:17,460 --> 00:34:24,600
+macros here ident and up and define
+
+667
+00:34:21,480 --> 00:34:28,370
+those so that op is addition and the
+
+668
+00:34:24,600 --> 00:34:30,360
+identity value is 0 where I the OP is
+
+669
+00:34:28,370 --> 00:34:33,210
+multiplication and the identity element
+
+670
+00:34:30,360 --> 00:34:35,970
+is 1 so that I can compare addition and
+
+671
+00:34:33,210 --> 00:34:38,070
+multiplications so that gives us sort of
+
+672
+00:34:35,970 --> 00:34:40,960
+eight possibilities here two different
+
+673
+00:34:38,070 --> 00:34:44,030
+operations in four different data types
+
+674
+00:34:40,960 --> 00:34:46,070
+and so this is written in the sort of
+
+675
+00:34:44,030 --> 00:34:47,899
+most straightforward manner that I'm
+
+676
+00:34:46,070 --> 00:34:50,570
+using this function called get BEC
+
+677
+00:34:47,899 --> 00:34:54,800
+element to retrieve the successive
+
+678
+00:34:50,570 --> 00:35:00,400
+values of this array and then performing
+
+679
+00:34:54,800 --> 00:35:03,830
+its operation on it so now to express a
+
+680
+00:35:00,400 --> 00:35:07,550
+performance of this we're going to use a
+
+681
+00:35:03,830 --> 00:35:11,360
+metric I introduced called CPE which
+
+682
+00:35:07,550 --> 00:35:13,430
+stands for cycles per element and the
+
+683
+00:35:11,360 --> 00:35:15,200
+idea is that usually when you write code
+
+684
+00:35:13,430 --> 00:35:17,270
+that say steps through effect anything
+
+685
+00:35:15,200 --> 00:35:20,210
+that has sort of some linear performance
+
+686
+00:35:17,270 --> 00:35:24,400
+as you get bigger you don't really want
+
+687
+00:35:20,210 --> 00:35:27,320
+to know for exactly it takes this many
+
+688
+00:35:24,400 --> 00:35:30,230
+seconds or microseconds or nanoseconds
+
+689
+00:35:27,320 --> 00:35:32,090
+to do an operation you kind of want to
+
+690
+00:35:30,230 --> 00:35:36,020
+know often more what's its overall
+
+691
+00:35:32,090 --> 00:35:37,580
+performance characteristics and also it
+
+692
+00:35:36,020 --> 00:35:39,770
+turns out when you're doing low-level
+
+693
+00:35:37,580 --> 00:35:42,980
+code optimization it's much more useful
+
+694
+00:35:39,770 --> 00:35:45,650
+to think in terms of clock cycles of the
+
+695
+00:35:42,980 --> 00:35:48,200
+inner clock of the processor rather than
+
+696
+00:35:45,650 --> 00:35:50,210
+an absolute term such as nanoseconds
+
+697
+00:35:48,200 --> 00:35:53,410
+because whether a processor is running
+
+698
+00:35:50,210 --> 00:35:56,330
+at two gigahertz through 2.3 gigahertz I
+
+699
+00:35:53,410 --> 00:35:59,870
+don't really I have no control over that
+
+700
+00:35:56,330 --> 00:36:02,210
+as a programmer but I can control sort
+
+701
+00:35:59,870 --> 00:36:03,740
+of it the low-level how many clock
+
+702
+00:36:02,210 --> 00:36:07,760
+cycles are being used for different
+
+703
+00:36:03,740 --> 00:36:09,860
+parts of the computation so that's why
+
+704
+00:36:07,760 --> 00:36:12,620
+it's called cycles per element and you
+
+705
+00:36:09,860 --> 00:36:15,320
+can think of it as and this shows some
+
+706
+00:36:12,620 --> 00:36:18,770
+actual measurements that typically a
+
+707
+00:36:15,320 --> 00:36:22,220
+function like this get what I showed the
+
+708
+00:36:18,770 --> 00:36:24,230
+combined will have some overhead a fixed
+
+709
+00:36:22,220 --> 00:36:26,570
+amount that's associated with setting up
+
+710
+00:36:24,230 --> 00:36:28,940
+the loop doing the top level call and
+
+711
+00:36:26,570 --> 00:36:32,150
+all that stuff and then some components
+
+712
+00:36:28,940 --> 00:36:34,280
+that's linear in the size and so what I
+
+713
+00:36:32,150 --> 00:36:39,080
+want to know is the scope of that linear
+
+714
+00:36:34,280 --> 00:36:41,150
+components I'll and that will determine
+
+715
+00:36:39,080 --> 00:36:42,770
+that's what I'll call the cycles per
+
+716
+00:36:41,150 --> 00:36:46,670
+element you can think of the scope is
+
+717
+00:36:42,770 --> 00:36:49,960
+the sort of incremental cost of adding
+
+718
+00:36:46,670 --> 00:36:49,960
+one more element to the array
+
+719
+00:36:53,430 --> 00:36:59,559
+so now if I run this function I showed
+
+720
+00:36:57,490 --> 00:37:01,900
+you and I'm only showing I'll mostly
+
+721
+00:36:59,559 --> 00:37:06,520
+only show four results because it turns
+
+722
+00:37:01,900 --> 00:37:09,579
+out whether it's int or long or float or
+
+723
+00:37:06,520 --> 00:37:11,619
+double is not going to actually have any
+
+724
+00:37:09,579 --> 00:37:14,650
+effect on performance for most of the
+
+725
+00:37:11,619 --> 00:37:16,300
+cases so if I just run this code through
+
+726
+00:37:14,650 --> 00:37:18,700
+a compiler and don't do any
+
+727
+00:37:16,300 --> 00:37:20,859
+optimizations it takes around 20 cycles
+
+728
+00:37:18,700 --> 00:37:23,890
+per element and if I turn on
+
+729
+00:37:20,859 --> 00:37:26,950
+optimization level 1 which is sort of
+
+730
+00:37:23,890 --> 00:37:29,770
+the first serious optimization it takes
+
+731
+00:37:26,950 --> 00:37:32,530
+the time in half so I'm down to 10 clock
+
+732
+00:37:29,770 --> 00:37:34,960
+cycles per element just by changing the
+
+733
+00:37:32,530 --> 00:37:38,970
+compilation and that jeezum the most
+
+734
+00:37:34,960 --> 00:37:43,630
+unoptimized code I could think of here
+
+735
+00:37:38,970 --> 00:37:47,109
+and then I won't go through it all but
+
+736
+00:37:43,630 --> 00:37:49,540
+using sort of the kind of things I
+
+737
+00:37:47,109 --> 00:37:52,720
+described earlier of sort of cut away
+
+738
+00:37:49,540 --> 00:37:55,059
+some of the redundancy in this program
+
+739
+00:37:52,720 --> 00:37:56,950
+you can get it down to something a
+
+740
+00:37:55,059 --> 00:37:58,869
+little bit simpler and so one thing
+
+741
+00:37:56,950 --> 00:38:01,720
+instead of you saw before I was making a
+
+742
+00:37:58,869 --> 00:38:03,640
+call to this get deck element and every
+
+743
+00:38:01,720 --> 00:38:06,069
+time it did that it went bounds checking
+
+744
+00:38:03,640 --> 00:38:07,900
+and it's kind of silly to keep bounds
+
+745
+00:38:06,069 --> 00:38:11,200
+checking the same array over and over
+
+746
+00:38:07,900 --> 00:38:14,230
+again when I'm stepping I'm using its
+
+747
+00:38:11,200 --> 00:38:16,869
+length as the determinate of how many
+
+748
+00:38:14,230 --> 00:38:19,510
+elements to access so if I'm willing to
+
+749
+00:38:16,869 --> 00:38:21,640
+to to forgo balanced checking what I can
+
+750
+00:38:19,510 --> 00:38:24,700
+do is introduce a function that will
+
+751
+00:38:21,640 --> 00:38:27,309
+just give me the actual data storage
+
+752
+00:38:24,700 --> 00:38:30,190
+part of this vector and skip over all
+
+753
+00:38:27,309 --> 00:38:33,250
+the other stuff and so I can write a
+
+754
+00:38:30,190 --> 00:38:34,930
+loop it and I introduce you know local
+
+755
+00:38:33,250 --> 00:38:40,450
+variables and all the kind of things we
+
+756
+00:38:34,930 --> 00:38:44,200
+described and accumulate in temporaries
+
+757
+00:38:40,450 --> 00:38:46,839
+and things like that then the program
+
+758
+00:38:44,200 --> 00:38:48,490
+actually gets a lot faster again with
+
+759
+00:38:46,839 --> 00:38:51,339
+this is everything from here out is
+
+760
+00:38:48,490 --> 00:38:53,410
+optimization level 1 and so it drops it
+
+761
+00:38:51,339 --> 00:38:58,359
+down to a little over a clock cycle for
+
+762
+00:38:53,410 --> 00:39:00,369
+integers addition of or three clock
+
+763
+00:38:58,359 --> 00:39:02,080
+cycles up to 5 clock cycles through
+
+764
+00:39:00,369 --> 00:39:04,230
+double precision multiplier
+
+765
+00:39:02,080 --> 00:39:07,000
+so that's pretty good I've sort of
+
+766
+00:39:04,230 --> 00:39:09,370
+definitely improved things but the
+
+767
+00:39:07,000 --> 00:39:09,520
+question is well is that the best there
+
+768
+00:39:09,370 --> 00:39:12,310
+is
+
+769
+00:39:09,520 --> 00:39:15,550
+and first and also try to understand
+
+770
+00:39:12,310 --> 00:39:18,580
+what is it about these numbers 3 5 and
+
+771
+00:39:15,550 --> 00:39:21,270
+this seems to be something close to 1.25
+
+772
+00:39:18,580 --> 00:39:24,040
+so where those numbers coming from and
+
+773
+00:39:21,270 --> 00:39:28,870
+does that indicate some fundamental
+
+774
+00:39:24,040 --> 00:39:30,700
+limitation in my program well in order
+
+775
+00:39:28,870 --> 00:39:32,080
+to do that you have to have some
+
+776
+00:39:30,700 --> 00:39:34,510
+understanding of the underlying hardware
+
+777
+00:39:32,080 --> 00:39:39,970
+and there's a really good course you can
+
+778
+00:39:34,510 --> 00:39:41,350
+take I think it's called ECE 741 so it
+
+779
+00:39:39,970 --> 00:39:43,390
+will tell you everything you ever could
+
+780
+00:39:41,350 --> 00:39:46,180
+imagine wanting to know about processor
+
+781
+00:39:43,390 --> 00:39:48,640
+design and you actually design
+
+782
+00:39:46,180 --> 00:39:50,140
+processors like this but I'm assuming
+
+783
+00:39:48,640 --> 00:39:51,190
+you're not going to do that for a while
+
+784
+00:39:50,140 --> 00:39:54,840
+because if you have about seven
+
+785
+00:39:51,190 --> 00:39:58,630
+prerequisites to do before that happen
+
+786
+00:39:54,840 --> 00:40:01,720
+so let me just give you the simple
+
+787
+00:39:58,630 --> 00:40:03,520
+version and Vincents sort of a an idea
+
+788
+00:40:01,720 --> 00:40:07,030
+of what a processor has looked like
+
+789
+00:40:03,520 --> 00:40:11,620
+since about 1995 so this is old stuff
+
+790
+00:40:07,030 --> 00:40:13,570
+but it's enough actually to really
+
+791
+00:40:11,620 --> 00:40:17,590
+understand it it's so hard it's really
+
+792
+00:40:13,570 --> 00:40:20,290
+the details are pretty massive and so
+
+793
+00:40:17,590 --> 00:40:23,320
+it's not even taught for example 447 is
+
+794
+00:40:20,290 --> 00:40:24,730
+the ECE is the computer architecture
+
+795
+00:40:23,320 --> 00:40:27,160
+course and they don't really go into
+
+796
+00:40:24,730 --> 00:40:28,330
+this kind of design here because they're
+
+797
+00:40:27,160 --> 00:40:31,510
+pretty hard they're actually hard to
+
+798
+00:40:28,330 --> 00:40:35,590
+design on your own but the basic idea is
+
+799
+00:40:31,510 --> 00:40:37,600
+you think about a program as is the
+
+800
+00:40:35,590 --> 00:40:40,960
+computer just reads in an instruction
+
+801
+00:40:37,600 --> 00:40:42,940
+does whatever it says to do reads in
+
+802
+00:40:40,960 --> 00:40:45,280
+another instruction does what that says
+
+803
+00:40:42,940 --> 00:40:47,590
+to do and that has nothing to do with
+
+804
+00:40:45,280 --> 00:40:49,240
+how programs actually execute what
+
+805
+00:40:47,590 --> 00:40:51,580
+they've built up is this massive
+
+806
+00:40:49,240 --> 00:40:55,360
+hardware infrastructure to make a
+
+807
+00:40:51,580 --> 00:40:57,130
+program run way faster than it would if
+
+808
+00:40:55,360 --> 00:41:00,310
+it were just doing one instruction at a
+
+809
+00:40:57,130 --> 00:41:02,110
+time and it employs a technique that's
+
+810
+00:41:00,310 --> 00:41:05,290
+called superscalar out of order
+
+811
+00:41:02,110 --> 00:41:07,600
+execution and the idea is roughly
+
+812
+00:41:05,290 --> 00:41:09,010
+speaking it it takes your program if you
+
+813
+00:41:07,600 --> 00:41:11,740
+think of your program as a linear
+
+814
+00:41:09,010 --> 00:41:14,289
+sequence of instructions and it just
+
+815
+00:41:11,740 --> 00:41:16,569
+sucks in as many of those as it can
+
+816
+00:41:14,289 --> 00:41:19,809
+and it pulls it apart to realize that
+
+817
+00:41:16,569 --> 00:41:21,910
+certain operations don't really depend
+
+818
+00:41:19,809 --> 00:41:23,619
+on each other so I can start one even
+
+819
+00:41:21,910 --> 00:41:25,479
+though later in the program
+
+820
+00:41:23,619 --> 00:41:26,829
+then the one I'm working on right now
+
+821
+00:41:25,479 --> 00:41:29,410
+because they're independent of each
+
+822
+00:41:26,829 --> 00:41:31,660
+other and it's extracting what they call
+
+823
+00:41:29,410 --> 00:41:34,119
+instruction level parallelism places
+
+824
+00:41:31,660 --> 00:41:37,509
+where even though your program is a
+
+825
+00:41:34,119 --> 00:41:40,660
+linear sequence of instruction buried in
+
+826
+00:41:37,509 --> 00:41:42,640
+there is actually a sort of forest of
+
+827
+00:41:40,660 --> 00:41:45,160
+different computations that need to be
+
+828
+00:41:42,640 --> 00:41:48,369
+done some which depend on each other and
+
+829
+00:41:45,160 --> 00:41:51,910
+some which don't and then it has a bunch
+
+830
+00:41:48,369 --> 00:41:56,739
+of hardware and so that's up here this
+
+831
+00:41:51,910 --> 00:41:59,769
+upper part shows this idea of fetching
+
+832
+00:41:56,739 --> 00:42:02,549
+instruction so there's a cache memory a
+
+833
+00:41:59,769 --> 00:42:04,869
+high performance high speed local memory
+
+834
+00:42:02,549 --> 00:42:07,900
+that is just pulling in your
+
+835
+00:42:04,869 --> 00:42:10,630
+instructions as fast as it can and those
+
+836
+00:42:07,900 --> 00:42:13,779
+instructions are then feeding a big pile
+
+837
+00:42:10,630 --> 00:42:16,809
+of hardware that will extract out of it
+
+838
+00:42:13,779 --> 00:42:18,869
+these low-level operations and figure
+
+839
+00:42:16,809 --> 00:42:23,909
+out which ones depend on which others
+
+840
+00:42:18,869 --> 00:42:26,859
+and then the there is a set of
+
+841
+00:42:23,909 --> 00:42:28,569
+functional units in this part of it that
+
+842
+00:42:26,859 --> 00:42:31,529
+are able to perform these low-level
+
+843
+00:42:28,569 --> 00:42:35,679
+operations to do arithmetic
+
+844
+00:42:31,529 --> 00:42:38,739
+floating-point operations to read data
+
+845
+00:42:35,679 --> 00:42:41,079
+from memory to store data back to memory
+
+846
+00:42:38,739 --> 00:42:43,109
+all using a cache which is something
+
+847
+00:42:41,079 --> 00:42:46,269
+you're going to learn about fairly soon
+
+848
+00:42:43,109 --> 00:42:48,999
+out what all this cache is but think of
+
+849
+00:42:46,269 --> 00:42:54,789
+this as a high speed copy of some of the
+
+850
+00:42:48,999 --> 00:42:58,979
+data memory and um and so what this this
+
+851
+00:42:54,789 --> 00:43:01,569
+logic tries to do is keep up forking out
+
+852
+00:42:58,979 --> 00:43:04,569
+spawning off operations based on your
+
+853
+00:43:01,569 --> 00:43:07,029
+program and keeping these as busy as
+
+854
+00:43:04,569 --> 00:43:08,829
+they can be doing different fragments of
+
+855
+00:43:07,029 --> 00:43:12,099
+your code doing different instructions
+
+856
+00:43:08,829 --> 00:43:15,059
+in a different order from before and it
+
+857
+00:43:12,099 --> 00:43:18,429
+turns out you think of a register as a
+
+858
+00:43:15,059 --> 00:43:21,309
+little the set of registers is a part of
+
+859
+00:43:18,429 --> 00:43:24,009
+memory that gets read and written it
+
+860
+00:43:21,309 --> 00:43:26,000
+turns out that in executing a register
+
+861
+00:43:24,009 --> 00:43:27,770
+now just becomes the name
+
+862
+00:43:26,000 --> 00:43:29,810
+of something that one instruction
+
+863
+00:43:27,770 --> 00:43:32,090
+produces and some other instructions
+
+864
+00:43:29,810 --> 00:43:35,420
+consume it's the destination for some
+
+865
+00:43:32,090 --> 00:43:38,360
+it's the source for others and this
+
+866
+00:43:35,420 --> 00:43:41,150
+whole a bunch of stuff here just sort of
+
+867
+00:43:38,360 --> 00:43:44,150
+magically passes the results of one
+
+868
+00:43:41,150 --> 00:43:46,730
+computation to the input to another
+
+869
+00:43:44,150 --> 00:43:48,850
+computation based on register names
+
+870
+00:43:46,730 --> 00:43:51,410
+without ever storing them in the and a
+
+871
+00:43:48,850 --> 00:43:54,080
+explicit register file there is a
+
+872
+00:43:51,410 --> 00:43:57,080
+register file when things kind of settle
+
+873
+00:43:54,080 --> 00:43:59,540
+down they get stored away anyways
+
+874
+00:43:57,080 --> 00:44:02,030
+there's a lot of stuff going on here but
+
+875
+00:43:59,540 --> 00:44:05,060
+the main thing to think about is your
+
+876
+00:44:02,030 --> 00:44:08,090
+machine has resources to do multiple
+
+877
+00:44:05,060 --> 00:44:11,750
+operations all at the same time if you
+
+878
+00:44:08,090 --> 00:44:16,910
+can somehow structure your program so
+
+879
+00:44:11,750 --> 00:44:18,980
+that those can all get used so this is
+
+880
+00:44:16,910 --> 00:44:21,350
+as I mentioned it's called a superscalar
+
+881
+00:44:18,980 --> 00:44:23,090
+instruct processor is one that can do
+
+882
+00:44:21,350 --> 00:44:29,810
+more than one instruction every clock
+
+883
+00:44:23,090 --> 00:44:31,610
+cycle and actually Intel's started in 93
+
+884
+00:44:29,810 --> 00:44:34,190
+the very first pentium could do two
+
+885
+00:44:31,610 --> 00:44:35,720
+instructions at once but then a little
+
+886
+00:44:34,190 --> 00:44:38,120
+later they came out with one called the
+
+887
+00:44:35,720 --> 00:44:40,730
+Pentium Pro which is sort of the basis
+
+888
+00:44:38,120 --> 00:44:44,290
+of all modern processors and the lead
+
+889
+00:44:40,730 --> 00:44:48,740
+architect by the way was a CMU graduate
+
+890
+00:44:44,290 --> 00:44:53,210
+but this out order execution is the
+
+891
+00:44:48,740 --> 00:44:55,520
+model that's used nowadays so the other
+
+892
+00:44:53,210 --> 00:44:58,370
+thing is those functional units are more
+
+893
+00:44:55,520 --> 00:45:00,200
+complex than you think they might be in
+
+894
+00:44:58,370 --> 00:45:03,590
+that they have what's called pipelining
+
+895
+00:45:00,200 --> 00:45:05,420
+and the ideas of pipelining is imagine
+
+896
+00:45:03,590 --> 00:45:09,920
+you can break up a computation into a
+
+897
+00:45:05,420 --> 00:45:11,720
+series of distinct stages a simple
+
+898
+00:45:09,920 --> 00:45:14,840
+example is if you want to compute a
+
+899
+00:45:11,720 --> 00:45:17,570
+times B plus C you first do the times
+
+900
+00:45:14,840 --> 00:45:19,430
+and then you do the plus but it actually
+
+901
+00:45:17,570 --> 00:45:22,910
+gets more than that you can take
+
+902
+00:45:19,430 --> 00:45:27,050
+something like multiplication and break
+
+903
+00:45:22,910 --> 00:45:29,870
+it up into smaller steps that can be
+
+904
+00:45:27,050 --> 00:45:31,490
+done one after the other in a way that
+
+905
+00:45:29,870 --> 00:45:33,290
+and then if you have a separate
+
+906
+00:45:31,490 --> 00:45:35,780
+dedicated Hardware for each of those
+
+907
+00:45:33,290 --> 00:45:39,020
+stages then you can do it called
+
+908
+00:45:35,780 --> 00:45:39,840
+pipelining which is when one operation
+
+909
+00:45:39,020 --> 00:45:42,180
+moves from one
+
+910
+00:45:39,840 --> 00:45:44,640
+the stage to the next a new operation
+
+911
+00:45:42,180 --> 00:45:48,720
+can come in behind and start started
+
+912
+00:45:44,640 --> 00:45:51,540
+thing so this example shows imagine I
+
+913
+00:45:48,720 --> 00:45:54,450
+had a three stage pipeline multiplier
+
+914
+00:45:51,540 --> 00:45:58,740
+and I want to do this computation a
+
+915
+00:45:54,450 --> 00:46:01,980
+times B a times C and now multiply those
+
+916
+00:45:58,740 --> 00:46:04,890
+together so the thing to observe is that
+
+917
+00:46:01,980 --> 00:46:07,710
+a times B and a times C don't depend on
+
+918
+00:46:04,890 --> 00:46:09,870
+each other in any way so I can do them
+
+919
+00:46:07,710 --> 00:46:12,840
+both and I don't have hardware to do
+
+920
+00:46:09,870 --> 00:46:15,110
+them simultaneously but I have them
+
+921
+00:46:12,840 --> 00:46:18,840
+enough to do one right after the other
+
+922
+00:46:15,110 --> 00:46:22,650
+so I can feed the first computation into
+
+923
+00:46:18,840 --> 00:46:25,410
+the first stage a times B on step times
+
+924
+00:46:22,650 --> 00:46:27,390
+step one and then times step two it will
+
+925
+00:46:25,410 --> 00:46:32,820
+move on to stage two and times step
+
+926
+00:46:27,390 --> 00:46:36,240
+three it will move on to stage three but
+
+927
+00:46:32,820 --> 00:46:39,690
+now I can start a times C in the time
+
+928
+00:46:36,240 --> 00:46:43,110
+step two because this stage became
+
+929
+00:46:39,690 --> 00:46:45,840
+available once a times B moved from
+
+930
+00:46:43,110 --> 00:46:49,170
+stage one to stage two and so I can
+
+931
+00:46:45,840 --> 00:46:53,970
+follow right behind just one clock cycle
+
+932
+00:46:49,170 --> 00:46:57,030
+behind this other operation now P times
+
+933
+00:46:53,970 --> 00:46:59,910
+one times p2 obviously depends on both
+
+934
+00:46:57,030 --> 00:47:03,960
+of these products so it can't start
+
+935
+00:46:59,910 --> 00:47:05,970
+until a times C is completed and then it
+
+936
+00:47:03,960 --> 00:47:07,320
+will run through the pipeline without
+
+937
+00:47:05,970 --> 00:47:10,290
+anything else
+
+938
+00:47:07,320 --> 00:47:14,060
+so overall then we've done what would
+
+939
+00:47:10,290 --> 00:47:18,990
+normally seem to be nine steps worth of
+
+940
+00:47:14,060 --> 00:47:23,120
+arithmetic in a total of seven steps
+
+941
+00:47:18,990 --> 00:47:23,120
+here because of pipelining question
+
+942
+00:47:26,590 --> 00:47:33,680
+with it if he had like in this is a
+
+943
+00:47:30,320 --> 00:47:34,940
+picture here if there were different
+
+944
+00:47:33,680 --> 00:47:38,390
+multipliers in these different places
+
+945
+00:47:34,940 --> 00:47:49,280
+yes you could do those two completely
+
+946
+00:47:38,390 --> 00:47:50,810
+independent of each other yes this is
+
+947
+00:47:49,280 --> 00:47:53,870
+all in a single core of a single
+
+948
+00:47:50,810 --> 00:47:55,820
+processor multi-core is yet another this
+
+949
+00:47:53,870 --> 00:47:58,910
+is a lower level parallelism than you
+
+950
+00:47:55,820 --> 00:48:01,490
+get through multi-core and it's present
+
+951
+00:47:58,910 --> 00:48:03,230
+except in the sort of lowest end lowest
+
+952
+00:48:01,490 --> 00:48:05,690
+power and embedded processors some
+
+953
+00:48:03,230 --> 00:48:07,160
+version of this exists and most of the
+
+954
+00:48:05,690 --> 00:48:08,570
+time your hardware is not being fully
+
+955
+00:48:07,160 --> 00:48:13,040
+utilized it's one thing you're going to
+
+956
+00:48:08,570 --> 00:48:15,560
+learn from this so that's the idea
+
+957
+00:48:13,040 --> 00:48:17,840
+pipelining it it's a sort of like
+
+958
+00:48:15,560 --> 00:48:20,120
+parallelism but it's not that you have
+
+959
+00:48:17,840 --> 00:48:23,950
+multiple copies of resources it's that
+
+960
+00:48:20,120 --> 00:48:26,750
+you have this ability to stream
+
+961
+00:48:23,950 --> 00:48:29,150
+operations through a single Hardware
+
+962
+00:48:26,750 --> 00:48:36,710
+resource in quotes exception to each
+
+963
+00:48:29,150 --> 00:48:39,020
+other and so as well which is a little
+
+964
+00:48:36,710 --> 00:48:42,860
+bit more recent than the sharp machines
+
+965
+00:48:39,020 --> 00:48:46,160
+but not that much more is one of the
+
+966
+00:48:42,860 --> 00:48:50,540
+most recent versions of the Intel x86
+
+967
+00:48:46,160 --> 00:48:53,870
+series and the functional units include
+
+968
+00:48:50,540 --> 00:48:56,570
+oh there's a lot of functional units
+
+969
+00:48:53,870 --> 00:48:58,250
+that can do different things but when
+
+970
+00:48:56,570 --> 00:49:02,840
+you add it all up there's a possibility
+
+971
+00:48:58,250 --> 00:49:04,790
+of it doing two loads in one store for
+
+972
+00:49:02,840 --> 00:49:07,460
+integer operations two floating-point
+
+973
+00:49:04,790 --> 00:49:10,670
+multiplies one addition and one division
+
+974
+00:49:07,460 --> 00:49:12,740
+of they can't all happen at the same
+
+975
+00:49:10,670 --> 00:49:14,780
+time because there's some are shared
+
+976
+00:49:12,740 --> 00:49:16,820
+functional units but the point is
+
+977
+00:49:14,780 --> 00:49:19,660
+there's really a lot of equipment there
+
+978
+00:49:16,820 --> 00:49:19,660
+that can do stuff
+
+979
+00:49:19,760 --> 00:49:26,869
+and also you can measure how an
+
+980
+00:49:23,839 --> 00:49:28,849
+instruction now has two characteristics
+
+981
+00:49:26,869 --> 00:49:31,339
+and operation is how long does it take
+
+982
+00:49:28,849 --> 00:49:34,790
+from beginning to end but also how
+
+983
+00:49:31,339 --> 00:49:37,640
+closely spaced can to interoperate be
+
+984
+00:49:34,790 --> 00:49:40,700
+because of this pipelining so you see
+
+985
+00:49:37,640 --> 00:49:43,369
+that most of them take some number of
+
+986
+00:49:40,700 --> 00:49:45,770
+clock cycles to perform but they're also
+
+987
+00:49:43,369 --> 00:49:49,099
+pipelines so that you can do a series of
+
+988
+00:49:45,770 --> 00:49:50,960
+them just one cycle apart the only
+
+989
+00:49:49,099 --> 00:49:54,079
+different ones that are tis you'll
+
+990
+00:49:50,960 --> 00:49:56,450
+notice the division is both very slow
+
+991
+00:49:54,079 --> 00:49:58,670
+and it's not pipelines and division is a
+
+992
+00:49:56,450 --> 00:50:06,230
+very expensive operation on most
+
+993
+00:49:58,670 --> 00:50:08,740
+machines relatively speaking so what I
+
+994
+00:50:06,230 --> 00:50:13,420
+claim then is is these these
+
+995
+00:50:08,740 --> 00:50:16,579
+characteristics then provide a limit on
+
+996
+00:50:13,420 --> 00:50:20,960
+how fast our program can run our
+
+997
+00:50:16,579 --> 00:50:22,730
+original program in that I have a series
+
+998
+00:50:20,960 --> 00:50:26,450
+of multiplications for example of
+
+999
+00:50:22,730 --> 00:50:30,589
+integers here and this shows the code
+
+1000
+00:50:26,450 --> 00:50:32,420
+for it and the result of I need the
+
+1001
+00:50:30,589 --> 00:50:35,059
+result of one multiplication before I
+
+1002
+00:50:32,420 --> 00:50:38,059
+can begin the next so there's a three
+
+1003
+00:50:35,059 --> 00:50:40,190
+clock cycle volunteer and you'll see
+
+1004
+00:50:38,059 --> 00:50:41,569
+that in fact my measurements all
+
+1005
+00:50:40,190 --> 00:50:44,119
+correspond to what I'm calling the
+
+1006
+00:50:41,569 --> 00:50:47,920
+latency bound of these machines which is
+
+1007
+00:50:44,119 --> 00:50:50,660
+just based on how much time it takes
+
+1008
+00:50:47,920 --> 00:50:53,960
+from a beginning of an operation to the
+
+1009
+00:50:50,660 --> 00:50:56,210
+end and the reason is we considered
+
+1010
+00:50:53,960 --> 00:50:59,450
+diagram the computation being done by
+
+1011
+00:50:56,210 --> 00:51:03,619
+this program that it's doing a series of
+
+1012
+00:50:59,450 --> 00:51:05,660
+multiplications and I require the result
+
+1013
+00:51:03,619 --> 00:51:07,940
+of one multiplication before I can start
+
+1014
+00:51:05,660 --> 00:51:12,380
+the next in general if you look at this
+
+1015
+00:51:07,940 --> 00:51:14,980
+loop code it has to compute ECX the
+
+1016
+00:51:12,380 --> 00:51:19,569
+updated value of it before it can now
+
+1017
+00:51:14,980 --> 00:51:22,250
+start the next one and so that's why
+
+1018
+00:51:19,569 --> 00:51:26,119
+even though this I have a pipeline
+
+1019
+00:51:22,250 --> 00:51:29,540
+multiplier my program itself limits me
+
+1020
+00:51:26,119 --> 00:51:31,990
+to the sequential execution of all the
+
+1021
+00:51:29,540 --> 00:51:31,990
+multiplies
+
+1022
+00:51:34,550 --> 00:51:41,340
+so let's see if we can't get beyond that
+
+1023
+00:51:38,190 --> 00:51:44,040
+bound that latency bound well there's a
+
+1024
+00:51:41,340 --> 00:51:45,510
+fairly common technique that you might
+
+1025
+00:51:44,040 --> 00:51:47,850
+have heard of before that's called loop
+
+1026
+00:51:45,510 --> 00:51:55,290
+unrolling and the idea of loop unrolling
+
+1027
+00:51:47,850 --> 00:51:58,260
+is just that you rather than executing
+
+1028
+00:51:55,290 --> 00:52:00,930
+one value within a loop you execute a
+
+1029
+00:51:58,260 --> 00:52:03,780
+multiple one and so this code shows
+
+1030
+00:52:00,930 --> 00:52:07,740
+unrolling by two and what it says is I'm
+
+1031
+00:52:03,780 --> 00:52:10,800
+going to step through this array two
+
+1032
+00:52:07,740 --> 00:52:13,080
+elements at a time and within each of
+
+1033
+00:52:10,800 --> 00:52:16,560
+the inner loop I'm going to combine the
+
+1034
+00:52:13,080 --> 00:52:18,480
+values from di and di plus one and I
+
+1035
+00:52:16,560 --> 00:52:21,090
+have to put in some extra code to finish
+
+1036
+00:52:18,480 --> 00:52:24,120
+off what happens if the original rate
+
+1037
+00:52:21,090 --> 00:52:27,240
+was a von wenk but you get the idea and
+
+1038
+00:52:24,120 --> 00:52:29,790
+this idea I showed this code of of two
+
+1039
+00:52:27,240 --> 00:52:32,790
+but you could imagine this applying for
+
+1040
+00:52:29,790 --> 00:52:36,450
+different values of loop unrolling so
+
+1041
+00:52:32,790 --> 00:52:39,930
+will this help us any well when I run it
+
+1042
+00:52:36,450 --> 00:52:42,390
+I get that the integer addition got a
+
+1043
+00:52:39,930 --> 00:52:46,020
+little faster but the other ones didn't
+
+1044
+00:52:42,390 --> 00:52:49,790
+improve at all so this one is going
+
+1045
+00:52:46,020 --> 00:52:52,140
+faster because basically the old code
+
+1046
+00:52:49,790 --> 00:52:54,300
+which is the overhead of the loop
+
+1047
+00:52:52,140 --> 00:52:56,880
+indexing and incrementing was enough to
+
+1048
+00:52:54,300 --> 00:52:59,790
+be slowing me down because it's already
+
+1049
+00:52:56,880 --> 00:53:02,820
+close to a clock cycle so I just managed
+
+1050
+00:52:59,790 --> 00:53:06,510
+to knock that down to be at the latency
+
+1051
+00:53:02,820 --> 00:53:08,850
+bound of this particular instruction but
+
+1052
+00:53:06,510 --> 00:53:11,400
+it didn't have the other ones because I
+
+1053
+00:53:08,850 --> 00:53:15,090
+still have the sequential dependency in
+
+1054
+00:53:11,400 --> 00:53:18,870
+order to get my new value of X I have to
+
+1055
+00:53:15,090 --> 00:53:23,180
+first do one computation and then view
+
+1056
+00:53:18,870 --> 00:53:23,180
+the other before I can begin another one
+
+1057
+00:53:23,420 --> 00:53:28,770
+but this shows me the way I could make a
+
+1058
+00:53:26,280 --> 00:53:31,680
+very very small change and change
+
+1059
+00:53:28,770 --> 00:53:34,980
+performance fairly dramatically what if
+
+1060
+00:53:31,680 --> 00:53:38,090
+I take these parentheses and shift them
+
+1061
+00:53:34,980 --> 00:53:38,090
+to the right
+
+1062
+00:53:40,900 --> 00:53:50,030
+would that make any difference of and lo
+
+1063
+00:53:46,850 --> 00:53:57,880
+and behold yet you find that and I'll
+
+1064
+00:53:50,030 --> 00:54:01,310
+call that transformation unrolling by to
+
+1065
+00:53:57,880 --> 00:54:04,130
+computing a one element at a time I'll
+
+1066
+00:54:01,310 --> 00:54:06,080
+talk about that in a minute but I'll use
+
+1067
+00:54:04,130 --> 00:54:09,080
+this lowercase a to say I've done an
+
+1068
+00:54:06,080 --> 00:54:11,060
+associate ivities formation and you see
+
+1069
+00:54:09,080 --> 00:54:16,850
+all of a sudden my time's dropped in
+
+1070
+00:54:11,060 --> 00:54:22,070
+half for these three cases so
+
+1071
+00:54:16,850 --> 00:54:25,270
+something's going on and so let's see
+
+1072
+00:54:22,070 --> 00:54:29,570
+why that is and now I'll introduce it
+
+1073
+00:54:25,270 --> 00:54:33,380
+and so if I take my picture from before
+
+1074
+00:54:29,570 --> 00:54:36,050
+and think about what those computations
+
+1075
+00:54:33,380 --> 00:54:38,540
+in PI you'll see that right now I've
+
+1076
+00:54:36,050 --> 00:54:43,070
+changed the structure of the computation
+
+1077
+00:54:38,540 --> 00:54:45,500
+so that I'm hair-wise combining each
+
+1078
+00:54:43,070 --> 00:54:49,070
+element of pair of elements of the array
+
+1079
+00:54:45,500 --> 00:54:51,800
+and then accumulating those into the
+
+1080
+00:54:49,070 --> 00:54:53,960
+overall computation so I've actually
+
+1081
+00:54:51,800 --> 00:54:56,450
+that shifting of the parentheses
+
+1082
+00:54:53,960 --> 00:55:00,080
+fundamentally changed how I'm doing my
+
+1083
+00:54:56,450 --> 00:55:02,000
+computation and you can see now that
+
+1084
+00:55:00,080 --> 00:55:04,430
+this critical path which is what
+
+1085
+00:55:02,000 --> 00:55:07,310
+determines in this case the the
+
+1086
+00:55:04,430 --> 00:55:09,920
+performance limitation just got shorter
+
+1087
+00:55:07,310 --> 00:55:13,240
+by a factor of two and that's why I'm
+
+1088
+00:55:09,920 --> 00:55:17,030
+now running twice as fast for for the
+
+1089
+00:55:13,240 --> 00:55:20,150
+operations not for integer addition but
+
+1090
+00:55:17,030 --> 00:55:23,330
+for the other three operations I've cut
+
+1091
+00:55:20,150 --> 00:55:25,550
+by a factor or two just by that shift
+
+1092
+00:55:23,330 --> 00:55:28,910
+now there is some good news and bad news
+
+1093
+00:55:25,550 --> 00:55:32,980
+here the good news is if this is integer
+
+1094
+00:55:28,910 --> 00:55:35,980
+arithmetic we know already you know that
+
+1095
+00:55:32,980 --> 00:55:40,160
+two's complement arithmetic is
+
+1096
+00:55:35,980 --> 00:55:42,350
+associative and commutative so it really
+
+1097
+00:55:40,160 --> 00:55:45,080
+doesn't matter for both multiplication
+
+1098
+00:55:42,350 --> 00:55:47,300
+and addition so it really doesn't matter
+
+1099
+00:55:45,080 --> 00:55:48,710
+what order I combine these elements and
+
+1100
+00:55:47,300 --> 00:55:51,680
+I'm going to get the exact same answer
+
+1101
+00:55:48,710 --> 00:55:54,800
+no matter what but you also saw
+
+1102
+00:55:51,680 --> 00:55:57,140
+voting point that's not the case so with
+
+1103
+00:55:54,800 --> 00:55:59,470
+floating point that shift shifting these
+
+1104
+00:55:57,140 --> 00:56:01,520
+parentheses because of rounding
+
+1105
+00:55:59,470 --> 00:56:04,310
+possibilities and even potentially
+
+1106
+00:56:01,520 --> 00:56:07,880
+overflow you might get different values
+
+1107
+00:56:04,310 --> 00:56:09,710
+results from these computations but then
+
+1108
+00:56:07,880 --> 00:56:11,000
+again if you think about you know is
+
+1109
+00:56:09,710 --> 00:56:15,050
+that really going to happen
+
+1110
+00:56:11,000 --> 00:56:16,370
+chances are no that it's not really
+
+1111
+00:56:15,050 --> 00:56:18,710
+going to affect the outcome of your
+
+1112
+00:56:16,370 --> 00:56:20,690
+program but it's enough of a change that
+
+1113
+00:56:18,710 --> 00:56:23,060
+most C compilers the most compilers
+
+1114
+00:56:20,690 --> 00:56:25,670
+period will not make any change that
+
+1115
+00:56:23,060 --> 00:56:27,380
+changes associativity because they're
+
+1116
+00:56:25,670 --> 00:56:30,980
+very conservative when it comes to
+
+1117
+00:56:27,380 --> 00:56:33,290
+floating points so that's something you
+
+1118
+00:56:30,980 --> 00:56:35,750
+as an application programmer has to have
+
+1119
+00:56:33,290 --> 00:56:37,580
+to know well enough is this a valid can
+
+1120
+00:56:35,750 --> 00:56:44,030
+I do this transformation without messing
+
+1121
+00:56:37,580 --> 00:56:45,800
+things up and now what I'll say is now
+
+1122
+00:56:44,030 --> 00:56:48,560
+there's a new set of bound
+
+1123
+00:56:45,800 --> 00:56:50,540
+so abounding what would appear to be
+
+1124
+00:56:48,560 --> 00:56:52,790
+sort of the best you can do based on
+
+1125
+00:56:50,540 --> 00:56:55,670
+some constraint in the program and
+
+1126
+00:56:52,790 --> 00:56:57,890
+before it was saying well the latency
+
+1127
+00:56:55,670 --> 00:57:01,040
+the total time through a given for a
+
+1128
+00:56:57,890 --> 00:57:03,140
+given operation was abound and now I say
+
+1129
+00:57:01,040 --> 00:57:04,850
+well there's an even more fundamental
+
+1130
+00:57:03,140 --> 00:57:08,030
+bound which I'll call the throughput
+
+1131
+00:57:04,850 --> 00:57:10,190
+bound which is just based on I only have
+
+1132
+00:57:08,030 --> 00:57:15,340
+so much Hardware out there and I can
+
+1133
+00:57:10,190 --> 00:57:19,150
+only a pump it so fast so for example
+
+1134
+00:57:15,340 --> 00:57:26,600
+these two that the throughput bound is 1
+
+1135
+00:57:19,150 --> 00:57:28,700
+because I only have that actually
+
+1136
+00:57:26,600 --> 00:57:32,840
+becomes limited by the requirement that
+
+1137
+00:57:28,700 --> 00:57:39,470
+I'm having to read from memory and I
+
+1138
+00:57:32,840 --> 00:57:41,840
+have two different load units oh no I'm
+
+1139
+00:57:39,470 --> 00:57:46,130
+sorry I only have one multiplier for
+
+1140
+00:57:41,840 --> 00:57:48,680
+integers in one for addition the
+
+1141
+00:57:46,130 --> 00:57:51,260
+throughput bound for these two actually
+
+1142
+00:57:48,680 --> 00:57:53,270
+is just 1/2 because it turns out there's
+
+1143
+00:57:51,260 --> 00:57:55,310
+some odd part of the hardware design
+
+1144
+00:57:53,270 --> 00:57:57,770
+that has two floating point multipliers
+
+1145
+00:57:55,310 --> 00:57:59,810
+but only one floating point adder and
+
+1146
+00:57:57,770 --> 00:58:01,700
+we'll see that we can actually make this
+
+1147
+00:57:59,810 --> 00:58:03,060
+multiplication code run faster than
+
+1148
+00:58:01,700 --> 00:58:05,100
+addition code
+
+1149
+00:58:03,060 --> 00:58:07,140
+and over here again my limit will be
+
+1150
+00:58:05,100 --> 00:58:11,340
+that I only have to load units and I
+
+1151
+00:58:07,140 --> 00:58:13,140
+have to be and I have to read for every
+
+1152
+00:58:11,340 --> 00:58:14,790
+element I'm computing I have to be
+
+1153
+00:58:13,140 --> 00:58:21,300
+reading one element from memory so I
+
+1154
+00:58:14,790 --> 00:58:23,820
+can't get below that okay so but we saw
+
+1155
+00:58:21,300 --> 00:58:26,700
+this transformation now is let us break
+
+1156
+00:58:23,820 --> 00:58:28,760
+out of this latency limitation and get
+
+1157
+00:58:26,700 --> 00:58:31,020
+something closer to throughput
+
+1158
+00:58:28,760 --> 00:58:34,320
+here's another technique that can be
+
+1159
+00:58:31,020 --> 00:58:36,480
+used to again sort of get more
+
+1160
+00:58:34,320 --> 00:58:40,200
+parallelism going and I call this
+
+1161
+00:58:36,480 --> 00:58:42,930
+multiple accumulators the idea is let's
+
+1162
+00:58:40,200 --> 00:58:44,790
+a imagine that we have the odd-numbered
+
+1163
+00:58:42,930 --> 00:58:49,080
+elements and the even-numbered element
+
+1164
+00:58:44,790 --> 00:58:51,930
+from the array and we can we can compute
+
+1165
+00:58:49,080 --> 00:58:54,330
+separate sums or products of those two
+
+1166
+00:58:51,930 --> 00:58:57,240
+sets of elements and then the very end
+
+1167
+00:58:54,330 --> 00:59:00,390
+combine them together so this is another
+
+1168
+00:58:57,240 --> 00:59:02,210
+form of an associativity transformation
+
+1169
+00:59:00,390 --> 00:59:05,850
+they were changing the order in which we
+
+1170
+00:59:02,210 --> 00:59:07,230
+combine things together it's just that
+
+1171
+00:59:05,850 --> 00:59:10,350
+we're doing it in the suit of odd-even
+
+1172
+00:59:07,230 --> 00:59:18,000
+manner or in general every ice value if
+
+1173
+00:59:10,350 --> 00:59:19,770
+we do it by some by some parameter I and
+
+1174
+00:59:18,000 --> 00:59:21,840
+it has the same issues that if it's
+
+1175
+00:59:19,770 --> 00:59:23,460
+integer arithmetic it fine if it's
+
+1176
+00:59:21,840 --> 00:59:28,110
+floating-point there's a risk of
+
+1177
+00:59:23,460 --> 00:59:30,660
+changing the behavior of the program but
+
+1178
+00:59:28,110 --> 00:59:33,600
+you'll see that again we get a cutting
+
+1179
+00:59:30,660 --> 00:59:39,900
+in half here and a little bit below one
+
+1180
+00:59:33,600 --> 00:59:41,460
+for integer addition and again we can
+
+1181
+00:59:39,900 --> 00:59:44,130
+think of it by looking at these pictures
+
+1182
+00:59:41,460 --> 00:59:45,300
+of what are the what gets computed and
+
+1183
+00:59:44,130 --> 00:59:48,510
+you see what we're doing is we're
+
+1184
+00:59:45,300 --> 00:59:50,160
+computing here all the even numbers even
+
+1185
+00:59:48,510 --> 00:59:52,590
+numbered elements being combined and
+
+1186
+00:59:50,160 --> 00:59:57,600
+here all the odd ones and the very end
+
+1187
+00:59:52,590 --> 01:00:01,440
+we're combining those together and so we
+
+1188
+00:59:57,600 --> 01:00:05,070
+can generalize this if we can unroll by
+
+1189
+01:00:01,440 --> 01:00:09,120
+a factor of K of L and we can accumulate
+
+1190
+01:00:05,070 --> 01:00:11,760
+K results in parallel and then we can
+
+1191
+01:00:09,120 --> 01:00:14,710
+use various values of L and K for in
+
+1192
+01:00:11,760 --> 01:00:19,110
+general LSB a multiple of ket
+
+1193
+01:00:14,710 --> 01:00:23,530
+and so you run it out and you can get
+
+1194
+01:00:19,110 --> 01:00:25,510
+for floating-point multiply you can
+
+1195
+01:00:23,530 --> 01:00:36,990
+actually get it down almost to this
+
+1196
+01:00:25,510 --> 01:00:39,760
+throughput bound of 0.5 this is
+
+1197
+01:00:36,990 --> 01:00:43,990
+incorrect this is integer addition I
+
+1198
+01:00:39,760 --> 01:00:48,660
+should say in tradition you can again
+
+1199
+01:00:43,990 --> 01:00:53,470
+get it down to around 0.5 and in general
+
+1200
+01:00:48,660 --> 01:00:55,420
+by sort of picking the best parameters I
+
+1201
+01:00:53,470 --> 01:00:58,960
+can get very close to the throughput
+
+1202
+01:00:55,420 --> 01:01:00,400
+found of this processor so I've been
+
+1203
+01:00:58,960 --> 01:01:03,700
+able to take something remember
+
+1204
+01:01:00,400 --> 01:01:06,280
+originally was 20 clock cycles than 10
+
+1205
+01:01:03,700 --> 01:01:11,230
+and now I'm getting it down to one or
+
+1206
+01:01:06,280 --> 01:01:15,370
+fewer clock cycles per illness so now
+
+1207
+01:01:11,230 --> 01:01:19,390
+just as the final step is okay is that
+
+1208
+01:01:15,370 --> 01:01:20,890
+as good as it go actually know you
+
+1209
+01:01:19,390 --> 01:01:22,660
+remember when I talked about
+
+1210
+01:01:20,890 --> 01:01:26,050
+floating-point I mentioned that there's
+
+1211
+01:01:22,660 --> 01:01:30,580
+the special set of registers that are on
+
+1212
+01:01:26,050 --> 01:01:33,160
+x86 that we're called xmm registers on
+
+1213
+01:01:30,580 --> 01:01:34,870
+the sharp machines and now that has well
+
+1214
+01:01:33,160 --> 01:01:37,360
+this newer generation has something
+
+1215
+01:01:34,870 --> 01:01:39,280
+called ymm registers which have the
+
+1216
+01:01:37,360 --> 01:01:42,480
+feature being twice as big as xmm
+
+1217
+01:01:39,280 --> 01:01:50,970
+registers so in particular these
+
+1218
+01:01:42,480 --> 01:01:54,370
+registers are are 32 bytes long and
+
+1219
+01:01:50,970 --> 01:01:57,160
+there's a new version coming out within
+
+1220
+01:01:54,370 --> 01:02:00,510
+a year or something they call a DX 512
+
+1221
+01:01:57,160 --> 01:02:02,490
+where the register is 512 bits so that's
+
+1222
+01:02:00,510 --> 01:02:07,910
+256 sites
+
+1223
+01:02:02,490 --> 01:02:11,970
+long no it's to 512
+
+1224
+01:02:07,910 --> 01:02:14,580
+get 64 bytes write 64 bytes there will
+
+1225
+01:02:11,970 --> 01:02:16,050
+be twice as big as these and as I
+
+1226
+01:02:14,580 --> 01:02:20,700
+mentioned before you can think of these
+
+1227
+01:02:16,050 --> 01:02:23,400
+as a way of operating on 32 individual
+
+1228
+01:02:20,700 --> 01:02:27,120
+characters for I can treat them as
+
+1229
+01:02:23,400 --> 01:02:30,390
+floating point and we saw before that
+
+1230
+01:02:27,120 --> 01:02:33,480
+you nowadays the regular floating point
+
+1231
+01:02:30,390 --> 01:02:36,810
+makes use of Ceuta the low order for a
+
+1232
+01:02:33,480 --> 01:02:40,340
+bytes of these registers but there's
+
+1233
+01:02:36,810 --> 01:02:44,280
+also instructions called vector addition
+
+1234
+01:02:40,340 --> 01:02:47,880
+where one instruction has the effect of
+
+1235
+01:02:44,280 --> 01:02:48,980
+doing eight floating-point additions at
+
+1236
+01:02:47,880 --> 01:02:52,230
+once
+
+1237
+01:02:48,980 --> 01:02:54,960
+unload data and on double precision the
+
+1238
+01:02:52,230 --> 01:02:59,010
+counterpart does four of them at once on
+
+1239
+01:02:54,960 --> 01:03:01,020
+these and the that hardware is there
+
+1240
+01:02:59,010 --> 01:03:04,200
+it's just sitting there waiting to use
+
+1241
+01:03:01,020 --> 01:03:07,650
+and it seldom gets fired up to really
+
+1242
+01:03:04,200 --> 01:03:11,070
+make use of it but so that floating
+
+1243
+01:03:07,650 --> 01:03:13,710
+point multiplier that can do a 40 point
+
+1244
+01:03:11,070 --> 01:03:16,940
+multiplication in three clock cycles and
+
+1245
+01:03:13,710 --> 01:03:19,790
+it's fully pipeline can actually do
+
+1246
+01:03:16,940 --> 01:03:23,610
+eight floating point multiplications in
+
+1247
+01:03:19,790 --> 01:03:26,090
+parallel and pipelines in three clock
+
+1248
+01:03:23,610 --> 01:03:26,090
+cycles
+
+1249
+01:03:26,500 --> 01:03:32,080
+and as I mentioned the sharp machine has
+
+1250
+01:03:29,680 --> 01:03:34,810
+an earlier version where the numbers are
+
+1251
+01:03:32,080 --> 01:03:36,940
+half of these so it can do for single
+
+1252
+01:03:34,810 --> 01:03:42,520
+precision or two double precision at
+
+1253
+01:03:36,940 --> 01:03:45,280
+once and if I write code that uses that
+
+1254
+01:03:42,520 --> 01:03:48,869
+what I call vector code then you can see
+
+1255
+01:03:45,280 --> 01:03:53,280
+I can drop by a factor of about four
+
+1256
+01:03:48,869 --> 01:03:56,950
+across the board here and make it run
+
+1257
+01:03:53,280 --> 01:04:02,590
+much faster so this 0.06 is really
+
+1258
+01:03:56,950 --> 01:04:12,400
+0.0625 right it's doing 16 operations
+
+1259
+01:04:02,590 --> 01:04:14,560
+per clock cycle on that and can't quite
+
+1260
+01:04:12,400 --> 01:04:16,810
+hit the vector throughput bound but in
+
+1261
+01:04:14,560 --> 01:04:19,570
+general making this thing run much
+
+1262
+01:04:16,810 --> 01:04:21,310
+faster and so the people really worry
+
+1263
+01:04:19,570 --> 01:04:23,290
+about and you can imagine these
+
+1264
+01:04:21,310 --> 01:04:25,390
+instructions were introduced for things
+
+1265
+01:04:23,290 --> 01:04:29,680
+like video processing image processing
+
+1266
+01:04:25,390 --> 01:04:32,410
+of sound sort of signal processing where
+
+1267
+01:04:29,680 --> 01:04:35,619
+a performance really matters how fast
+
+1268
+01:04:32,410 --> 01:04:38,650
+you can display an image how fast you
+
+1269
+01:04:35,619 --> 01:04:40,480
+can rotate something you know how fast
+
+1270
+01:04:38,650 --> 01:04:43,300
+you can perform graphics makes a big
+
+1271
+01:04:40,480 --> 01:04:46,140
+difference in video games are one of the
+
+1272
+01:04:43,300 --> 01:04:49,060
+big drivers but even for other
+
+1273
+01:04:46,140 --> 01:04:50,680
+operations you might do on images and so
+
+1274
+01:04:49,060 --> 01:04:52,630
+these instructions were really designed
+
+1275
+01:04:50,680 --> 01:04:55,180
+to do it and people write code for those
+
+1276
+01:04:52,630 --> 01:04:57,640
+kind of applications get pretty good at
+
+1277
+01:04:55,180 --> 01:04:59,859
+writing code in a way that they can do
+
+1278
+01:04:57,640 --> 01:05:03,070
+this vector ID what's called vectorizing
+
+1279
+01:04:59,859 --> 01:05:04,900
+and unfortunately so the Intel compiler
+
+1280
+01:05:03,070 --> 01:05:08,200
+will actually automatically do some of
+
+1281
+01:05:04,900 --> 01:05:09,730
+this for you a GCC they attempted to
+
+1282
+01:05:08,200 --> 01:05:13,060
+implement it and it didn't work very
+
+1283
+01:05:09,730 --> 01:05:17,260
+well so I think they discontinued it it
+
+1284
+01:05:13,060 --> 01:05:20,740
+turns out there's a web aside so this is
+
+1285
+01:05:17,260 --> 01:05:22,570
+on the web from the books web page that
+
+1286
+01:05:20,740 --> 01:05:25,180
+describes how to do this programming if
+
+1287
+01:05:22,570 --> 01:05:28,240
+you're interested there's extensions to
+
+1288
+01:05:25,180 --> 01:05:33,460
+GCC they're very funky really weird
+
+1289
+01:05:28,240 --> 01:05:35,380
+stuff but you can write code that then
+
+1290
+01:05:33,460 --> 01:05:37,390
+will get compiled down to make use of
+
+1291
+01:05:35,380 --> 01:05:39,040
+these kind of instructions and that's
+
+1292
+01:05:37,390 --> 01:05:39,680
+how I did it and how I got these
+
+1293
+01:05:39,040 --> 01:05:45,770
+performance
+
+1294
+01:05:39,680 --> 01:05:47,839
+results okay so that shows you if you
+
+1295
+01:05:45,770 --> 01:05:51,040
+really want to and but that's very
+
+1296
+01:05:47,839 --> 01:05:55,069
+machine specific that will only work on
+
+1297
+01:05:51,040 --> 01:05:56,930
+well you have to you can actually tune
+
+1298
+01:05:55,069 --> 01:05:59,270
+it so it's easy to compile it to go
+
+1299
+01:05:56,930 --> 01:06:02,210
+between different machines but it's
+
+1300
+01:05:59,270 --> 01:06:06,380
+still a fairly specific and very
+
+1301
+01:06:02,210 --> 01:06:08,270
+specific to GCC in fact so that sort of
+
+1302
+01:06:06,380 --> 01:06:11,510
+shows you though if you really want to
+
+1303
+01:06:08,270 --> 01:06:13,880
+push it what you can do now let's uh get
+
+1304
+01:06:11,510 --> 01:06:16,819
+back to one of the things I told you
+
+1305
+01:06:13,880 --> 01:06:18,890
+about how you can if you think of your
+
+1306
+01:06:16,819 --> 01:06:22,309
+program as a very long linear sequence
+
+1307
+01:06:18,890 --> 01:06:24,619
+of instructions then the thing is trying
+
+1308
+01:06:22,309 --> 01:06:27,740
+to grab as many of those and pull them
+
+1309
+01:06:24,619 --> 01:06:29,180
+apart as fast as it can but of course
+
+1310
+01:06:27,740 --> 01:06:31,040
+you know your program is actually
+
+1311
+01:06:29,180 --> 01:06:33,470
+typically a loop and there aren't many
+
+1312
+01:06:31,040 --> 01:06:35,890
+instructions in that loop so how is it
+
+1313
+01:06:33,470 --> 01:06:40,369
+turning that into a linear sequence
+
+1314
+01:06:35,890 --> 01:06:44,089
+well that relies on an idea of how do
+
+1315
+01:06:40,369 --> 01:06:47,540
+you handle branches so typically the
+
+1316
+01:06:44,089 --> 01:06:49,089
+program or fetching a head grabbing
+
+1317
+01:06:47,540 --> 01:06:53,030
+instructions and it will come to a
+
+1318
+01:06:49,089 --> 01:06:57,230
+branch instruction a conditional jump of
+
+1319
+01:06:53,030 --> 01:07:01,040
+some sort and there is a dilemma because
+
+1320
+01:06:57,230 --> 01:07:05,569
+in general this branch could either I'm
+
+1321
+01:07:01,040 --> 01:07:08,270
+sorry could either be taken meaning it
+
+1322
+01:07:05,569 --> 01:07:10,400
+will go to the branch target or it could
+
+1323
+01:07:08,270 --> 01:07:12,740
+do it called fall through meaning it it
+
+1324
+01:07:10,400 --> 01:07:15,650
+the test fails and so it just continues
+
+1325
+01:07:12,740 --> 01:07:18,109
+execution and there's no way a priority
+
+1326
+01:07:15,650 --> 01:07:24,260
+to know what will happen these can often
+
+1327
+01:07:18,109 --> 01:07:26,540
+be data dependent and so the way this is
+
+1328
+01:07:24,260 --> 01:07:28,520
+handled on a modern processor is by
+
+1329
+01:07:26,540 --> 01:07:32,119
+doing what's known as branch prediction
+
+1330
+01:07:28,520 --> 01:07:33,589
+which is essentially just guess which
+
+1331
+01:07:32,119 --> 01:07:35,839
+ways this branch is going to go is going
+
+1332
+01:07:33,589 --> 01:07:37,730
+to be taken or not and you predict and
+
+1333
+01:07:35,839 --> 01:07:40,220
+then you start executing along the
+
+1334
+01:07:37,730 --> 01:07:43,760
+predicted direction but do it in a way
+
+1335
+01:07:40,220 --> 01:07:45,619
+that if you make a mistake you haven't
+
+1336
+01:07:43,760 --> 01:07:49,010
+caused irreparable harm to the program
+
+1337
+01:07:45,619 --> 01:07:51,049
+and we'll see what that means so what
+
+1338
+01:07:49,010 --> 01:07:52,910
+really happens then is up here there's a
+
+1339
+01:07:51,049 --> 01:07:56,250
+lot of logic that
+
+1340
+01:07:52,910 --> 01:07:59,730
+trying to suck out instructions and then
+
+1341
+01:07:56,250 --> 01:08:02,240
+there's a branch unit that being
+
+1342
+01:07:59,730 --> 01:08:04,920
+basically coming along later and saying
+
+1343
+01:08:02,240 --> 01:08:07,470
+yeah you're okay you predicted that
+
+1344
+01:08:04,920 --> 01:08:09,630
+correctly so you can keep going or it
+
+1345
+01:08:07,470 --> 01:08:12,390
+will throw up a flag and say oh wait a
+
+1346
+01:08:09,630 --> 01:08:14,760
+minute stop your misprediction you
+
+1347
+01:08:12,390 --> 01:08:17,160
+mispredicted this branch way back 100
+
+1348
+01:08:14,760 --> 01:08:19,980
+clock cycles ago it's not that long ago
+
+1349
+01:08:17,160 --> 01:08:24,930
+but some number of clock cycles ago
+
+1350
+01:08:19,980 --> 01:08:27,390
+you've got to fix it and so so the hand
+
+1351
+01:08:24,930 --> 01:08:30,060
+way of jumps then becomes more a case of
+
+1352
+01:08:27,390 --> 01:08:33,989
+of guessing up here and then either
+
+1353
+01:08:30,060 --> 01:08:43,380
+confirming or denying that guess down
+
+1354
+01:08:33,989 --> 01:08:45,299
+below so in general then if you it will
+
+1355
+01:08:43,380 --> 01:08:48,960
+predict it one way and begin executing
+
+1356
+01:08:45,299 --> 01:08:51,569
+so imagine for example in a loop like
+
+1357
+01:08:48,960 --> 01:08:53,310
+I've shown you that you predict that the
+
+1358
+01:08:51,569 --> 01:08:54,900
+branch will be taken but you'll go back
+
+1359
+01:08:53,310 --> 01:08:57,719
+to the start of the loop again that's
+
+1360
+01:08:54,900 --> 01:08:59,819
+actually a pretty good guess it's a good
+
+1361
+01:08:57,719 --> 01:09:02,989
+guess extolled you hit the end of the
+
+1362
+01:08:59,819 --> 01:09:06,750
+loop but let's just guess that way and
+
+1363
+01:09:02,989 --> 01:09:10,440
+so the program will just keep guessing
+
+1364
+01:09:06,750 --> 01:09:12,450
+that the branch will be taken and and by
+
+1365
+01:09:10,440 --> 01:09:14,580
+that means by all those guesses
+
+1366
+01:09:12,450 --> 01:09:17,279
+basically create this long linear
+
+1367
+01:09:14,580 --> 01:09:23,880
+sequence of instructions that can be
+
+1368
+01:09:17,279 --> 01:09:25,739
+pulled in and executed and in general
+
+1369
+01:09:23,880 --> 01:09:28,009
+some of them will be fetched and some of
+
+1370
+01:09:25,739 --> 01:09:30,180
+them will actually have done the
+
+1371
+01:09:28,009 --> 01:09:34,830
+operations that are called for in the
+
+1372
+01:09:30,180 --> 01:09:39,480
+instruction and then what happens is if
+
+1373
+01:09:34,830 --> 01:09:43,190
+if the flag goes up they say no this was
+
+1374
+01:09:39,480 --> 01:09:47,219
+invalid then what will happen is it will
+
+1375
+01:09:43,190 --> 01:09:50,569
+go back and cancel all the instructions
+
+1376
+01:09:47,219 --> 01:09:53,520
+that have been fetched and executed and
+
+1377
+01:09:50,569 --> 01:09:55,590
+the way it does that is you'll notice
+
+1378
+01:09:53,520 --> 01:09:59,280
+not all these instructions only modify
+
+1379
+01:09:55,590 --> 01:10:01,980
+registers and it has multiple copies of
+
+1380
+01:09:59,280 --> 01:10:03,780
+all the registers going back these are
+
+1381
+01:10:01,980 --> 01:10:04,560
+the registers these are the values that
+
+1382
+01:10:03,780 --> 01:10:05,550
+I'm sure of
+
+1383
+01:10:04,560 --> 01:10:08,340
+these are
+
+1384
+01:10:05,550 --> 01:10:11,010
+speculative values appending updates to
+
+1385
+01:10:08,340 --> 01:10:13,530
+them and so when it comes time to cancel
+
+1386
+01:10:11,010 --> 01:10:16,110
+it just cancels out all those pending
+
+1387
+01:10:13,530 --> 01:10:22,020
+updates and goes back to values that
+
+1388
+01:10:16,110 --> 01:10:25,230
+it's certain of question the there is a
+
+1389
+01:10:22,020 --> 01:10:28,230
+big block they call the register
+
+1390
+01:10:25,230 --> 01:10:30,840
+renaming unit which is sort of multiple
+
+1391
+01:10:28,230 --> 01:10:43,230
+copies of all the registers as they get
+
+1392
+01:10:30,840 --> 01:10:45,180
+accumulated it has many more it will
+
+1393
+01:10:43,230 --> 01:10:47,730
+typically have several hundred reg of
+
+1394
+01:10:45,180 --> 01:10:51,800
+these sort of virtual registers to keep
+
+1395
+01:10:47,730 --> 01:10:56,040
+pending copies to the actual registers
+
+1396
+01:10:51,800 --> 01:10:57,900
+it does it stores you know here's the
+
+1397
+01:10:56,040 --> 01:11:01,530
+old value here's the first update here's
+
+1398
+01:10:57,900 --> 01:11:03,690
+the second update here's the third and
+
+1399
+01:11:01,530 --> 01:11:06,480
+it keeps track of all that you can
+
+1400
+01:11:03,690 --> 01:11:08,460
+imagine why this is not a something you
+
+1401
+01:11:06,480 --> 01:11:10,620
+learn in a one semester course right
+
+1402
+01:11:08,460 --> 01:11:12,330
+that to keep track of all those
+
+1403
+01:11:10,620 --> 01:11:14,970
+different things flying by and make sure
+
+1404
+01:11:12,330 --> 01:11:15,360
+that it works is a pretty tricky
+
+1405
+01:11:14,970 --> 01:11:17,370
+business
+
+1406
+01:11:15,360 --> 01:11:20,190
+but the conceptually it's a pretty
+
+1407
+01:11:17,370 --> 01:11:22,710
+simple idea that it just races off does
+
+1408
+01:11:20,190 --> 01:11:25,770
+a lot of things based purely on
+
+1409
+01:11:22,710 --> 01:11:28,880
+speculation and then only if it makes a
+
+1410
+01:11:25,770 --> 01:11:31,680
+mistake it goes oh it sort of rolls back
+
+1411
+01:11:28,880 --> 01:11:34,230
+to as if it had only execute up to a
+
+1412
+01:11:31,680 --> 01:11:39,510
+certain point and then it moves forward
+
+1413
+01:11:34,230 --> 01:11:42,930
+and starts in going the correct way so
+
+1414
+01:11:39,510 --> 01:11:45,810
+and and so and it can get away with this
+
+1415
+01:11:42,930 --> 01:11:48,120
+it's very interesting and tricky stuff
+
+1416
+01:11:45,810 --> 01:11:51,000
+but you remember we talked early in the
+
+1417
+01:11:48,120 --> 01:11:53,340
+course about the difference between
+
+1418
+01:11:51,000 --> 01:11:55,410
+using conditional moves and conditional
+
+1419
+01:11:53,340 --> 01:11:58,800
+jumps to implement conditional
+
+1420
+01:11:55,410 --> 01:12:02,010
+operations and conditional moves can
+
+1421
+01:11:58,800 --> 01:12:05,250
+take place totally within the structure
+
+1422
+01:12:02,010 --> 01:12:08,280
+of this pipeline but a conditional jump
+
+1423
+01:12:05,250 --> 01:12:10,950
+if it's an unpredictable branch the
+
+1424
+01:12:08,280 --> 01:12:13,200
+problem is it might go off executing and
+
+1425
+01:12:10,950 --> 01:12:15,600
+make do a lot of wasted work but even
+
+1426
+01:12:13,200 --> 01:12:18,420
+worse than when it gets back and has to
+
+1427
+01:12:15,600 --> 01:12:19,289
+restart it takes a while to sort of fill
+
+1428
+01:12:18,420 --> 01:12:21,329
+up all the
+
+1429
+01:12:19,289 --> 01:12:24,769
+the buffers in the system and get the
+
+1430
+01:12:21,329 --> 01:12:24,769
+whole thing running at full steam ahead
+
+1431
+01:12:26,420 --> 01:12:33,179
+so that kind of finishes up then the the
+
+1432
+01:12:31,199 --> 01:12:34,260
+way I describe it is first of all don't
+
+1433
+01:12:33,179 --> 01:12:37,590
+do anything stupid
+
+1434
+01:12:34,260 --> 01:12:40,860
+even and stupid is probably too strong a
+
+1435
+01:12:37,590 --> 01:12:42,719
+word don't do sort of keep in mind
+
+1436
+01:12:40,860 --> 01:12:44,400
+there's certain things that you should
+
+1437
+01:12:42,719 --> 01:12:47,820
+as a programmer be doing all the time
+
+1438
+01:12:44,400 --> 01:12:50,429
+and they're not obvious perhaps and then
+
+1439
+01:12:47,820 --> 01:12:53,250
+begin thinking about tuning and getting
+
+1440
+01:12:50,429 --> 01:12:55,590
+some instruction level parallelism and I
+
+1441
+01:12:53,250 --> 01:12:57,869
+describe it as for the machine but as I
+
+1442
+01:12:55,590 --> 01:13:00,179
+said pretty much all processors nowadays
+
+1443
+01:12:57,869 --> 01:13:03,000
+it's a class of machines and so these
+
+1444
+01:13:00,179 --> 01:13:05,849
+general techniques will work that those
+
+1445
+01:13:03,000 --> 01:13:08,610
+ideas of changing the associativity will
+
+1446
+01:13:05,849 --> 01:13:10,769
+work whether it's you know the ARM
+
+1447
+01:13:08,610 --> 01:13:13,260
+processor built into my cell phone or
+
+1448
+01:13:10,769 --> 01:13:16,110
+the x86 processor built into your laptop
+
+1449
+01:13:13,260 --> 01:13:19,139
+or one of the shark machines they all
+
+1450
+01:13:16,110 --> 01:13:20,789
+have the same general of implementation
+
+1451
+01:13:19,139 --> 01:13:25,889
+structures so these techniques will work
+
+1452
+01:13:20,789 --> 01:13:28,429
+across across all of them ok that'll do
+
+1453
+01:13:25,889 --> 01:13:28,429
+it for today
+

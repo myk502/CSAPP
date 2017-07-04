@@ -1,0 +1,5744 @@
+1
+00:00:01,020 --> 00:00:08,010
+good afternoon everyone so now we're
+
+2
+00:00:06,330 --> 00:00:09,750
+going to jump into the part of the
+
+3
+00:00:08,010 --> 00:00:13,049
+course that I'd call the real core of
+
+4
+00:00:09,750 --> 00:00:15,210
+the course where we go into machine
+
+5
+00:00:13,049 --> 00:00:18,000
+level programming and by the term
+
+6
+00:00:15,210 --> 00:00:21,060
+machine level programming I mean when
+
+7
+00:00:18,000 --> 00:00:23,220
+you're actually considering the the
+
+8
+00:00:21,060 --> 00:00:25,560
+individual instructions to get executed
+
+9
+00:00:23,220 --> 00:00:27,900
+by the machine in response to your
+
+10
+00:00:25,560 --> 00:00:30,570
+program and there's really two forms of
+
+11
+00:00:27,900 --> 00:00:33,180
+machine programs one is the actual
+
+12
+00:00:30,570 --> 00:00:36,000
+object code that runs on the computer
+
+13
+00:00:33,180 --> 00:00:38,550
+and as we'll see that a series of bytes
+
+14
+00:00:36,000 --> 00:00:41,850
+that encode instructions that the
+
+15
+00:00:38,550 --> 00:00:45,120
+processor executes but well because it's
+
+16
+00:00:41,850 --> 00:00:47,550
+hard to look at byte and understand them
+
+17
+00:00:45,120 --> 00:00:50,250
+there's various text forms to make it
+
+18
+00:00:47,550 --> 00:00:53,940
+more clear and one of those is assembly
+
+19
+00:00:50,250 --> 00:00:56,070
+code that it used to be that tell people
+
+20
+00:00:53,940 --> 00:00:58,620
+program machines and nowadays it's what
+
+21
+00:00:56,070 --> 00:01:00,870
+the target of a compiler is is to
+
+22
+00:00:58,620 --> 00:01:03,030
+generate assembly code and I'll use
+
+23
+00:01:00,870 --> 00:01:06,060
+those terms when I say machine code I
+
+24
+00:01:03,030 --> 00:01:08,850
+sort of interchangeably mean object code
+
+25
+00:01:06,060 --> 00:01:11,549
+the binary form or assembly code the
+
+26
+00:01:08,850 --> 00:01:13,020
+text version of it interchangeably
+
+27
+00:01:11,549 --> 00:01:16,710
+because there really is a one-to-one
+
+28
+00:01:13,020 --> 00:01:19,920
+mapping between them but in case I sort
+
+29
+00:01:16,710 --> 00:01:22,110
+of used a term like assembly code when I
+
+30
+00:01:19,920 --> 00:01:23,820
+instead of consistently saying machine
+
+31
+00:01:22,110 --> 00:01:28,560
+code it's because they're really the
+
+32
+00:01:23,820 --> 00:01:34,020
+same general idea so this is sort of one
+
+33
+00:01:28,560 --> 00:01:35,970
+place where this course 213 513 takes a
+
+34
+00:01:34,020 --> 00:01:39,509
+particular perspective that's very
+
+35
+00:01:35,970 --> 00:01:42,659
+different from done ever elsewhere in
+
+36
+00:01:39,509 --> 00:01:44,520
+the bad old days of computing you would
+
+37
+00:01:42,659 --> 00:01:45,810
+be required to take a course it was
+
+38
+00:01:44,520 --> 00:01:48,270
+typically called assembly level
+
+39
+00:01:45,810 --> 00:01:51,000
+programming the way you actually learned
+
+40
+00:01:48,270 --> 00:01:53,040
+to write programs in assembler and your
+
+41
+00:01:51,000 --> 00:01:58,950
+assignments would be to do things like
+
+42
+00:01:53,040 --> 00:02:00,689
+to sort a array of numbers or set up
+
+43
+00:01:58,950 --> 00:02:03,390
+some kind of linked list data structure
+
+44
+00:02:00,689 --> 00:02:05,040
+just sort of low-level programming that
+
+45
+00:02:03,390 --> 00:02:08,479
+nowadays you wouldn't even think of
+
+46
+00:02:05,040 --> 00:02:11,640
+wanting to write an assembly code and so
+
+47
+00:02:08,479 --> 00:02:12,270
+people didn't really enjoy those courses
+
+48
+00:02:11,640 --> 00:02:13,800
+very well
+
+49
+00:02:12,270 --> 00:02:16,020
+and so they got sort of our
+
+50
+00:02:13,800 --> 00:02:18,900
+we cut out of the curriculum but what
+
+51
+00:02:16,020 --> 00:02:21,810
+our version of it is is this is pretty
+
+52
+00:02:18,900 --> 00:02:24,990
+important stuff to know as the sort of
+
+53
+00:02:21,810 --> 00:02:27,240
+gateway between what's how you write
+
+54
+00:02:24,990 --> 00:02:29,850
+your programs say and C or any other
+
+55
+00:02:27,240 --> 00:02:33,480
+language and how those programs actually
+
+56
+00:02:29,850 --> 00:02:35,340
+execute on a machine so machine code it
+
+57
+00:02:33,480 --> 00:02:37,200
+sort of the intermediate form there the
+
+58
+00:02:35,340 --> 00:02:39,120
+intermediate language and you need to
+
+59
+00:02:37,200 --> 00:02:42,290
+understand that to understand better
+
+60
+00:02:39,120 --> 00:02:47,100
+what your programs are trying to do and
+
+61
+00:02:42,290 --> 00:02:48,810
+what the machine is trying to do so as a
+
+62
+00:02:47,100 --> 00:02:51,300
+result of that our perspective will be
+
+63
+00:02:48,810 --> 00:02:53,550
+we won't actually write except in very
+
+64
+00:02:51,300 --> 00:02:56,010
+very small amount we're not going to
+
+65
+00:02:53,550 --> 00:02:58,440
+actually sit down and write assembly
+
+66
+00:02:56,010 --> 00:03:00,360
+programs in this course but what you'll
+
+67
+00:02:58,440 --> 00:03:03,360
+do is you're going to look at a lot of
+
+68
+00:03:00,360 --> 00:03:08,010
+code that was generated by a C compiler
+
+69
+00:03:03,360 --> 00:03:10,200
+GCC and try to see how does that what
+
+70
+00:03:08,010 --> 00:03:12,660
+came out of that compiler relate to what
+
+71
+00:03:10,200 --> 00:03:15,960
+went into it how does this low-level
+
+72
+00:03:12,660 --> 00:03:19,739
+code implement the higher-level
+
+73
+00:03:15,960 --> 00:03:23,370
+of constructs that I was trying to
+
+74
+00:03:19,739 --> 00:03:26,370
+express my program in how our procedures
+
+75
+00:03:23,370 --> 00:03:28,410
+functions implemented in machine
+
+76
+00:03:26,370 --> 00:03:30,780
+language how our data structures such as
+
+77
+00:03:28,410 --> 00:03:34,140
+arrays and structs how are those
+
+78
+00:03:30,780 --> 00:03:36,090
+implemented in machine code so we're
+
+79
+00:03:34,140 --> 00:03:38,880
+going to learn all of that stuff and it
+
+80
+00:03:36,090 --> 00:03:41,160
+takes a significant chunk of this course
+
+81
+00:03:38,880 --> 00:03:42,690
+and a fair number of lectures to get
+
+82
+00:03:41,160 --> 00:03:46,920
+through all that material because it's
+
+83
+00:03:42,690 --> 00:03:48,780
+really quite a bit but I think it's like
+
+84
+00:03:46,920 --> 00:03:54,810
+I said I think this is suitable core of
+
+85
+00:03:48,780 --> 00:03:56,640
+where this course is and as you know in
+
+86
+00:03:54,810 --> 00:04:00,840
+this course we only look at one
+
+87
+00:03:56,640 --> 00:04:03,150
+particular classes of machines even
+
+88
+00:04:00,840 --> 00:04:06,390
+though there's many more different
+
+89
+00:04:03,150 --> 00:04:09,450
+machine level programming possibilities
+
+90
+00:04:06,390 --> 00:04:11,820
+out there and we've chosen the Intel the
+
+91
+00:04:09,450 --> 00:04:15,269
+64-bit version of the Intel instruction
+
+92
+00:04:11,820 --> 00:04:17,549
+set so I'll go through a little bit of
+
+93
+00:04:15,269 --> 00:04:20,880
+the history behind Intel and how it got
+
+94
+00:04:17,549 --> 00:04:23,250
+to where it is we'll look at through
+
+95
+00:04:20,880 --> 00:04:25,949
+this idea of how does C code relate to
+
+96
+00:04:23,250 --> 00:04:28,099
+assembly code machine code and so forth
+
+97
+00:04:25,949 --> 00:04:30,569
+we'll go through certainly the low-level
+
+98
+00:04:28,099 --> 00:04:33,569
+basics that you need to understand the
+
+99
+00:04:30,569 --> 00:04:35,610
+of what assembly cut machine code looks
+
+100
+00:04:33,569 --> 00:04:38,460
+like and then we'll actually take on and
+
+101
+00:04:35,610 --> 00:04:43,639
+look at some real code focusing
+
+102
+00:04:38,460 --> 00:04:46,349
+specifically on arithmetic operations so
+
+103
+00:04:43,639 --> 00:04:49,319
+x86 is the sort of colloquial term for
+
+104
+00:04:46,349 --> 00:04:52,189
+Intel processors and the reason is that
+
+105
+00:04:49,319 --> 00:04:55,979
+the first one was called the 8086 and
+
+106
+00:04:52,189 --> 00:05:01,289
+then they kind of skipped 81 but then
+
+107
+00:04:55,979 --> 00:05:04,979
+they went to 80 to 86 and so forth 83 86
+
+108
+00:05:01,289 --> 00:05:08,699
+so the one thing in common was 86 and so
+
+109
+00:05:04,979 --> 00:05:10,319
+people just call it x86 and one thing
+
+110
+00:05:08,699 --> 00:05:13,139
+that's important to this and it will
+
+111
+00:05:10,319 --> 00:05:16,979
+have influence on what the programs look
+
+112
+00:05:13,139 --> 00:05:20,430
+like is x86 is a language like English
+
+113
+00:05:16,979 --> 00:05:23,819
+that it's been an accrual and evolution
+
+114
+00:05:20,430 --> 00:05:26,610
+of different features layered on top of
+
+115
+00:05:23,819 --> 00:05:29,849
+each other and not always the most
+
+116
+00:05:26,610 --> 00:05:32,849
+elegant way so just like English there's
+
+117
+00:05:29,849 --> 00:05:34,500
+all these sort of quirky things that how
+
+118
+00:05:32,849 --> 00:05:36,479
+you write it is very different from how
+
+119
+00:05:34,500 --> 00:05:39,089
+you pronounce it and there's all these
+
+120
+00:05:36,479 --> 00:05:40,199
+irregular cases and it doesn't make
+
+121
+00:05:39,089 --> 00:05:43,020
+sense it's not sort of a
+
+122
+00:05:40,199 --> 00:05:45,930
+purpose-designed language it's the same
+
+123
+00:05:43,020 --> 00:05:48,360
+with x86 it's a language that just got
+
+124
+00:05:45,930 --> 00:05:50,250
+there because of a bunch of decisions
+
+125
+00:05:48,360 --> 00:05:51,810
+that locally were probably the right
+
+126
+00:05:50,250 --> 00:05:54,150
+thing to do but globally were not
+
+127
+00:05:51,810 --> 00:05:56,300
+there's other instruction sets that are
+
+128
+00:05:54,150 --> 00:05:59,699
+much cleaner and easier to understand
+
+129
+00:05:56,300 --> 00:06:01,560
+but we figure it's just the same reason
+
+130
+00:05:59,699 --> 00:06:03,509
+that you learn English instead of
+
+131
+00:06:01,560 --> 00:06:05,610
+learning Esperanto or something like
+
+132
+00:06:03,509 --> 00:06:11,159
+that that it's a much more useful
+
+133
+00:06:05,610 --> 00:06:13,830
+language x86 is what sometimes was
+
+134
+00:06:11,159 --> 00:06:18,810
+called a Sisk there is a big thing in
+
+135
+00:06:13,830 --> 00:06:20,819
+the early 80s 80s in general called risk
+
+136
+00:06:18,810 --> 00:06:23,189
+versus Sisk Sisk
+
+137
+00:06:20,819 --> 00:06:24,900
+a well risk was a new relatively new
+
+138
+00:06:23,189 --> 00:06:27,900
+idea what they called a reduced
+
+139
+00:06:24,900 --> 00:06:30,659
+instruction set computer and it was all
+
+140
+00:06:27,900 --> 00:06:33,629
+the rage and nobody had a name for what
+
+141
+00:06:30,659 --> 00:06:36,509
+came before but the risk people named
+
+142
+00:06:33,629 --> 00:06:38,130
+what came before a Sisk for a complex
+
+143
+00:06:36,509 --> 00:06:39,240
+instruction set computer with the
+
+144
+00:06:38,130 --> 00:06:43,130
+obvious
+
+145
+00:06:39,240 --> 00:06:45,630
+a pejorative nature to that title and so
+
+146
+00:06:43,130 --> 00:06:47,460
+intelligent of the the classic Fisk
+
+147
+00:06:45,630 --> 00:06:49,889
+architecture meaning it has a ton of
+
+148
+00:06:47,460 --> 00:06:52,380
+features we're not going to even scratch
+
+149
+00:06:49,889 --> 00:06:56,130
+the surface if you want it the the
+
+150
+00:06:52,380 --> 00:06:58,740
+manual for it is two big fat books which
+
+151
+00:06:56,130 --> 00:07:00,569
+nowadays you do with PDF documents but
+
+152
+00:06:58,740 --> 00:07:04,919
+it's still a huge amount of stuff and
+
+153
+00:07:00,569 --> 00:07:08,430
+some 500 or more instructions everything
+
+154
+00:07:04,919 --> 00:07:10,889
+from doing decimal arithmetic to even
+
+155
+00:07:08,430 --> 00:07:14,280
+decimal floating point and all kinds of
+
+156
+00:07:10,889 --> 00:07:16,440
+goofy stuff in there but it turns out
+
+157
+00:07:14,280 --> 00:07:18,659
+that you can kind of get a pretty good
+
+158
+00:07:16,440 --> 00:07:22,050
+handle on it by focusing more on just
+
+159
+00:07:18,659 --> 00:07:24,419
+what does the code look like that GCC is
+
+160
+00:07:22,050 --> 00:07:29,039
+generating for the kind of programs that
+
+161
+00:07:24,419 --> 00:07:35,699
+you typically write and you should also
+
+162
+00:07:29,039 --> 00:07:39,270
+realize that it many levels of this
+
+163
+00:07:35,699 --> 00:07:41,819
+should not have been the successful
+
+164
+00:07:39,270 --> 00:07:44,520
+design because as I said it just got
+
+165
+00:07:41,819 --> 00:07:47,460
+lots of stuff on there but Intel has
+
+166
+00:07:44,520 --> 00:07:50,759
+been such a powerful company and had so
+
+167
+00:07:47,460 --> 00:07:52,740
+much market and since better technology
+
+168
+00:07:50,759 --> 00:07:54,840
+as far as semiconductors than its
+
+169
+00:07:52,740 --> 00:07:59,070
+competitors that's been able to kind of
+
+170
+00:07:54,840 --> 00:08:04,169
+keep this thing alive for almost 40
+
+171
+00:07:59,070 --> 00:08:06,330
+years this is pretty admirable so just
+
+172
+00:08:04,169 --> 00:08:09,569
+to give you a suit of timescale as I
+
+173
+00:08:06,330 --> 00:08:11,669
+mentioned the 8086 was the first one of
+
+174
+00:08:09,569 --> 00:08:15,440
+the first single chip 16-bit
+
+175
+00:08:11,669 --> 00:08:18,599
+microprocessors it came out in 78 and a
+
+176
+00:08:15,440 --> 00:08:21,289
+slight variation on it was a very basis
+
+177
+00:08:18,599 --> 00:08:26,550
+for the original IBM PC which I know
+
+178
+00:08:21,289 --> 00:08:29,099
+predates most of you your lives but it
+
+179
+00:08:26,550 --> 00:08:32,039
+was a sort of a the big breakthrough
+
+180
+00:08:29,099 --> 00:08:36,089
+that put computers on the desktops of
+
+181
+00:08:32,039 --> 00:08:37,469
+many people and there's been many many
+
+182
+00:08:36,089 --> 00:08:40,020
+generations I'm just giving you the
+
+183
+00:08:37,469 --> 00:08:43,140
+highlights from that are relevant to
+
+184
+00:08:40,020 --> 00:08:46,290
+this particular class the 386 which
+
+185
+00:08:43,140 --> 00:08:48,120
+dates back to 1985 was the one that
+
+186
+00:08:46,290 --> 00:08:50,160
+really made the transition from these
+
+187
+00:08:48,120 --> 00:08:52,190
+being personal computers that could run
+
+188
+00:08:50,160 --> 00:08:54,890
+not very interesting at
+
+189
+00:08:52,190 --> 00:08:57,470
+locations - ones that could actually run
+
+190
+00:08:54,890 --> 00:09:00,650
+something like a UNIX or Linux machine
+
+191
+00:08:57,470 --> 00:09:03,370
+and the reason is they extended it to 32
+
+192
+00:09:00,650 --> 00:09:05,630
+bits and they removed some of the weird
+
+193
+00:09:03,370 --> 00:09:07,790
+addressing stuff that used to be in
+
+194
+00:09:05,630 --> 00:09:11,360
+there so that these look like sort of a
+
+195
+00:09:07,790 --> 00:09:13,280
+generic processor and that was clear
+
+196
+00:09:11,360 --> 00:09:17,600
+back in 85 and that was what sometimes
+
+197
+00:09:13,280 --> 00:09:23,900
+called ia32 intel architecture 32 which
+
+198
+00:09:17,600 --> 00:09:26,210
+was the dominant way of code up told
+
+199
+00:09:23,900 --> 00:09:29,690
+just even a few years ago so even up as
+
+200
+00:09:26,210 --> 00:09:34,640
+recently as this past summer this course
+
+201
+00:09:29,690 --> 00:09:36,950
+was teaching I a 32 and then there and
+
+202
+00:09:34,640 --> 00:09:40,610
+I'll talk about it more later there was
+
+203
+00:09:36,950 --> 00:09:44,480
+a reason in a strange story behind the
+
+204
+00:09:40,610 --> 00:09:48,530
+extension from 32 to 64 bits which kind
+
+205
+00:09:44,480 --> 00:09:50,960
+of was sneaked in by Intel and an odd
+
+206
+00:09:48,530 --> 00:09:56,090
+model the Pentium 4 II but you see it
+
+207
+00:09:50,960 --> 00:09:58,040
+was only about 10 years ago and one of
+
+208
+00:09:56,090 --> 00:10:00,740
+the smart things they did would that is
+
+209
+00:09:58,040 --> 00:10:04,820
+that the machines that can run the
+
+210
+00:10:00,740 --> 00:10:06,980
+64-bit code can also run 32-bit code so
+
+211
+00:10:04,820 --> 00:10:09,230
+they were able to sort of bring out all
+
+212
+00:10:06,980 --> 00:10:11,330
+these machines without everybody having
+
+213
+00:10:09,230 --> 00:10:14,680
+to change over their software and it's
+
+214
+00:10:11,330 --> 00:10:17,420
+taken about that amount of time for the
+
+215
+00:10:14,680 --> 00:10:26,020
+software to largely transition away from
+
+216
+00:10:17,420 --> 00:10:29,360
+32-bit code to 64-bit code and then for
+
+217
+00:10:26,020 --> 00:10:32,150
+actually fairly interesting reasons you
+
+218
+00:10:29,360 --> 00:10:34,580
+could map how fast a single processor
+
+219
+00:10:32,150 --> 00:10:39,290
+would run and it was climbing up at a
+
+220
+00:10:34,580 --> 00:10:41,750
+pretty steady pace until around 2004 and
+
+221
+00:10:39,290 --> 00:10:43,520
+then Intel got and all the companies got
+
+222
+00:10:41,750 --> 00:10:45,740
+into serious trouble with the power
+
+223
+00:10:43,520 --> 00:10:49,130
+consumption of their chips they're
+
+224
+00:10:45,740 --> 00:10:50,870
+approaching 100 watt so imagine a 100
+
+225
+00:10:49,130 --> 00:10:53,930
+watt light bulb and how much heat that
+
+226
+00:10:50,870 --> 00:10:56,660
+generates inside of a box that you try
+
+227
+00:10:53,930 --> 00:10:59,210
+to blow a fan on really hard to keep it
+
+228
+00:10:56,660 --> 00:11:00,800
+from getting too hot and they were
+
+229
+00:10:59,210 --> 00:11:03,890
+reaching the point where they really
+
+230
+00:11:00,800 --> 00:11:05,500
+couldn't go much beyond a hundred watts
+
+231
+00:11:03,890 --> 00:11:07,570
+and so they sort of got
+
+232
+00:11:05,500 --> 00:11:09,160
+to a power budget problem and as a
+
+233
+00:11:07,570 --> 00:11:11,620
+result they haven't been able to scale
+
+234
+00:11:09,160 --> 00:11:14,560
+up the frequency how fast the inner
+
+235
+00:11:11,620 --> 00:11:20,710
+clock that drives this thing is beyond
+
+236
+00:11:14,560 --> 00:11:23,350
+just a few gigahertz since 2004 so what
+
+237
+00:11:20,710 --> 00:11:25,690
+happened was they said well we can't
+
+238
+00:11:23,350 --> 00:11:27,340
+make any single processor faster but we
+
+239
+00:11:25,690 --> 00:11:29,410
+can put a bunch of processors on a
+
+240
+00:11:27,340 --> 00:11:32,440
+single chip and those are referred to
+
+241
+00:11:29,410 --> 00:11:35,860
+cores or multi-core so most of you with
+
+242
+00:11:32,440 --> 00:11:38,560
+laptops probably have two cores on those
+
+243
+00:11:35,860 --> 00:11:42,610
+and a laptop processor and a server
+
+244
+00:11:38,560 --> 00:11:44,820
+might have up to 16 cores so those are
+
+245
+00:11:42,610 --> 00:11:49,300
+independent processors that are all
+
+246
+00:11:44,820 --> 00:11:53,010
+reside on a single chip the shark
+
+247
+00:11:49,300 --> 00:11:56,400
+machines date back to 2008 and they are
+
+248
+00:11:53,010 --> 00:11:59,340
+each have four cores on them
+
+249
+00:11:56,400 --> 00:12:01,300
+the shark machines the one thing about
+
+250
+00:11:59,340 --> 00:12:02,050
+computers haven't really gotten that
+
+251
+00:12:01,300 --> 00:12:04,660
+much faster
+
+252
+00:12:02,050 --> 00:12:08,050
+of in the meantime so there's still
+
+253
+00:12:04,660 --> 00:12:10,390
+fairways and they were in their day a
+
+254
+00:12:08,050 --> 00:12:15,850
+very high performance machine so they're
+
+255
+00:12:10,390 --> 00:12:21,490
+still pretty decent this shows a picture
+
+256
+00:12:15,850 --> 00:12:24,850
+of the chip that makes up a I think the
+
+257
+00:12:21,490 --> 00:12:27,250
+the sharp machines or approximately that
+
+258
+00:12:24,850 --> 00:12:29,460
+same era and you'll see that as the
+
+259
+00:12:27,250 --> 00:12:32,500
+picture shows these four cores are
+
+260
+00:12:29,460 --> 00:12:34,720
+integrated onto one chip and then down
+
+261
+00:12:32,500 --> 00:12:36,640
+at the bottom is what they call a cache
+
+262
+00:12:34,720 --> 00:12:40,710
+and we'll learn a lot about cache memory
+
+263
+00:12:36,640 --> 00:12:43,600
+but it's it's basically a temporary
+
+264
+00:12:40,710 --> 00:12:45,670
+memory used to hold the most recently
+
+265
+00:12:43,600 --> 00:12:48,580
+accessed data so that you can get to it
+
+266
+00:12:45,670 --> 00:12:53,620
+more quickly and you'll see that that
+
+267
+00:12:48,580 --> 00:12:55,660
+shared across the four cores so if you
+
+268
+00:12:53,620 --> 00:12:59,470
+look at the latest if you were to go off
+
+269
+00:12:55,660 --> 00:13:01,060
+shopping on in the catalog the latest
+
+270
+00:12:59,470 --> 00:13:03,730
+instance and I don't have any chip
+
+271
+00:13:01,060 --> 00:13:07,300
+pictures of it is a model they called a
+
+272
+00:13:03,730 --> 00:13:10,230
+Broadwell model and you'll see that on a
+
+273
+00:13:07,300 --> 00:13:13,000
+single chip they have multiple cores
+
+274
+00:13:10,230 --> 00:13:16,480
+forfor a serious standard desktop model
+
+275
+00:13:13,000 --> 00:13:18,790
+eight for a server class machine and
+
+276
+00:13:16,480 --> 00:13:21,250
+then built around the perimeter
+
+277
+00:13:18,790 --> 00:13:24,280
+there are various connections to the
+
+278
+00:13:21,250 --> 00:13:26,280
+rest of the world so DDR is the way you
+
+279
+00:13:24,280 --> 00:13:31,090
+connect to the main memory what's called
+
+280
+00:13:26,280 --> 00:13:33,480
+DRAM dynamic ram pci is the connection
+
+281
+00:13:31,090 --> 00:13:36,730
+to peripheral devices
+
+282
+00:13:33,480 --> 00:13:42,550
+SATA is a connection to different types
+
+283
+00:13:36,730 --> 00:13:46,090
+of discs and USB well you know it USB is
+
+284
+00:13:42,550 --> 00:13:51,850
+and then the ethernet is the connection
+
+285
+00:13:46,090 --> 00:13:53,860
+also to a network connection so that's
+
+286
+00:13:51,850 --> 00:13:56,620
+all integrated onto a single chip is not
+
+287
+00:13:53,860 --> 00:14:00,130
+just the processor itself but a lot of
+
+288
+00:13:56,620 --> 00:14:03,490
+logic that glues that processor into a
+
+289
+00:14:00,130 --> 00:14:05,710
+larger system and one interesting thing
+
+290
+00:14:03,490 --> 00:14:06,690
+you'll notice is that the desktop model
+
+291
+00:14:05,710 --> 00:14:10,600
+is a higher power
+
+292
+00:14:06,690 --> 00:14:12,670
+65 watts versus the server is 45 watts
+
+293
+00:14:10,600 --> 00:14:15,160
+when you put a lot of computers in a
+
+294
+00:14:12,670 --> 00:14:18,270
+room turns out power is the biggest
+
+295
+00:14:15,160 --> 00:14:18,270
+issue you have to deal with
+
+296
+00:14:20,320 --> 00:14:26,170
+so intelligent the only company in this
+
+297
+00:14:23,350 --> 00:14:29,620
+game they're sort of historic competitor
+
+298
+00:14:26,170 --> 00:14:33,399
+is a company called AMD and AMD was
+
+299
+00:14:29,620 --> 00:14:36,850
+always sort of number two behind Intel
+
+300
+00:14:33,399 --> 00:14:44,620
+in although I gave us his number two
+
+301
+00:14:36,850 --> 00:14:46,870
+behind her but the they had a little
+
+302
+00:14:44,620 --> 00:14:50,019
+burst in time when they kind of got out
+
+303
+00:14:46,870 --> 00:14:53,589
+ahead of Intel because Intel had wasted
+
+304
+00:14:50,019 --> 00:14:54,970
+their time on some bad ideas and they
+
+305
+00:14:53,589 --> 00:14:57,759
+actually were the one that came up with
+
+306
+00:14:54,970 --> 00:15:02,319
+the 64-bit extension to Intel that we
+
+307
+00:14:57,759 --> 00:15:03,149
+use right now though AMD is not just
+
+308
+00:15:02,319 --> 00:15:06,279
+doing very well
+
+309
+00:15:03,149 --> 00:15:08,319
+Intel sort of realized that it had to
+
+310
+00:15:06,279 --> 00:15:13,540
+get its act together and it did and it
+
+311
+00:15:08,319 --> 00:15:14,980
+is more or less crushed AMD but and I
+
+312
+00:15:13,540 --> 00:15:18,279
+should mention that they had these
+
+313
+00:15:14,980 --> 00:15:19,810
+ferocious patent suits many years ago
+
+314
+00:15:18,279 --> 00:15:22,630
+and the result of that was across
+
+315
+00:15:19,810 --> 00:15:26,769
+licensing deal that allows AMD to
+
+316
+00:15:22,630 --> 00:15:29,230
+produce x86 processors - now it's
+
+317
+00:15:26,769 --> 00:15:32,110
+interesting story behind Intel in 64
+
+318
+00:15:29,230 --> 00:15:33,819
+bits they decided to make this radical
+
+319
+00:15:32,110 --> 00:15:39,880
+shift to an architecture that they
+
+320
+00:15:33,819 --> 00:15:42,550
+called the they called ia-64
+
+321
+00:15:39,880 --> 00:15:45,790
+at the time and it was based on a whole
+
+322
+00:15:42,550 --> 00:15:48,160
+new concept that looked really good on
+
+323
+00:15:45,790 --> 00:15:48,940
+paper and initial results looked
+
+324
+00:15:48,160 --> 00:15:50,620
+promising
+
+325
+00:15:48,940 --> 00:15:53,260
+they invested a lot of money in this
+
+326
+00:15:50,620 --> 00:15:55,449
+stuff they formed a joint operation with
+
+327
+00:15:53,260 --> 00:15:57,220
+Hewlett Packard on this and it turned
+
+328
+00:15:55,449 --> 00:16:01,110
+out not to work it was much too
+
+329
+00:15:57,220 --> 00:16:03,130
+aggressive it assumed miraculous
+
+330
+00:16:01,110 --> 00:16:05,709
+optimization capabilities by the
+
+331
+00:16:03,130 --> 00:16:08,230
+compiler and so it was a from a
+
+332
+00:16:05,709 --> 00:16:10,209
+technically idea it was very interesting
+
+333
+00:16:08,230 --> 00:16:12,850
+technology but in the marketplace it
+
+334
+00:16:10,209 --> 00:16:16,269
+didn't work and this was sort of a
+
+335
+00:16:12,850 --> 00:16:17,949
+branch off that Intel pursued and felt
+
+336
+00:16:16,269 --> 00:16:20,139
+obligated to keep it up because they'd
+
+337
+00:16:17,949 --> 00:16:22,240
+invested so much in it and Along Came
+
+338
+00:16:20,139 --> 00:16:24,040
+AMD and they said well we don't have to
+
+339
+00:16:22,240 --> 00:16:28,000
+do this radical shift we'll just sort of
+
+340
+00:16:24,040 --> 00:16:30,339
+do the obvious thing of adding making
+
+341
+00:16:28,000 --> 00:16:33,310
+the registers bigger making things go
+
+342
+00:16:30,339 --> 00:16:34,120
+from 32 to 64 bits and they came along
+
+343
+00:16:33,310 --> 00:16:37,420
+with that
+
+344
+00:16:34,120 --> 00:16:40,800
+and got a and were successful and so
+
+345
+00:16:37,420 --> 00:16:44,230
+Intel kind of had to just sheepishly
+
+346
+00:16:40,800 --> 00:16:47,020
+follow behind AMD on this but they could
+
+347
+00:16:44,230 --> 00:16:48,940
+because of their cross licensing deal so
+
+348
+00:16:47,020 --> 00:16:52,450
+nowadays as I mentioned hardware-wise
+
+349
+00:16:48,940 --> 00:16:55,510
+just about every processor that is in a
+
+350
+00:16:52,450 --> 00:16:57,520
+laptop in a desktop even your cell
+
+351
+00:16:55,510 --> 00:17:05,770
+phones of recent generation are all
+
+352
+00:16:57,520 --> 00:17:08,170
+64-bit processors so what we'll talk
+
+353
+00:17:05,770 --> 00:17:10,449
+about then we used to teach ia32 but
+
+354
+00:17:08,170 --> 00:17:13,600
+that's gone this is the first term where
+
+355
+00:17:10,449 --> 00:17:16,990
+we're skipping it all together so we're
+
+356
+00:17:13,600 --> 00:17:19,000
+using what we'll call x86 - 64 there's
+
+357
+00:17:16,990 --> 00:17:22,630
+various ways this is named but this is
+
+358
+00:17:19,000 --> 00:17:24,720
+sort of the Linux way of naming it if
+
+359
+00:17:22,630 --> 00:17:27,280
+you're interested in AI 32 there's a
+
+360
+00:17:24,720 --> 00:17:29,530
+document on the web associated with the
+
+361
+00:17:27,280 --> 00:17:31,300
+book called a web aside that goes
+
+362
+00:17:29,530 --> 00:17:33,490
+through at least some of the basics of
+
+363
+00:17:31,300 --> 00:17:36,130
+it but to really read that you need to
+
+364
+00:17:33,490 --> 00:17:40,390
+learn the 64 bit because it assumes you
+
+365
+00:17:36,130 --> 00:17:42,760
+kind of already know that okay so let's
+
+366
+00:17:40,390 --> 00:17:45,340
+go in and I should mention - if just for
+
+367
+00:17:42,760 --> 00:17:47,710
+general interest the other major class
+
+368
+00:17:45,340 --> 00:17:51,190
+of processor in common use today are
+
+369
+00:17:47,710 --> 00:17:55,210
+called arm so arm actually is an acronym
+
+370
+00:17:51,190 --> 00:17:57,100
+for acorn RISC machine I just told you
+
+371
+00:17:55,210 --> 00:17:59,980
+what risk means it means risk reduced
+
+372
+00:17:57,100 --> 00:18:02,050
+instruction set computer an acorn means
+
+373
+00:17:59,980 --> 00:18:04,390
+like you know the seed of an oak tree it
+
+374
+00:18:02,050 --> 00:18:08,680
+was a British company
+
+375
+00:18:04,390 --> 00:18:10,450
+and that decide to make its own personal
+
+376
+00:18:08,680 --> 00:18:12,340
+computers in the early days of it and
+
+377
+00:18:10,450 --> 00:18:13,600
+they said we're not going to buy those
+
+378
+00:18:12,340 --> 00:18:15,100
+chips from Intel we're going to make
+
+379
+00:18:13,600 --> 00:18:17,680
+them ourselves so they designed and
+
+380
+00:18:15,100 --> 00:18:19,690
+manufactured their own chips well as a
+
+381
+00:18:17,680 --> 00:18:22,690
+company a computer manufacturer it was a
+
+382
+00:18:19,690 --> 00:18:24,970
+complete bust but it turned out that
+
+383
+00:18:22,690 --> 00:18:28,090
+they'd come up with a fairly good
+
+384
+00:18:24,970 --> 00:18:30,930
+instruction set that was sufficiently
+
+385
+00:18:28,090 --> 00:18:34,870
+simple that it could be put on chips and
+
+386
+00:18:30,930 --> 00:18:37,090
+better yet it could be customized so arm
+
+387
+00:18:34,870 --> 00:18:39,150
+is now a company of its own
+
+388
+00:18:37,090 --> 00:18:41,350
+headquartered in Cambridge England and
+
+389
+00:18:39,150 --> 00:18:43,780
+the reason why part of the reason
+
+390
+00:18:41,350 --> 00:18:46,110
+they're successful therefore is because
+
+391
+00:18:43,780 --> 00:18:48,850
+it tends to be a lower power
+
+392
+00:18:46,110 --> 00:18:51,100
+requirements than an x86 machine because
+
+393
+00:18:48,850 --> 00:18:53,520
+it's simpler but the other is that they
+
+394
+00:18:51,100 --> 00:18:56,740
+don't actually sell processors they sell
+
+395
+00:18:53,520 --> 00:18:59,740
+companies the rights the licensing
+
+396
+00:18:56,740 --> 00:19:03,550
+rights to use their designs and so if
+
+397
+00:18:59,740 --> 00:19:05,800
+you look at like a cellphone processor
+
+398
+00:19:03,550 --> 00:19:08,410
+the actual ARM processor is a little
+
+399
+00:19:05,800 --> 00:19:10,080
+tiny part of it on the chip and then
+
+400
+00:19:08,410 --> 00:19:13,030
+they'll have other stuff to make the
+
+401
+00:19:10,080 --> 00:19:16,150
+graphics go better to improve your phone
+
+402
+00:19:13,030 --> 00:19:18,280
+calls and so forth and so they're really
+
+403
+00:19:16,150 --> 00:19:22,300
+selling what intellectual property is
+
+404
+00:19:18,280 --> 00:19:23,980
+opposed to chips and so people we've
+
+405
+00:19:22,300 --> 00:19:26,080
+gotten various inquiries when are you
+
+406
+00:19:23,980 --> 00:19:27,730
+going to start talking about arm in your
+
+407
+00:19:26,080 --> 00:19:30,430
+book or your course or something and we
+
+408
+00:19:27,730 --> 00:19:32,380
+go it would be another book to write to
+
+409
+00:19:30,430 --> 00:19:36,490
+do justice to arm it would be like a
+
+410
+00:19:32,380 --> 00:19:38,340
+whole redo of the thing and we were not
+
+411
+00:19:36,490 --> 00:19:41,050
+inclined to do that right now
+
+412
+00:19:38,340 --> 00:19:44,650
+but just so you know there's sort of a
+
+413
+00:19:41,050 --> 00:19:47,700
+two worlds out there x86 and arm are the
+
+414
+00:19:44,650 --> 00:19:47,700
+dominant players right now
+
+415
+00:19:48,490 --> 00:19:52,310
+so let's talk some terminology and
+
+416
+00:19:51,380 --> 00:19:54,410
+you've probably heard some of these
+
+417
+00:19:52,310 --> 00:19:57,170
+terms before but let's make it clear so
+
+418
+00:19:54,410 --> 00:20:00,770
+when we talk about the instructions the
+
+419
+00:19:57,170 --> 00:20:03,650
+instruction set that's the the target of
+
+420
+00:20:00,770 --> 00:20:05,390
+a compiler to give you a series of
+
+421
+00:20:03,650 --> 00:20:09,890
+instructions that tell the Machine
+
+422
+00:20:05,390 --> 00:20:11,540
+exactly what to do but it turns out that
+
+423
+00:20:09,890 --> 00:20:13,420
+the hardware people will figure out all
+
+424
+00:20:11,540 --> 00:20:16,970
+kinds of clever ways to implement
+
+425
+00:20:13,420 --> 00:20:19,760
+instructions some of them are really
+
+426
+00:20:16,970 --> 00:20:21,620
+fast but take a lot of hardware some are
+
+427
+00:20:19,760 --> 00:20:23,900
+pretty slow but don't take much hardware
+
+428
+00:20:21,620 --> 00:20:27,050
+at all and so they managed to create
+
+429
+00:20:23,900 --> 00:20:28,970
+this this abstraction that's called the
+
+430
+00:20:27,050 --> 00:20:31,520
+instruction set architecture which is
+
+431
+00:20:28,970 --> 00:20:33,680
+what the target of a compiler should be
+
+432
+00:20:31,520 --> 00:20:36,050
+and then let the hardware people figure
+
+433
+00:20:33,680 --> 00:20:38,120
+out how best to implement it and then
+
+434
+00:20:36,050 --> 00:20:42,080
+the low so that that's a concept
+
+435
+00:20:38,120 --> 00:20:46,280
+actually it came along in the 1960s so
+
+436
+00:20:42,080 --> 00:20:49,820
+that's even before my time as far as a
+
+437
+00:20:46,280 --> 00:20:52,340
+computer person but it's a very
+
+438
+00:20:49,820 --> 00:20:54,620
+important concept in the world of
+
+439
+00:20:52,340 --> 00:20:56,570
+computers and then what they call the
+
+440
+00:20:54,620 --> 00:20:57,500
+lower level stuff how it actually gets
+
+441
+00:20:56,570 --> 00:20:58,610
+implemented is called the
+
+442
+00:20:57,500 --> 00:21:00,950
+microarchitecture
+
+443
+00:20:58,610 --> 00:21:03,740
+we will talk very very little about
+
+444
+00:21:00,950 --> 00:21:05,540
+microarchitecture in this course and as
+
+445
+00:21:03,740 --> 00:21:08,300
+I mentioned machine code in sort of a
+
+446
+00:21:05,540 --> 00:21:11,090
+generic term that incorporates both the
+
+447
+00:21:08,300 --> 00:21:13,370
+actual bit the bytes that are operated
+
+448
+00:21:11,090 --> 00:21:16,060
+executing as well as the assembly level
+
+449
+00:21:13,370 --> 00:21:16,060
+version of it
+
+450
+00:21:17,430 --> 00:21:24,410
+and as I mentioned you can think of from
+
+451
+00:21:20,070 --> 00:21:28,500
+instruction set point of view so ia32
+
+452
+00:21:24,410 --> 00:21:31,530
+x86 64 and what's called Itanium or this
+
+453
+00:21:28,500 --> 00:21:35,060
+not very successful Intel thing those
+
+454
+00:21:31,530 --> 00:21:35,060
+are all in some ways different
+
+455
+00:21:35,150 --> 00:21:40,410
+instruction set architectures arm
+
+456
+00:21:37,350 --> 00:21:42,330
+actually similar to Intel has gone
+
+457
+00:21:40,410 --> 00:21:44,040
+through various different generations so
+
+458
+00:21:42,330 --> 00:21:48,330
+there's various different generations of
+
+459
+00:21:44,040 --> 00:21:50,460
+its instruction sets so from a
+
+460
+00:21:48,330 --> 00:21:52,560
+programmer machine level programmers
+
+461
+00:21:50,460 --> 00:21:56,340
+perspective things are a bit different
+
+462
+00:21:52,560 --> 00:21:59,040
+than you see when you write C code first
+
+463
+00:21:56,340 --> 00:22:01,200
+of all there is some very visible parts
+
+464
+00:21:59,040 --> 00:22:04,110
+of the instruction the Machine State
+
+465
+00:22:01,200 --> 00:22:07,320
+that you can examine and test and
+
+466
+00:22:04,110 --> 00:22:09,330
+operate on and you must in fact that you
+
+467
+00:22:07,320 --> 00:22:12,210
+would never understand what those are if
+
+468
+00:22:09,330 --> 00:22:15,000
+you're just thinking in terms of C so in
+
+469
+00:22:12,210 --> 00:22:17,880
+particular there's some sort of a
+
+470
+00:22:15,000 --> 00:22:21,060
+program counter to tells you what what
+
+471
+00:22:17,880 --> 00:22:23,100
+address is the instruction that you're
+
+472
+00:22:21,060 --> 00:22:27,420
+going to execute next where is that
+
+473
+00:22:23,100 --> 00:22:31,110
+located in memory and then there's a set
+
+474
+00:22:27,420 --> 00:22:33,630
+of registers which are part of the that
+
+475
+00:22:31,110 --> 00:22:36,330
+the programmer actually makes use of you
+
+476
+00:22:33,630 --> 00:22:38,550
+can think of them as as a very small
+
+477
+00:22:36,330 --> 00:22:41,730
+number of memory locations but rather
+
+478
+00:22:38,550 --> 00:22:44,040
+than giving an address from 0 up to n
+
+479
+00:22:41,730 --> 00:22:48,420
+minus 1 or something you actually give
+
+480
+00:22:44,040 --> 00:22:50,820
+them by name specifically and then
+
+481
+00:22:48,420 --> 00:22:52,830
+there's another sort of state that's
+
+482
+00:22:50,820 --> 00:22:57,030
+just a few bits worth of state that
+
+483
+00:22:52,830 --> 00:23:00,060
+talked about what what are the results
+
+484
+00:22:57,030 --> 00:23:02,100
+of some recent instructions where they
+
+485
+00:23:00,060 --> 00:23:03,870
+did it produce a value of 0 did it
+
+486
+00:23:02,100 --> 00:23:05,580
+produce a negative or a positive value
+
+487
+00:23:03,870 --> 00:23:07,350
+and those are used to implement
+
+488
+00:23:05,580 --> 00:23:10,740
+conditional branching which we'll look
+
+489
+00:23:07,350 --> 00:23:13,230
+at later as we go and then the other
+
+490
+00:23:10,740 --> 00:23:15,000
+part of it so that sort of the processor
+
+491
+00:23:13,230 --> 00:23:20,820
+and then the other part of it is the
+
+492
+00:23:15,000 --> 00:23:22,770
+memory and as I mentioned in the one of
+
+493
+00:23:20,820 --> 00:23:24,990
+the first lectures the memory is you can
+
+494
+00:23:22,770 --> 00:23:28,430
+think of logically as just an array of
+
+495
+00:23:24,990 --> 00:23:31,640
+bytes and that's what the
+
+496
+00:23:28,430 --> 00:23:33,350
+machine level programmer C's and it's
+
+497
+00:23:31,640 --> 00:23:35,300
+actually kind of a fiction in in
+
+498
+00:23:33,350 --> 00:23:37,070
+different ways as I mentioned before
+
+499
+00:23:35,300 --> 00:23:38,740
+they're sort of a collaboration between
+
+500
+00:23:37,070 --> 00:23:42,110
+the operating system and the hardware
+
+501
+00:23:38,740 --> 00:23:44,150
+what they call virtual memory to make it
+
+502
+00:23:42,110 --> 00:23:48,530
+look like each program running on a
+
+503
+00:23:44,150 --> 00:23:51,530
+processor has its own independent array
+
+504
+00:23:48,530 --> 00:23:55,100
+of bytes that it can access even though
+
+505
+00:23:51,530 --> 00:23:56,800
+they actually share values within the
+
+506
+00:23:55,100 --> 00:24:00,080
+the physical memory itself and
+
+507
+00:23:56,800 --> 00:24:02,270
+furthermore you heard the term cache the
+
+508
+00:24:00,080 --> 00:24:05,120
+idea of a cache is not visible here at
+
+509
+00:24:02,270 --> 00:24:08,540
+all because it just is automatically
+
+510
+00:24:05,120 --> 00:24:10,630
+loaded with recent stuff and the only
+
+511
+00:24:08,540 --> 00:24:13,250
+thing that will look different is if you
+
+512
+00:24:10,630 --> 00:24:15,020
+access that memory it will go faster
+
+513
+00:24:13,250 --> 00:24:18,080
+than it would if it hadn't been cached
+
+514
+00:24:15,020 --> 00:24:20,360
+but it's not visible in terms of there's
+
+515
+00:24:18,080 --> 00:24:23,810
+no instructions to manipulate the cache
+
+516
+00:24:20,360 --> 00:24:28,850
+there's no way you can directly access
+
+517
+00:24:23,810 --> 00:24:31,250
+the cache so you already see that it's
+
+518
+00:24:28,850 --> 00:24:35,210
+already abstract it's got some more
+
+519
+00:24:31,250 --> 00:24:37,220
+details of real Hardware but underneath
+
+520
+00:24:35,210 --> 00:24:39,610
+it that sort of microarchitecture level
+
+521
+00:24:37,220 --> 00:24:43,610
+has some features built into it that
+
+522
+00:24:39,610 --> 00:24:47,750
+you're not operating on you're not
+
+523
+00:24:43,610 --> 00:24:50,920
+making use of direct way yeah when you
+
+524
+00:24:47,750 --> 00:24:50,920
+write machine level programs
+
+525
+00:24:52,130 --> 00:24:59,070
+so if you have a program then say and
+
+526
+00:24:56,730 --> 00:25:01,140
+see it would typically on a larger
+
+527
+00:24:59,070 --> 00:25:04,320
+program that will include multiple files
+
+528
+00:25:01,140 --> 00:25:07,590
+and it will make use of some library
+
+529
+00:25:04,320 --> 00:25:10,830
+code and so the process of compilation
+
+530
+00:25:07,590 --> 00:25:13,410
+is actually a series of steps that will
+
+531
+00:25:10,830 --> 00:25:16,290
+take what you've written for code turn
+
+532
+00:25:13,410 --> 00:25:19,980
+it into machine code combine it with the
+
+533
+00:25:16,290 --> 00:25:22,730
+compiled compiler generated code for the
+
+534
+00:25:19,980 --> 00:25:25,950
+libraries and produce finally a in a
+
+535
+00:25:22,730 --> 00:25:28,710
+file that's your actual executable
+
+536
+00:25:25,950 --> 00:25:31,800
+program and svet shown here in this
+
+537
+00:25:28,710 --> 00:25:33,900
+picture that the first step is to take C
+
+538
+00:25:31,800 --> 00:25:36,930
+and actually generate assembly code from
+
+539
+00:25:33,900 --> 00:25:38,850
+it and then the next is to run that
+
+540
+00:25:36,930 --> 00:25:42,060
+through an assembler which takes the
+
+541
+00:25:38,850 --> 00:25:43,650
+text representation of instructions and
+
+542
+00:25:42,060 --> 00:25:45,780
+turns it into the actual byte level
+
+543
+00:25:43,650 --> 00:25:49,740
+representation we'll look at all this
+
+544
+00:25:45,780 --> 00:25:52,650
+shortly and then there's a program
+
+545
+00:25:49,740 --> 00:25:55,890
+called a linker which merges together
+
+546
+00:25:52,650 --> 00:25:59,010
+all the different files for both your
+
+547
+00:25:55,890 --> 00:26:01,940
+individual file their their compiled
+
+548
+00:25:59,010 --> 00:26:05,580
+versions and for the library code and
+
+549
+00:26:01,940 --> 00:26:07,080
+then finally there's a even once you run
+
+550
+00:26:05,580 --> 00:26:10,530
+a program there's actually some
+
+551
+00:26:07,080 --> 00:26:14,730
+libraries that get imported dynamically
+
+552
+00:26:10,530 --> 00:26:17,010
+when the program first begins so it's a
+
+553
+00:26:14,730 --> 00:26:19,380
+sort of many layered set of activities
+
+554
+00:26:17,010 --> 00:26:24,150
+and I'll go through some of these
+
+555
+00:26:19,380 --> 00:26:27,450
+one-by-one for you so for example here's
+
+556
+00:26:24,150 --> 00:26:29,610
+a not very interesting function in terms
+
+557
+00:26:27,450 --> 00:26:31,760
+of doing anything useful but it sort of
+
+558
+00:26:29,610 --> 00:26:35,130
+demonstrates two basic ideas of
+
+559
+00:26:31,760 --> 00:26:38,130
+compilation and if I run this through a
+
+560
+00:26:35,130 --> 00:26:40,830
+C compiler I get something that looks
+
+561
+00:26:38,130 --> 00:26:43,680
+like what's shown on the right and
+
+562
+00:26:40,830 --> 00:26:45,750
+that's the sembly code and just to give
+
+563
+00:26:43,680 --> 00:26:47,520
+you an idea of what it is it looks like
+
+564
+00:26:45,750 --> 00:26:50,070
+a sort of strange language the first
+
+565
+00:26:47,520 --> 00:26:52,800
+time you see it but you'll see those
+
+566
+00:26:50,070 --> 00:26:55,080
+percent are something those are the
+
+567
+00:26:52,800 --> 00:26:56,910
+actual names of registers remember I
+
+568
+00:26:55,080 --> 00:27:00,600
+told you there's registers that you give
+
+569
+00:26:56,910 --> 00:27:02,880
+by name and then those instructions are
+
+570
+00:27:00,600 --> 00:27:05,250
+telling it to do something push cue
+
+571
+00:27:02,880 --> 00:27:08,280
+means push something onto a stack
+
+572
+00:27:05,250 --> 00:27:10,830
+move means move copy it from one place
+
+573
+00:27:08,280 --> 00:27:15,000
+to another call means to call some
+
+574
+00:27:10,830 --> 00:27:18,930
+procedure pop is the counterpart to push
+
+575
+00:27:15,000 --> 00:27:21,060
+and then rep is exit return out of this
+
+576
+00:27:18,930 --> 00:27:23,580
+particular function so you see each of
+
+577
+00:27:21,060 --> 00:27:26,070
+those is an instruction and it's written
+
+578
+00:27:23,580 --> 00:27:29,790
+in text but each of those will turn into
+
+579
+00:27:26,070 --> 00:27:33,540
+one actual instruction in the object
+
+580
+00:27:29,790 --> 00:27:35,880
+code representation so I should tell you
+
+581
+00:27:33,540 --> 00:27:37,830
+that this is actually a slightly cleaned
+
+582
+00:27:35,880 --> 00:27:39,690
+up version of what really happens so let
+
+583
+00:27:37,830 --> 00:27:47,790
+me show you the reality because you'll
+
+584
+00:27:39,690 --> 00:27:50,610
+be experiencing that a bit more - they
+
+585
+00:27:47,790 --> 00:27:53,030
+had this bigger before let me make it
+
+586
+00:27:50,610 --> 00:27:53,030
+bigger
+
+587
+00:27:59,850 --> 00:28:02,390
+and
+
+588
+00:28:04,090 --> 00:28:13,000
+pull this up so that you can see it set
+
+589
+00:28:10,490 --> 00:28:18,400
+can you see it in the back they're
+
+590
+00:28:13,000 --> 00:28:18,400
+bigger better
+
+591
+00:28:22,810 --> 00:28:27,070
+and let me get the other one
+
+592
+00:28:39,120 --> 00:28:42,120
+in
+
+593
+00:28:49,429 --> 00:28:59,010
+and they've already logged into a fish
+
+594
+00:28:54,929 --> 00:29:01,650
+machine to get here so this is a file
+
+595
+00:28:59,010 --> 00:29:04,260
+then you see it's called some dot C and
+
+596
+00:29:01,650 --> 00:29:08,340
+I'll mention that all of these programs
+
+597
+00:29:04,260 --> 00:29:12,059
+are available you can see the whole well
+
+598
+00:29:08,340 --> 00:29:13,799
+slash AFS is my own personal and all
+
+599
+00:29:12,059 --> 00:29:16,740
+that first stuff is my own personal
+
+600
+00:29:13,799 --> 00:29:22,080
+links but once you get to the class web
+
+601
+00:29:16,740 --> 00:29:24,090
+page awwh code slash and then it's all
+
+602
+00:29:22,080 --> 00:29:27,000
+given by which particular lecture it is
+
+603
+00:29:24,090 --> 00:29:29,809
+I think these are linked on the homepage
+
+604
+00:29:27,000 --> 00:29:32,400
+too and you can see various files there
+
+605
+00:29:29,809 --> 00:29:36,390
+that are used for the demonstration the
+
+606
+00:29:32,400 --> 00:29:39,960
+C files are obviously the programs that
+
+607
+00:29:36,390 --> 00:29:42,330
+we typed in and then one to have an S at
+
+608
+00:29:39,960 --> 00:29:45,360
+the end that's assembly code one that Rd
+
+609
+00:29:42,330 --> 00:29:53,210
+R what's called disassembly so anyways
+
+610
+00:29:45,360 --> 00:29:59,429
+if I say GCC - Bo - - Muslim sir - fo G
+
+611
+00:29:53,210 --> 00:30:02,280
+minus s capital some dot C that what I
+
+612
+00:29:59,429 --> 00:30:05,100
+did was just tell the compiler to take
+
+613
+00:30:02,280 --> 00:30:07,799
+the C code and turn it into assembly
+
+614
+00:30:05,100 --> 00:30:10,230
+code so when you invoke GCC you're
+
+615
+00:30:07,799 --> 00:30:12,890
+actually invoking it's not just one
+
+616
+00:30:10,230 --> 00:30:15,419
+program but a whole sequence of programs
+
+617
+00:30:12,890 --> 00:30:18,059
+that do various stages of the
+
+618
+00:30:15,419 --> 00:30:21,360
+compilation and by giving it this minus
+
+619
+00:30:18,059 --> 00:30:23,309
+capital F switch I'm saying stop I'll
+
+620
+00:30:21,360 --> 00:30:29,150
+just do the first part C to assembly
+
+621
+00:30:23,309 --> 00:30:31,169
+code and the - Oh little G is a
+
+622
+00:30:29,150 --> 00:30:33,330
+specification of what kind of
+
+623
+00:30:31,169 --> 00:30:37,549
+optimization I want the compiler to do
+
+624
+00:30:33,330 --> 00:30:40,440
+so if you don't say anything - just
+
+625
+00:30:37,549 --> 00:30:42,840
+ignite
+
+626
+00:30:40,440 --> 00:30:46,110
+an optimized code and it's actually very
+
+627
+00:30:42,840 --> 00:30:51,090
+hard to read that code it's very tedious
+
+628
+00:30:46,110 --> 00:30:54,450
+the way it works if you say - oh one
+
+629
+00:30:51,090 --> 00:30:56,100
+which is what you used to do - turn on
+
+630
+00:30:54,450 --> 00:30:58,530
+the optimizer it
+
+631
+00:30:56,100 --> 00:31:00,600
+turns out that as GCC as they've gotten
+
+632
+00:30:58,530 --> 00:31:03,900
+more advanced it does a lot of
+
+633
+00:31:00,600 --> 00:31:06,390
+optimizations now that for the purpose
+
+634
+00:31:03,900 --> 00:31:09,840
+of this course make the code pretty hard
+
+635
+00:31:06,390 --> 00:31:12,299
+to understand so it just with one of the
+
+636
+00:31:09,840 --> 00:31:16,410
+most recent generations of GCC came out
+
+637
+00:31:12,299 --> 00:31:20,460
+with this level called G for debugging
+
+638
+00:31:16,410 --> 00:31:22,380
+that's a nice for this course purpose of
+
+639
+00:31:20,460 --> 00:31:25,260
+this course a nice level that it sort of
+
+640
+00:31:22,380 --> 00:31:28,020
+does the obvious kind of optimizations
+
+641
+00:31:25,260 --> 00:31:31,770
+to make the code readable without being
+
+642
+00:31:28,020 --> 00:31:33,150
+sort of extravagant in trying to rewrite
+
+643
+00:31:31,770 --> 00:31:35,880
+your whole program in a way that would
+
+644
+00:31:33,150 --> 00:31:37,799
+make it a lot different and hopefully
+
+645
+00:31:35,880 --> 00:31:40,530
+more efficient so that's what we'll use
+
+646
+00:31:37,799 --> 00:31:42,150
+in this course it's only exists in the
+
+647
+00:31:40,530 --> 00:31:43,919
+recent versions of the GCC it's
+
+648
+00:31:42,150 --> 00:31:50,570
+non-standard across other compilers
+
+649
+00:31:43,919 --> 00:31:56,960
+question no it's an O capital o
+
+650
+00:31:50,570 --> 00:31:59,400
+it stands for optimize so what that
+
+651
+00:31:56,960 --> 00:32:04,730
+command just did was produce a file
+
+652
+00:31:59,400 --> 00:32:04,730
+called some dot F so let me show you
+
+653
+00:32:06,440 --> 00:32:12,890
+what some dot s is and let me show you
+
+654
+00:32:09,539 --> 00:32:12,890
+the function some store
+
+655
+00:32:15,280 --> 00:32:20,860
+can you see that then okay
+
+656
+00:32:27,650 --> 00:32:34,710
+so this is the code it says some store
+
+657
+00:32:31,590 --> 00:32:36,330
+and then you'll see you'll recognize
+
+658
+00:32:34,710 --> 00:32:39,570
+those instructions I mentioned before
+
+659
+00:32:36,330 --> 00:32:42,390
+the push the move to call the must move
+
+660
+00:32:39,570 --> 00:32:48,270
+the pop and the rest but you also see
+
+661
+00:32:42,390 --> 00:32:50,580
+other junk there that that we edited out
+
+662
+00:32:48,270 --> 00:32:53,610
+for the presentation and even in the
+
+663
+00:32:50,580 --> 00:32:55,530
+book it got edited out and the reason is
+
+664
+00:32:53,610 --> 00:32:57,540
+these are various directives that aren't
+
+665
+00:32:55,530 --> 00:33:00,810
+really directly part of the code itself
+
+666
+00:32:57,540 --> 00:33:02,190
+the fact they start with a period is an
+
+667
+00:33:00,810 --> 00:33:04,200
+indication that these aren't actually
+
+668
+00:33:02,190 --> 00:33:08,030
+instructions there's something else and
+
+669
+00:33:04,200 --> 00:33:11,340
+they all are related to what the
+
+670
+00:33:08,030 --> 00:33:14,160
+information that needs to be fed to a
+
+671
+00:33:11,340 --> 00:33:17,580
+debugger for it to be able to locate
+
+672
+00:33:14,160 --> 00:33:19,740
+various parts of the program and some
+
+673
+00:33:17,580 --> 00:33:21,870
+information for the linker to tell it
+
+674
+00:33:19,740 --> 00:33:24,120
+that this is a globally defined function
+
+675
+00:33:21,870 --> 00:33:27,210
+and various other things that you don't
+
+676
+00:33:24,120 --> 00:33:31,050
+really need to rethink about initially
+
+677
+00:33:27,210 --> 00:33:32,430
+so we sort of take those out of the
+
+678
+00:33:31,050 --> 00:33:35,790
+program just to make them more readable
+
+679
+00:33:32,430 --> 00:33:37,560
+but if you ever do this yourself you'll
+
+680
+00:33:35,790 --> 00:33:39,600
+find this crud in there and we don't
+
+681
+00:33:37,560 --> 00:33:41,010
+want you to get like oh my gosh this
+
+682
+00:33:39,600 --> 00:33:50,150
+wasn't in the book I don't know what to
+
+683
+00:33:41,010 --> 00:33:50,150
+do with it so let's go back
+
+684
+00:33:57,830 --> 00:34:03,320
+the other thing is people are learning
+
+685
+00:33:59,330 --> 00:34:05,900
+on data web is sharp versus non charkh
+
+686
+00:34:03,320 --> 00:34:10,550
+it makes a difference and even like this
+
+687
+00:34:05,900 --> 00:34:13,460
+is a Mac computer and I can rut got GCC
+
+688
+00:34:10,550 --> 00:34:16,550
+installed and it generates its Intel
+
+689
+00:34:13,460 --> 00:34:19,429
+processor in there but it's not directly
+
+690
+00:34:16,550 --> 00:34:21,409
+compatible with Linux code so it's
+
+691
+00:34:19,429 --> 00:34:22,700
+pretty important for this course we're
+
+692
+00:34:21,409 --> 00:34:29,690
+saying just stick with the shark
+
+693
+00:34:22,700 --> 00:34:31,070
+machines for everything you do so what
+
+694
+00:34:29,690 --> 00:34:33,290
+are some characteristics that have
+
+695
+00:34:31,070 --> 00:34:36,050
+assembly code especially how do they
+
+696
+00:34:33,290 --> 00:34:38,690
+differ from C well first of all there's
+
+697
+00:34:36,050 --> 00:34:43,310
+a number of different sort of integer
+
+698
+00:34:38,690 --> 00:34:46,250
+data types of size 1 2 4 and 8 bytes an
+
+699
+00:34:43,310 --> 00:34:50,720
+integer data type they don't distinguish
+
+700
+00:34:46,250 --> 00:34:53,810
+sign versus unsigned in how it gets
+
+701
+00:34:50,720 --> 00:34:57,020
+stored and even an address or a pointer
+
+702
+00:34:53,810 --> 00:34:59,690
+is just stored as a number in a computer
+
+703
+00:34:57,020 --> 00:35:03,110
+and doesn't have any special
+
+704
+00:34:59,690 --> 00:35:04,910
+significance to it a floating-point is
+
+705
+00:35:03,110 --> 00:35:06,230
+handled in a very different way on the
+
+706
+00:35:04,910 --> 00:35:09,530
+other hand with a different set of
+
+707
+00:35:06,230 --> 00:35:11,090
+registers that I think I'll talked about
+
+708
+00:35:09,530 --> 00:35:14,990
+very briefly in one of the later
+
+709
+00:35:11,090 --> 00:35:16,880
+lectures the program itself is in x86
+
+710
+00:35:14,990 --> 00:35:18,580
+it's just a series of bytes and I'll
+
+711
+00:35:16,880 --> 00:35:21,700
+show you some examples of those and
+
+712
+00:35:18,580 --> 00:35:24,560
+things like a raise and structs and
+
+713
+00:35:21,700 --> 00:35:27,350
+things that you think of as fundamental
+
+714
+00:35:24,560 --> 00:35:29,750
+datatypes don't exist at the machine
+
+715
+00:35:27,350 --> 00:35:32,420
+level they're sort of constructed
+
+716
+00:35:29,750 --> 00:35:34,460
+artificially by the compiler and later
+
+717
+00:35:32,420 --> 00:35:36,950
+in the course and these lectures will
+
+718
+00:35:34,460 --> 00:35:40,220
+cross over into how that's actually done
+
+719
+00:35:36,950 --> 00:35:43,100
+as well so some of the things you're you
+
+720
+00:35:40,220 --> 00:35:46,010
+know about and see exists here and some
+
+721
+00:35:43,100 --> 00:35:48,620
+of them are sort of have to be built up
+
+722
+00:35:46,010 --> 00:35:51,130
+in layers on top of the assembly level
+
+723
+00:35:48,620 --> 00:35:51,130
+program
+
+724
+00:35:51,619 --> 00:35:57,079
+so the other thing about assembly level
+
+725
+00:35:54,619 --> 00:35:59,089
+programming is each instruction is very
+
+726
+00:35:57,079 --> 00:36:03,309
+very limited in what it can do it can
+
+727
+00:35:59,089 --> 00:36:07,279
+move data from a register to memory from
+
+728
+00:36:03,309 --> 00:36:10,190
+or it can do an addition or a
+
+729
+00:36:07,279 --> 00:36:12,019
+multiplication or something like that
+
+730
+00:36:10,190 --> 00:36:17,509
+but it can really basically only do one
+
+731
+00:36:12,019 --> 00:36:19,549
+thing and and so you have to write a
+
+732
+00:36:17,509 --> 00:36:20,960
+whole if you were writing it by hand
+
+733
+00:36:19,549 --> 00:36:23,630
+you'd have to write a whole series of
+
+734
+00:36:20,960 --> 00:36:24,739
+instructions to get anything done and
+
+735
+00:36:23,630 --> 00:36:26,180
+that's part of the reason why it's
+
+736
+00:36:24,739 --> 00:36:30,140
+really much better to what the compiler
+
+737
+00:36:26,180 --> 00:36:35,469
+do that and that will also see the sort
+
+738
+00:36:30,140 --> 00:36:39,890
+of how things like do loops while loops
+
+739
+00:36:35,469 --> 00:36:42,559
+conditional switch statements those are
+
+740
+00:36:39,890 --> 00:36:47,569
+all built up on top of some other lower
+
+741
+00:36:42,559 --> 00:36:51,049
+level features in the instructions so
+
+742
+00:36:47,569 --> 00:36:53,930
+for this function a some store actually
+
+743
+00:36:51,049 --> 00:36:57,859
+it gets encoded by a total of fourteen
+
+744
+00:36:53,930 --> 00:37:00,099
+bytes and so one thing about x86 is some
+
+745
+00:36:57,859 --> 00:37:03,279
+instructions are as short as one byte
+
+746
+00:37:00,099 --> 00:37:07,569
+but others can be as long as 15 bytes
+
+747
+00:37:03,279 --> 00:37:07,569
+saw in the encoding and
+
+748
+00:37:12,410 --> 00:37:18,829
+Oh like I said each each instruction
+
+749
+00:37:16,039 --> 00:37:21,200
+really typically only does one thing so
+
+750
+00:37:18,829 --> 00:37:24,619
+for example and see if you say star desc
+
+751
+00:37:21,200 --> 00:37:26,930
+equals T what that will typically and
+
+752
+00:37:24,619 --> 00:37:28,690
+not always but this sort of way to think
+
+753
+00:37:26,930 --> 00:37:31,369
+about that at the machine level is it
+
+754
+00:37:28,690 --> 00:37:34,430
+ten years some local value would be
+
+755
+00:37:31,369 --> 00:37:36,230
+typically stored in a register and as
+
+756
+00:37:34,430 --> 00:37:37,940
+you know and see if you put star in
+
+757
+00:37:36,230 --> 00:37:40,279
+front of it you want it referenced as a
+
+758
+00:37:37,940 --> 00:37:44,390
+pointer and if that reference is on the
+
+759
+00:37:40,279 --> 00:37:46,900
+left you want to store a number of value
+
+760
+00:37:44,390 --> 00:37:50,420
+at that place where you're pointing to
+
+761
+00:37:46,900 --> 00:37:53,390
+so what would typically happen is
+
+762
+00:37:50,420 --> 00:37:55,849
+guessed that the actual pointer value
+
+763
+00:37:53,390 --> 00:37:59,329
+would also be stored in a register here
+
+764
+00:37:55,849 --> 00:38:01,970
+it's in register RBX and i use a move
+
+765
+00:37:59,329 --> 00:38:04,579
+instruction to say take the value from
+
+766
+00:38:01,970 --> 00:38:07,390
+one register which is called our ax here
+
+767
+00:38:04,579 --> 00:38:10,789
+and store it in the memory location
+
+768
+00:38:07,390 --> 00:38:13,759
+that's specified by another register so
+
+769
+00:38:10,789 --> 00:38:15,829
+you see the idea we'll go into more
+
+770
+00:38:13,759 --> 00:38:18,259
+detail about all these register names
+
+771
+00:38:15,829 --> 00:38:19,700
+and what the parentheses mean but you
+
+772
+00:38:18,259 --> 00:38:22,910
+get the rough idea that a move
+
+773
+00:38:19,700 --> 00:38:27,009
+instruction is saying can refer to
+
+774
+00:38:22,910 --> 00:38:29,240
+either a register or a memory location
+
+775
+00:38:27,009 --> 00:38:31,400
+and the actual object code
+
+776
+00:38:29,240 --> 00:38:38,240
+representation of this is just three
+
+777
+00:38:31,400 --> 00:38:40,279
+bytes where the first byte tells it that
+
+778
+00:38:38,240 --> 00:38:42,740
+it and we would even talk much in this
+
+779
+00:38:40,279 --> 00:38:46,220
+course about how the instructions are
+
+780
+00:38:42,740 --> 00:38:48,859
+encoded won't generally let programs do
+
+781
+00:38:46,220 --> 00:38:50,480
+that for us but in this case it only
+
+782
+00:38:48,859 --> 00:38:53,869
+takes three bytes to write that
+
+783
+00:38:50,480 --> 00:38:56,059
+particular instruction so how can we
+
+784
+00:38:53,869 --> 00:38:58,099
+know that kind of stuff how can we
+
+785
+00:38:56,059 --> 00:38:59,750
+figure out that level of detail well
+
+786
+00:38:58,099 --> 00:39:03,890
+there's some really useful tools that
+
+787
+00:38:59,750 --> 00:39:05,990
+let you examine machine code even if you
+
+788
+00:39:03,890 --> 00:39:09,200
+don't have a copy of the original C file
+
+789
+00:39:05,990 --> 00:39:10,970
+or even the assembly code file ahead of
+
+790
+00:39:09,200 --> 00:39:14,259
+time and there's one called a
+
+791
+00:39:10,970 --> 00:39:18,319
+disassembler so an assembler goes from
+
+792
+00:39:14,259 --> 00:39:20,900
+this text version of instructions to a
+
+793
+00:39:18,319 --> 00:39:23,119
+byte level representation and the
+
+794
+00:39:20,900 --> 00:39:25,430
+disassembler just reverses that it says
+
+795
+00:39:23,119 --> 00:39:30,170
+here is a series of bytes
+
+796
+00:39:25,430 --> 00:39:32,600
+and I the disassembler know that this
+
+797
+00:39:30,170 --> 00:39:35,030
+particular byte sequence refers is a
+
+798
+00:39:32,600 --> 00:39:38,270
+move instruction and so it will now
+
+799
+00:39:35,030 --> 00:39:40,130
+print out on the screen to say oh that
+
+800
+00:39:38,270 --> 00:39:42,950
+was a move instruction and so it
+
+801
+00:39:40,130 --> 00:39:45,470
+basically reverse engineers from the
+
+802
+00:39:42,950 --> 00:39:48,080
+object code back to the assembly code or
+
+803
+00:39:45,470 --> 00:39:55,520
+something sort of like the assembly code
+
+804
+00:39:48,080 --> 00:39:58,760
+you'll see it lost of what it's very
+
+805
+00:39:55,520 --> 00:40:00,740
+slightly different one thing also to
+
+806
+00:39:58,760 --> 00:40:04,220
+notice I should mention about assembly
+
+807
+00:40:00,740 --> 00:40:06,680
+code is all those you know all the names
+
+808
+00:40:04,220 --> 00:40:09,500
+I used all the names of variables are
+
+809
+00:40:06,680 --> 00:40:12,260
+completely lost at the assembly code
+
+810
+00:40:09,500 --> 00:40:14,090
+level or the machine code level things
+
+811
+00:40:12,260 --> 00:40:16,550
+are just there in registers they're
+
+812
+00:40:14,090 --> 00:40:18,410
+somewhere in memory the program has no
+
+813
+00:40:16,550 --> 00:40:22,280
+understanding of your original source
+
+814
+00:40:18,410 --> 00:40:24,230
+code at that level and so the
+
+815
+00:40:22,280 --> 00:40:26,360
+disassembled is just a way to go
+
+816
+00:40:24,230 --> 00:40:29,750
+backwards and you can do that yourself
+
+817
+00:40:26,360 --> 00:40:36,010
+and you'll find that useful in various
+
+818
+00:40:29,750 --> 00:40:36,010
+contexts and to do that yourself
+
+819
+00:40:37,509 --> 00:40:47,349
+things kind of monkeying around music so
+
+820
+00:40:43,219 --> 00:40:47,349
+if I compile the sum program
+
+821
+00:41:01,590 --> 00:41:08,590
+so if I do the more standard thing you
+
+822
+00:41:04,720 --> 00:41:11,920
+do in using a compiler you say run the
+
+823
+00:41:08,590 --> 00:41:14,110
+compiler give it some optimization tell
+
+824
+00:41:11,920 --> 00:41:16,620
+it what the source files are until where
+
+825
+00:41:14,110 --> 00:41:19,150
+to put the final executable code and I'm
+
+826
+00:41:16,620 --> 00:41:26,170
+terribly clever I call the function sum
+
+827
+00:41:19,150 --> 00:41:28,500
+and so sum is a binary file of eight
+
+828
+00:41:26,170 --> 00:41:31,210
+thousand six hundred sixty-three bikes
+
+829
+00:41:28,500 --> 00:41:34,990
+you'll see off on the left it's marked
+
+830
+00:41:31,210 --> 00:41:38,340
+as executable and it actually works I
+
+831
+00:41:34,990 --> 00:41:41,560
+can add numbers together with it so
+
+832
+00:41:38,340 --> 00:41:47,170
+that's the year the standard executable
+
+833
+00:41:41,560 --> 00:41:51,370
+program excuse me and if I run a program
+
+834
+00:41:47,170 --> 00:41:54,610
+called object dump and ask it to
+
+835
+00:41:51,370 --> 00:41:58,450
+disassemble it can do various things it
+
+836
+00:41:54,610 --> 00:42:00,250
+will spit out a disassembled version of
+
+837
+00:41:58,450 --> 00:42:06,720
+the program it will fly by on the screen
+
+838
+00:42:00,250 --> 00:42:06,720
+but if I redirect that to some file
+
+839
+00:42:07,290 --> 00:42:12,750
+which I already did I'll remove the old
+
+840
+00:42:10,450 --> 00:42:12,750
+one
+
+841
+00:42:17,010 --> 00:42:25,810
+and now I look at that you will see that
+
+842
+00:42:22,570 --> 00:42:27,430
+it has what I described as is the
+
+843
+00:42:25,810 --> 00:42:29,860
+disassembled representation of the
+
+844
+00:42:27,430 --> 00:42:31,930
+program including some files that you
+
+845
+00:42:29,860 --> 00:42:34,120
+didn't some functions that you didn't
+
+846
+00:42:31,930 --> 00:42:38,070
+write as ones that are sort of the
+
+847
+00:42:34,120 --> 00:42:40,840
+low-level functions that are used in the
+
+848
+00:42:38,070 --> 00:42:42,840
+initial startup of a program called in
+
+849
+00:42:40,840 --> 00:42:45,840
+it
+
+850
+00:42:42,840 --> 00:42:45,840
+oops
+
+851
+00:42:47,780 --> 00:42:53,190
+but here somewhere in the middle of it
+
+852
+00:42:50,520 --> 00:42:56,610
+you'll see lo and behold is that program
+
+853
+00:42:53,190 --> 00:43:00,600
+that function some story that got
+
+854
+00:42:56,610 --> 00:43:05,960
+compiled and you can see that what it
+
+855
+00:43:00,600 --> 00:43:09,390
+did was it took this 14 bytes from the
+
+856
+00:43:05,960 --> 00:43:12,270
+original that the object code and it
+
+857
+00:43:09,390 --> 00:43:14,910
+picked those apart and came back with
+
+858
+00:43:12,270 --> 00:43:17,010
+what instructions those bytes in code so
+
+859
+00:43:14,910 --> 00:43:20,430
+for example the push instruction only
+
+860
+00:43:17,010 --> 00:43:24,510
+takes a single byte the move as you saw
+
+861
+00:43:20,430 --> 00:43:27,930
+before takes three bytes this call
+
+862
+00:43:24,510 --> 00:43:30,180
+because it has to give the location of
+
+863
+00:43:27,930 --> 00:43:35,550
+where to call is a five byte instruction
+
+864
+00:43:30,180 --> 00:43:37,500
+and so forth but again the disassembler
+
+865
+00:43:35,550 --> 00:43:39,210
+didn't have access to the source code it
+
+866
+00:43:37,500 --> 00:43:41,460
+didn't have access even to the assembly
+
+867
+00:43:39,210 --> 00:43:46,290
+code it figured this out just by the
+
+868
+00:43:41,460 --> 00:43:48,530
+bytes in the actual object code file so
+
+869
+00:43:46,290 --> 00:43:51,840
+this is the way if you ever want to know
+
+870
+00:43:48,530 --> 00:43:54,350
+actually the byte level encoding this is
+
+871
+00:43:51,840 --> 00:43:59,400
+how you figure it out is to run a
+
+872
+00:43:54,350 --> 00:44:01,710
+program run it through an assembler get
+
+873
+00:43:59,400 --> 00:44:06,710
+object code and then come back out with
+
+874
+00:44:01,710 --> 00:44:06,710
+it there's another way you can do it
+
+875
+00:44:06,830 --> 00:44:12,390
+using the debugging program which you'll
+
+876
+00:44:10,230 --> 00:44:16,950
+get to know very well in the next web
+
+877
+00:44:12,390 --> 00:44:23,670
+you're going to do and it's called gdb
+
+878
+00:44:16,950 --> 00:44:26,970
+and gdb is a very powerful debugging
+
+879
+00:44:23,670 --> 00:44:29,660
+program that you can examine step
+
+880
+00:44:26,970 --> 00:44:34,440
+through and operate on programs in and
+
+881
+00:44:29,660 --> 00:44:36,180
+again you can if you if the source code
+
+882
+00:44:34,440 --> 00:44:39,210
+for it's available it will make use of
+
+883
+00:44:36,180 --> 00:44:40,770
+it but it also can be used on programs
+
+884
+00:44:39,210 --> 00:44:42,750
+for which there's no source available
+
+885
+00:44:40,770 --> 00:44:45,210
+but one of the features is the ability
+
+886
+00:44:42,750 --> 00:44:51,770
+to disassemble functions in there so if
+
+887
+00:44:45,210 --> 00:44:53,810
+I say disassemble some store
+
+888
+00:44:51,770 --> 00:44:55,520
+it'll come back with something that
+
+889
+00:44:53,810 --> 00:44:59,150
+looks a lot like what you saw from the
+
+890
+00:44:55,520 --> 00:45:02,030
+from object dump a listing of the
+
+891
+00:44:59,150 --> 00:45:03,710
+instructions and here it just shows in
+
+892
+00:45:02,030 --> 00:45:05,990
+hex what the addresses of those
+
+893
+00:45:03,710 --> 00:45:10,910
+different instructions are it doesn't
+
+894
+00:45:05,990 --> 00:45:13,550
+show the byte level encoding so there's
+
+895
+00:45:10,910 --> 00:45:17,060
+my point here is there's various tools
+
+896
+00:45:13,550 --> 00:45:19,130
+that let you look at a program even if
+
+897
+00:45:17,060 --> 00:45:21,200
+it's actual representation is a binary
+
+898
+00:45:19,130 --> 00:45:23,770
+file that you don't want to examine
+
+899
+00:45:21,200 --> 00:45:23,770
+directly
+
+900
+00:45:32,470 --> 00:45:37,830
+I just plug this in
+
+901
+00:45:42,569 --> 00:45:47,950
+so what this slide shows is what I just
+
+902
+00:45:45,970 --> 00:45:50,380
+showed you on the screen which is what
+
+903
+00:45:47,950 --> 00:45:54,760
+the object dump program produces for
+
+904
+00:45:50,380 --> 00:45:56,950
+this function and this is a version
+
+905
+00:45:54,760 --> 00:46:00,160
+showing what gdb would show you for it
+
+906
+00:45:56,950 --> 00:46:03,579
+and with gdb if you want to actually get
+
+907
+00:46:00,160 --> 00:46:06,549
+the bytes out you can do that you can
+
+908
+00:46:03,579 --> 00:46:09,130
+basically for any address you can just
+
+909
+00:46:06,549 --> 00:46:11,859
+give an address and tell it to display
+
+910
+00:46:09,130 --> 00:46:16,660
+some number of bytes and so this rather
+
+911
+00:46:11,859 --> 00:46:20,589
+cryptic command to gdb says examine 14
+
+912
+00:46:16,660 --> 00:46:26,230
+bytes in hex format starting at the
+
+913
+00:46:20,589 --> 00:46:27,849
+address of the function sum store and it
+
+914
+00:46:26,230 --> 00:46:30,809
+produced something that looks like what
+
+915
+00:46:27,849 --> 00:46:30,809
+you see on the left
+
+916
+00:46:32,220 --> 00:46:37,900
+in fact disassembly is a tool that can
+
+917
+00:46:35,290 --> 00:46:40,150
+be used as part of any of reverse
+
+918
+00:46:37,900 --> 00:46:42,820
+engineering tools and I used to demo
+
+919
+00:46:40,150 --> 00:46:47,800
+this by showing a disassembly of the
+
+920
+00:46:42,820 --> 00:46:52,810
+windows of Microsoft Word I had a PC
+
+921
+00:46:47,800 --> 00:46:55,570
+back then not a mess but some people and
+
+922
+00:46:52,810 --> 00:46:57,700
+you know our slides are online and so we
+
+923
+00:46:55,570 --> 00:46:59,950
+got some nasty grams from people saying
+
+924
+00:46:57,700 --> 00:47:02,020
+you know you're violating the Microsoft
+
+925
+00:46:59,950 --> 00:47:04,990
+end-user license agreement when you do
+
+926
+00:47:02,020 --> 00:47:06,640
+that because you're supposed to you
+
+927
+00:47:04,990 --> 00:47:10,090
+don't know this but remember all those
+
+928
+00:47:06,640 --> 00:47:14,530
+click through I agree things that you
+
+929
+00:47:10,090 --> 00:47:16,900
+never read one of them is that we not to
+
+930
+00:47:14,530 --> 00:47:21,010
+try to reverse-engineer any microsoft
+
+931
+00:47:16,900 --> 00:47:23,920
+product so so this is when technically
+
+932
+00:47:21,010 --> 00:47:26,140
+so I'm sure just for modesty I blanked
+
+933
+00:47:23,920 --> 00:47:28,000
+this out but you can actually do it if
+
+934
+00:47:26,140 --> 00:47:31,240
+you can find where the file is it's sort
+
+935
+00:47:28,000 --> 00:47:34,690
+of obscure where the actual executable
+
+936
+00:47:31,240 --> 00:47:39,850
+files of an application now my point is
+
+937
+00:47:34,690 --> 00:47:42,400
+that words like any other application
+
+938
+00:47:39,850 --> 00:47:44,440
+you run is just an executable file and
+
+939
+00:47:42,400 --> 00:47:50,110
+that executable file is just a bunch of
+
+940
+00:47:44,440 --> 00:47:51,970
+bytes that encode instructions okay so
+
+941
+00:47:50,110 --> 00:47:54,480
+let's go a little bit further into this
+
+942
+00:47:51,970 --> 00:47:58,290
+to assembly level programming business
+
+943
+00:47:54,480 --> 00:48:02,170
+so I keep talking about registers and
+
+944
+00:47:58,290 --> 00:48:04,780
+x86 64 has this totally quirky set of
+
+945
+00:48:02,170 --> 00:48:07,240
+registers and it's a reflection again of
+
+946
+00:48:04,780 --> 00:48:12,550
+this sort of evolutionary history to it
+
+947
+00:48:07,240 --> 00:48:14,980
+but you'll see that there's 16 registers
+
+948
+00:48:12,550 --> 00:48:18,730
+that you can use to hold integers and
+
+949
+00:48:14,980 --> 00:48:20,980
+pointers and some of them have these
+
+950
+00:48:18,730 --> 00:48:23,380
+sort of alphabetic names and some of
+
+951
+00:48:20,980 --> 00:48:25,450
+them have numeric names I'll show you
+
+952
+00:48:23,380 --> 00:48:27,880
+why in a minute and also for each
+
+953
+00:48:25,450 --> 00:48:32,500
+register if you use the sort of percent
+
+954
+00:48:27,880 --> 00:48:34,450
+are name of it you'll get 64 bits but if
+
+955
+00:48:32,500 --> 00:48:37,210
+you use the percent II version of it
+
+956
+00:48:34,450 --> 00:48:40,650
+you'll get 32 bits and what you'll find
+
+957
+00:48:37,210 --> 00:48:44,020
+in programs that manipulate long in
+
+958
+00:48:40,650 --> 00:48:45,090
+you'll see the use of are and if they're
+
+959
+00:48:44,020 --> 00:48:47,250
+just in there
+
+960
+00:48:45,090 --> 00:48:49,410
+two-bit things you'll see code saying
+
+961
+00:48:47,250 --> 00:48:52,050
+percent e so you'll see both of these
+
+962
+00:48:49,410 --> 00:48:55,170
+show up but and it's fairly important to
+
+963
+00:48:52,050 --> 00:48:58,880
+remember that the percent e version is
+
+964
+00:48:55,170 --> 00:49:03,990
+just the low order 32 bits of a larger
+
+965
+00:48:58,880 --> 00:49:05,160
+percent our entity and in fact it goes
+
+966
+00:49:03,990 --> 00:49:07,680
+beyond that
+
+967
+00:49:05,160 --> 00:49:11,250
+you can also reference the lower order
+
+968
+00:49:07,680 --> 00:49:14,610
+16 bits and the low order two bit I'm
+
+969
+00:49:11,250 --> 00:49:17,220
+sorry one byte 16 want 2 bytes and one
+
+970
+00:49:14,610 --> 00:49:21,450
+byte within each of these registers as
+
+971
+00:49:17,220 --> 00:49:25,590
+well but again think of these as like
+
+972
+00:49:21,450 --> 00:49:27,990
+named locations where you can store
+
+973
+00:49:25,590 --> 00:49:32,880
+values and you can retrieve values from
+
+974
+00:49:27,990 --> 00:49:35,130
+them and you have to you the suit of
+
+975
+00:49:32,880 --> 00:49:40,050
+personifying machine level programming
+
+976
+00:49:35,130 --> 00:49:42,420
+here not you personally will actually
+
+977
+00:49:40,050 --> 00:49:45,180
+have to explicitly name those registers
+
+978
+00:49:42,420 --> 00:49:46,860
+for the most part to say where things
+
+979
+00:49:45,180 --> 00:49:49,920
+should go where they should come out of
+
+980
+00:49:46,860 --> 00:49:52,650
+it's not like a memory where you just
+
+981
+00:49:49,920 --> 00:49:54,150
+give a number to tell where to look for
+
+982
+00:49:52,650 --> 00:49:56,280
+you could compute a number there
+
+983
+00:49:54,150 --> 00:49:59,640
+actually each one is identified
+
+984
+00:49:56,280 --> 00:50:06,660
+separately so just as a little bit of
+
+985
+00:49:59,640 --> 00:50:10,830
+history with ia32 so back we just talked
+
+986
+00:50:06,660 --> 00:50:13,860
+about there being 8 registers all the %
+
+987
+00:50:10,830 --> 00:50:18,360
+e versions and one of the changes that
+
+988
+00:50:13,860 --> 00:50:20,640
+went from ia32 to x86 64 was to double
+
+989
+00:50:18,360 --> 00:50:22,530
+the number of registers and by the way
+
+990
+00:50:20,640 --> 00:50:24,600
+this is a really helpful thing because
+
+991
+00:50:22,530 --> 00:50:28,680
+it was very frustrating how few
+
+992
+00:50:24,600 --> 00:50:37,770
+registers there were in the old I 32
+
+993
+00:50:28,680 --> 00:50:40,140
+machines and then the as I mentioned you
+
+994
+00:50:37,770 --> 00:50:43,890
+could actually in the old machine refer
+
+995
+00:50:40,140 --> 00:50:47,070
+to the lower door 16 bytes of these
+
+996
+00:50:43,890 --> 00:50:51,690
+registers and that was a legacy from the
+
+997
+00:50:47,070 --> 00:50:54,660
+8086 days and within the first floor you
+
+998
+00:50:51,690 --> 00:50:57,720
+could even refer to the individual to
+
+999
+00:50:54,660 --> 00:51:00,930
+lord or bytes in those
+
+1000
+00:50:57,720 --> 00:51:03,780
+so nowadays you can actually get to the
+
+1001
+00:51:00,930 --> 00:51:07,260
+low order byte of all of them and we
+
+1002
+00:51:03,780 --> 00:51:09,570
+just sort of got that covered in the
+
+1003
+00:51:07,260 --> 00:51:11,250
+book actually we don't talk about how
+
+1004
+00:51:09,570 --> 00:51:14,550
+you can get to these bytes because
+
+1005
+00:51:11,250 --> 00:51:23,250
+that's really a legacy from back before
+
+1006
+00:51:14,550 --> 00:51:32,100
+the 8086 was one called the 8080 which
+
+1007
+00:51:23,250 --> 00:51:34,260
+was a an 8 byte machine so anyways you
+
+1008
+00:51:32,100 --> 00:51:37,350
+can see then how you got from this kind
+
+1009
+00:51:34,260 --> 00:51:40,080
+of weird state of affairs to the even
+
+1010
+00:51:37,350 --> 00:51:42,930
+weirder state that we are in today where
+
+1011
+00:51:40,080 --> 00:51:47,100
+some of them have names and some of them
+
+1012
+00:51:42,930 --> 00:51:51,510
+have numbers and those names by the way
+
+1013
+00:51:47,100 --> 00:51:54,090
+had a reason back in ancient days they
+
+1014
+00:51:51,510 --> 00:51:56,340
+had very specific purposes and so they
+
+1015
+00:51:54,090 --> 00:52:00,210
+were given names that sort of reflected
+
+1016
+00:51:56,340 --> 00:52:02,970
+those purposes but that that all went
+
+1017
+00:52:00,210 --> 00:52:05,760
+away years and years ago and so now
+
+1018
+00:52:02,970 --> 00:52:08,400
+these names are just legacy names have
+
+1019
+00:52:05,760 --> 00:52:10,110
+nothing to do with their purpose now I
+
+1020
+00:52:08,400 --> 00:52:11,790
+should mention there's only there are
+
+1021
+00:52:10,110 --> 00:52:16,950
+some special there's one special
+
+1022
+00:52:11,790 --> 00:52:19,230
+register nowadays as shown in pink here
+
+1023
+00:52:16,950 --> 00:52:22,170
+and that's called the stack pointer and
+
+1024
+00:52:19,230 --> 00:52:24,060
+that register you don't just use any old
+
+1025
+00:52:22,170 --> 00:52:26,520
+way you please it has a very specific
+
+1026
+00:52:24,060 --> 00:52:28,710
+purpose and all the other registers
+
+1027
+00:52:26,520 --> 00:52:30,300
+there's some that are slightly different
+
+1028
+00:52:28,710 --> 00:52:33,210
+than the other but for the most part
+
+1029
+00:52:30,300 --> 00:52:37,370
+they're all usable for holding program
+
+1030
+00:52:33,210 --> 00:52:39,870
+data back in the ia32 days there was a
+
+1031
+00:52:37,370 --> 00:52:43,020
+register called the base pointer that
+
+1032
+00:52:39,870 --> 00:52:45,270
+also got used for procedures but that no
+
+1033
+00:52:43,020 --> 00:52:49,350
+longer gets used anymore either
+
+1034
+00:52:45,270 --> 00:52:51,000
+at least not usually so anyways I didn't
+
+1035
+00:52:49,350 --> 00:52:53,850
+want to I don't want to spend a lot of
+
+1036
+00:52:51,000 --> 00:52:56,730
+time on historic legacy stuff and have
+
+1037
+00:52:53,850 --> 00:52:58,830
+you memorized you know what feature was
+
+1038
+00:52:56,730 --> 00:53:00,690
+added and what model of processor but
+
+1039
+00:52:58,830 --> 00:53:03,240
+just in case you're wondering why
+
+1040
+00:53:00,690 --> 00:53:05,400
+there's these weird names for these
+
+1041
+00:53:03,240 --> 00:53:08,779
+things just so you appreciate the fact
+
+1042
+00:53:05,400 --> 00:53:13,380
+that this is a legacy thing
+
+1043
+00:53:08,779 --> 00:53:16,049
+okay so now we can think of it then that
+
+1044
+00:53:13,380 --> 00:53:17,969
+there's eight registers with names and
+
+1045
+00:53:16,049 --> 00:53:21,269
+there's eight registers that are
+
+1046
+00:53:17,969 --> 00:53:22,979
+indicated by some number and let's look
+
+1047
+00:53:21,269 --> 00:53:28,650
+at some of the instructions that operate
+
+1048
+00:53:22,979 --> 00:53:31,170
+on those registers and there's sort of
+
+1049
+00:53:28,650 --> 00:53:34,319
+three different so move the move
+
+1050
+00:53:31,170 --> 00:53:38,999
+instruction in x86 is actually can do a
+
+1051
+00:53:34,319 --> 00:53:42,119
+lot of things because it can take
+
+1052
+00:53:38,999 --> 00:53:44,729
+different types of information or what
+
+1053
+00:53:42,119 --> 00:53:47,849
+they call operands so the source and
+
+1054
+00:53:44,729 --> 00:53:51,269
+some where you're you're copying from
+
+1055
+00:53:47,849 --> 00:53:53,489
+the source to the destination the source
+
+1056
+00:53:51,269 --> 00:53:55,529
+can be some what's called immediate it's
+
+1057
+00:53:53,489 --> 00:53:58,140
+actually a number that's baked into the
+
+1058
+00:53:55,529 --> 00:54:01,739
+program that you want to copy into some
+
+1059
+00:53:58,140 --> 00:54:05,539
+other location a register we've talked
+
+1060
+00:54:01,739 --> 00:54:08,309
+about is one a specially named memory of
+
+1061
+00:54:05,539 --> 00:54:10,680
+locations and memory is the array of
+
+1062
+00:54:08,309 --> 00:54:13,140
+bytes that you typically you have to
+
+1063
+00:54:10,680 --> 00:54:16,619
+specify what's the address that you're
+
+1064
+00:54:13,140 --> 00:54:19,079
+either reading from if if it's the
+
+1065
+00:54:16,619 --> 00:54:23,429
+source are you writing to if it's the
+
+1066
+00:54:19,079 --> 00:54:26,299
+destination and so the move instruction
+
+1067
+00:54:23,429 --> 00:54:31,170
+gives you all these possibilities an
+
+1068
+00:54:26,299 --> 00:54:33,650
+immediate value can be written to a
+
+1069
+00:54:31,170 --> 00:54:36,299
+register or directly to memory a
+
+1070
+00:54:33,650 --> 00:54:39,630
+register value can be copied to another
+
+1071
+00:54:36,299 --> 00:54:42,329
+register or written to memory or you can
+
+1072
+00:54:39,630 --> 00:54:45,239
+take a value from memory read it from
+
+1073
+00:54:42,329 --> 00:54:47,699
+memory and copy it to a register so if
+
+1074
+00:54:45,239 --> 00:54:50,609
+you think of a wait shouldn't there be
+
+1075
+00:54:47,699 --> 00:54:52,890
+nine different combinations here well no
+
+1076
+00:54:50,609 --> 00:54:55,769
+because it doesn't make sense to have an
+
+1077
+00:54:52,890 --> 00:54:59,759
+immediate value as a destination it's a
+
+1078
+00:54:55,769 --> 00:55:01,559
+constant and also just for sort of the
+
+1079
+00:54:59,759 --> 00:55:03,929
+sake of convenience so the hardware
+
+1080
+00:55:01,559 --> 00:55:06,150
+designers it doesn't let you directly
+
+1081
+00:55:03,929 --> 00:55:08,400
+copy from one memory location to another
+
+1082
+00:55:06,150 --> 00:55:10,619
+what you have to do is use two
+
+1083
+00:55:08,400 --> 00:55:11,670
+instructions one to copy from memory to
+
+1084
+00:55:10,619 --> 00:55:16,349
+read it from memory
+
+1085
+00:55:11,670 --> 00:55:17,819
+copy it to a register and a second to
+
+1086
+00:55:16,349 --> 00:55:19,390
+take that value in the register and
+
+1087
+00:55:17,819 --> 00:55:23,980
+rewrite it to memory
+
+1088
+00:55:19,390 --> 00:55:27,490
+so that's why there's this only five
+
+1089
+00:55:23,980 --> 00:55:30,550
+possibilities and so each of these
+
+1090
+00:55:27,490 --> 00:55:33,520
+actual five combinations you'll see in
+
+1091
+00:55:30,550 --> 00:55:35,980
+some form or another so for example if I
+
+1092
+00:55:33,520 --> 00:55:38,980
+take a constant value and copy it to a
+
+1093
+00:55:35,980 --> 00:55:40,570
+register it's a little like you can
+
+1094
+00:55:38,980 --> 00:55:42,550
+think of registries in sort of the
+
+1095
+00:55:40,570 --> 00:55:45,360
+temporary data that you're operating on
+
+1096
+00:55:42,550 --> 00:55:47,470
+right now so it's a way of sort of
+
+1097
+00:55:45,360 --> 00:55:51,990
+assigning a constant value to a
+
+1098
+00:55:47,470 --> 00:55:54,310
+temporary similarly if you're have a
+
+1099
+00:55:51,990 --> 00:55:57,400
+memory as your destination it's like
+
+1100
+00:55:54,310 --> 00:56:01,360
+storing a constant value in memory
+
+1101
+00:55:57,400 --> 00:56:03,160
+somewhere if you're copying from one
+
+1102
+00:56:01,360 --> 00:56:05,110
+register to another it's sort of like
+
+1103
+00:56:03,160 --> 00:56:09,090
+copying one temporary value to another
+
+1104
+00:56:05,110 --> 00:56:13,330
+one register to memory it's as if you
+
+1105
+00:56:09,090 --> 00:56:15,790
+it's sort of like storing to an address
+
+1106
+00:56:13,330 --> 00:56:17,170
+so a pointer dereference where the
+
+1107
+00:56:15,790 --> 00:56:21,490
+pointers on the left side the
+
+1108
+00:56:17,170 --> 00:56:23,140
+dereference and memory to register is
+
+1109
+00:56:21,490 --> 00:56:26,560
+the opposite it's your you're reading
+
+1110
+00:56:23,140 --> 00:56:32,170
+from some location into a temporary
+
+1111
+00:56:26,560 --> 00:56:36,910
+position so these Yosi all five versions
+
+1112
+00:56:32,170 --> 00:56:38,940
+get used in some form or another so now
+
+1113
+00:56:36,910 --> 00:56:43,270
+let's talk about how we write these
+
+1114
+00:56:38,940 --> 00:56:46,120
+pointers how we specify either a source
+
+1115
+00:56:43,270 --> 00:56:50,110
+or a destination for a memory reference
+
+1116
+00:56:46,120 --> 00:56:52,420
+and you already saw one version of this
+
+1117
+00:56:50,110 --> 00:56:54,900
+in fact in some of the code when you put
+
+1118
+00:56:52,420 --> 00:56:57,640
+the name of a register in parenthesis
+
+1119
+00:56:54,900 --> 00:57:00,100
+that's just saying use this register
+
+1120
+00:56:57,640 --> 00:57:03,010
+whatever is in that that's an address
+
+1121
+00:57:00,100 --> 00:57:07,000
+and use that address to reference some
+
+1122
+00:57:03,010 --> 00:57:10,030
+memory location and so you'll see
+
+1123
+00:57:07,000 --> 00:57:11,770
+something like this is equivalent of
+
+1124
+00:57:10,030 --> 00:57:12,670
+dereferencing a pointer and putting it
+
+1125
+00:57:11,770 --> 00:57:14,950
+in there temporary
+
+1126
+00:57:12,670 --> 00:57:18,220
+you're also allowed to do a little bit
+
+1127
+00:57:14,950 --> 00:57:20,910
+of arithmetic to derive an address from
+
+1128
+00:57:18,220 --> 00:57:23,950
+some collection of registers and other
+
+1129
+00:57:20,910 --> 00:57:27,640
+constant values so if you see a number
+
+1130
+00:57:23,950 --> 00:57:31,240
+called the displacement D in front of
+
+1131
+00:57:27,640 --> 00:57:32,990
+this parenthesis it means to offset not
+
+1132
+00:57:31,240 --> 00:57:35,540
+use the address that's in the
+
+1133
+00:57:32,990 --> 00:57:37,850
+register but add or subtract some number
+
+1134
+00:57:35,540 --> 00:57:39,980
+from it to get an address that's just
+
+1135
+00:57:37,850 --> 00:57:43,160
+slightly off of it by some fixed amount
+
+1136
+00:57:39,980 --> 00:57:47,840
+and that we'll see is fairly useful for
+
+1137
+00:57:43,160 --> 00:57:49,790
+accessing different data structures so
+
+1138
+00:57:47,840 --> 00:57:52,360
+here is an example of a very simple
+
+1139
+00:57:49,790 --> 00:57:56,630
+function that we can understand
+
+1140
+00:57:52,360 --> 00:57:58,670
+everything about it already because we
+
+1141
+00:57:56,630 --> 00:58:02,780
+know what the move instruction does and
+
+1142
+00:57:58,670 --> 00:58:06,020
+that the sort of classic swapping of two
+
+1143
+00:58:02,780 --> 00:58:08,720
+values that are stored in memory so my
+
+1144
+00:58:06,020 --> 00:58:11,630
+point my arguments are two pointers
+
+1145
+00:58:08,720 --> 00:58:13,460
+called XP and YP and I'm going to
+
+1146
+00:58:11,630 --> 00:58:16,880
+dereference those pointers I'm going to
+
+1147
+00:58:13,460 --> 00:58:20,800
+read from memory into registers and then
+
+1148
+00:58:16,880 --> 00:58:25,000
+I'm going to copy back to to memory but
+
+1149
+00:58:20,800 --> 00:58:28,550
+reversing the the two destinations and
+
+1150
+00:58:25,000 --> 00:58:31,070
+so as you can imagine it it lines up to
+
+1151
+00:58:28,550 --> 00:58:35,030
+be for move instructions that correspond
+
+1152
+00:58:31,070 --> 00:58:37,640
+to these four references and the final
+
+1153
+00:58:35,030 --> 00:58:40,040
+one rekt just won't learn more about
+
+1154
+00:58:37,640 --> 00:58:43,040
+functions and how they're called but
+
+1155
+00:58:40,040 --> 00:58:46,130
+just think of the read is it gets you it
+
+1156
+00:58:43,040 --> 00:58:54,440
+returns from wherever the calling
+
+1157
+00:58:46,130 --> 00:58:58,300
+position was and so let's look at at
+
+1158
+00:58:54,440 --> 00:59:04,660
+more detail at the actual code then and
+
+1159
+00:58:58,300 --> 00:59:07,910
+so it turns out with 64 x86 64 the
+
+1160
+00:59:04,660 --> 00:59:10,940
+arguments always come in some specific
+
+1161
+00:59:07,910 --> 00:59:13,460
+registers and the ones to remember for
+
+1162
+00:59:10,940 --> 00:59:15,890
+today is Rd I will be the first argument
+
+1163
+00:59:13,460 --> 00:59:18,230
+register and RS I will be the second
+
+1164
+00:59:15,890 --> 00:59:19,910
+argument register there can be up to six
+
+1165
+00:59:18,230 --> 00:59:23,359
+of these and we'll go into more of that
+
+1166
+00:59:19,910 --> 00:59:26,500
+later so those two registers represent
+
+1167
+00:59:23,359 --> 00:59:29,540
+the values of XP and YP those are set
+
+1168
+00:59:26,500 --> 00:59:31,910
+before when this before the function is
+
+1169
+00:59:29,540 --> 00:59:33,920
+actually begins executing that's set by
+
+1170
+00:59:31,910 --> 00:59:37,310
+the part of the code that calls this
+
+1171
+00:59:33,920 --> 00:59:39,530
+function and those will be pointers so
+
+1172
+00:59:37,310 --> 00:59:42,900
+what they are is they contain addresses
+
+1173
+00:59:39,530 --> 00:59:45,060
+that specifying locations in memory
+
+1174
+00:59:42,900 --> 00:59:47,430
+and then within the code the compiler
+
+1175
+00:59:45,060 --> 00:59:50,640
+just came up with its own ideas of how
+
+1176
+00:59:47,430 --> 00:59:53,790
+to use different registers for temporary
+
+1177
+00:59:50,640 --> 00:59:56,970
+data by whatever what's known as the
+
+1178
+00:59:53,790 --> 00:59:59,670
+register allocation algorithm it uses
+
+1179
+00:59:56,970 --> 01:00:01,830
+and we don't really care we just want
+
+1180
+00:59:59,670 --> 01:00:05,250
+what we'll want to do is figure out what
+
+1181
+01:00:01,830 --> 01:00:07,710
+it's doing and we'll see that a register
+
+1182
+01:00:05,250 --> 01:00:13,130
+is our ax is being used to hold the
+
+1183
+01:00:07,710 --> 01:00:13,130
+value T 0 and our DX of the value T 1
+
+1184
+01:00:13,430 --> 01:00:20,550
+now so let's get actually concrete here
+
+1185
+01:00:16,800 --> 01:00:24,000
+and this is very detailed but I think
+
+1186
+01:00:20,550 --> 01:00:26,190
+it's important that you understand sort
+
+1187
+01:00:24,000 --> 01:00:29,160
+of you can almost simulate the execution
+
+1188
+01:00:26,190 --> 01:00:31,190
+of some instructions by yourself you're
+
+1189
+01:00:29,160 --> 01:00:33,780
+going to really have to know this stuff
+
+1190
+01:00:31,190 --> 01:00:35,940
+so what each of these instructions is
+
+1191
+01:00:33,780 --> 01:00:39,120
+doing and how it works and really have
+
+1192
+01:00:35,940 --> 01:00:41,310
+that wired into you pretty well so let's
+
+1193
+01:00:39,120 --> 01:00:44,970
+make up an example I'll let's imagine
+
+1194
+01:00:41,310 --> 01:00:48,150
+that the two addresses that are used for
+
+1195
+01:00:44,970 --> 01:00:51,210
+these two pointers are in hex 1 2 0 and
+
+1196
+01:00:48,150 --> 01:00:54,210
+1 0 0 by the way those would not be
+
+1197
+01:00:51,210 --> 01:00:55,890
+typical addresses they're way too small
+
+1198
+01:00:54,210 --> 01:00:59,340
+a number but it's much easier to use
+
+1199
+01:00:55,890 --> 01:01:01,110
+them as an illustration and let's
+
+1200
+01:00:59,340 --> 01:01:06,150
+suppose that one of them held the value
+
+1201
+01:01:01,110 --> 01:01:10,130
+1 2 3 and the other 4 5 6 so the first
+
+1202
+01:01:06,150 --> 01:01:13,170
+instruction says use RDI as an address
+
+1203
+01:01:10,130 --> 01:01:17,520
+copy from that memory location and store
+
+1204
+01:01:13,170 --> 01:01:20,340
+the result and register R X so R di is 1
+
+1205
+01:01:17,520 --> 01:01:22,770
+2 0 I'll read from that address I'll
+
+1206
+01:01:20,340 --> 01:01:25,770
+read the value 1 2 3 and store it and
+
+1207
+01:01:22,770 --> 01:01:29,070
+register R ax these are all by the way 8
+
+1208
+01:01:25,770 --> 01:01:32,750
+byte values and I'm just sort of
+
+1209
+01:01:29,070 --> 01:01:35,880
+glossing over that part of it but the Q
+
+1210
+01:01:32,750 --> 01:01:39,750
+refers to what in Intel terminology is a
+
+1211
+01:01:35,880 --> 01:01:47,040
+quad word a word because it goes back to
+
+1212
+01:01:39,750 --> 01:01:53,010
+the 8086 is 16 bits 2 bytes a long word
+
+1213
+01:01:47,040 --> 01:01:53,580
+is 32 bits and a quad word is 64 bits
+
+1214
+01:01:53,010 --> 01:01:56,550
+that
+
+1215
+01:01:53,580 --> 01:02:00,870
+just their terminology and we're stuck
+
+1216
+01:01:56,550 --> 01:02:03,420
+with it okay so that one instruction had
+
+1217
+01:02:00,870 --> 01:02:06,180
+that effect the second instruction does
+
+1218
+01:02:03,420 --> 01:02:09,630
+the same thing but using RSI which holds
+
+1219
+01:02:06,180 --> 01:02:12,630
+one zero zero as an address until it
+
+1220
+01:02:09,630 --> 01:02:17,480
+copies four fifty four five six into RDX
+
+1221
+01:02:12,630 --> 01:02:20,460
+and then the third instruction is
+
+1222
+01:02:17,480 --> 01:02:24,180
+writing back to memory so it sources
+
+1223
+01:02:20,460 --> 01:02:27,000
+register RDX the destination has the
+
+1224
+01:02:24,180 --> 01:02:30,080
+address of r di which is one two zero
+
+1225
+01:02:27,000 --> 01:02:33,650
+and its storing that back in memory and
+
+1226
+01:02:30,080 --> 01:02:36,810
+finally the fourth instruction does the
+
+1227
+01:02:33,650 --> 01:02:38,700
+the other part of the right so you see
+
+1228
+01:02:36,810 --> 01:02:41,250
+these four instructions to read from
+
+1229
+01:02:38,700 --> 01:02:43,470
+memory into registers two of them wrote
+
+1230
+01:02:41,250 --> 01:02:48,450
+from registers back to memory and that's
+
+1231
+01:02:43,470 --> 01:02:51,360
+the whole function and you can see it
+
+1232
+01:02:48,450 --> 01:02:56,670
+this move instruction is is is doing all
+
+1233
+01:02:51,360 --> 01:02:58,770
+the work here so we've shown that
+
+1234
+01:02:56,670 --> 01:03:01,980
+example just showed this very simple
+
+1235
+01:02:58,770 --> 01:03:04,950
+memory referencing that's designated by
+
+1236
+01:03:01,980 --> 01:03:06,240
+the parentheses and as I mentioned you
+
+1237
+01:03:04,950 --> 01:03:09,690
+can do a version where you put a
+
+1238
+01:03:06,240 --> 01:03:12,000
+displacement there too and in fact
+
+1239
+01:03:09,690 --> 01:03:13,440
+there's a much more elaborate form and
+
+1240
+01:03:12,000 --> 01:03:16,590
+we'll see that this is useful for
+
+1241
+01:03:13,440 --> 01:03:18,150
+implementing array references where
+
+1242
+01:03:16,590 --> 01:03:23,450
+there can be actually two registers
+
+1243
+01:03:18,150 --> 01:03:26,940
+involved and there can be a displacement
+
+1244
+01:03:23,450 --> 01:03:29,250
+which is a constant offset and a scale
+
+1245
+01:03:26,940 --> 01:03:32,820
+factor which will be one two four eight
+
+1246
+01:03:29,250 --> 01:03:37,080
+and the general idea of it is to take
+
+1247
+01:03:32,820 --> 01:03:40,110
+our register that I'm referring to as R
+
+1248
+01:03:37,080 --> 01:03:44,210
+sub I that's known as an index register
+
+1249
+01:03:40,110 --> 01:03:50,010
+you multiply it by the scale factor I'll
+
+1250
+01:03:44,210 --> 01:03:52,740
+you add the value of RB register RB and
+
+1251
+01:03:50,010 --> 01:03:56,850
+you also add the constant displacement
+
+1252
+01:03:52,740 --> 01:04:00,810
+and these have a RB refers to base our
+
+1253
+01:03:56,850 --> 01:04:02,430
+eye is index and s is scale and it turns
+
+1254
+01:04:00,810 --> 01:04:04,230
+out this will be the sort of natural way
+
+1255
+01:04:02,430 --> 01:04:06,240
+to implement array reference it will
+
+1256
+01:04:04,230 --> 01:04:07,060
+make a lot more sense when we talk about
+
+1257
+01:04:06,240 --> 01:04:09,730
+arrays
+
+1258
+01:04:07,060 --> 01:04:13,270
+but basically you can think of is if
+
+1259
+01:04:09,730 --> 01:04:15,610
+this is an array index I have to
+
+1260
+01:04:13,270 --> 01:04:19,210
+typically scale it by however many bytes
+
+1261
+01:04:15,610 --> 01:04:21,730
+my data type is so if it's an entire to
+
+1262
+01:04:19,210 --> 01:04:24,550
+scale it by four it's no long I have to
+
+1263
+01:04:21,730 --> 01:04:31,030
+scale it by eight so that's where these
+
+1264
+01:04:24,550 --> 01:04:33,970
+scale factors will come in and basically
+
+1265
+01:04:31,030 --> 01:04:38,200
+the the format in the assembly code lets
+
+1266
+01:04:33,970 --> 01:04:40,930
+you eliminate some of these fields if
+
+1267
+01:04:38,200 --> 01:04:42,820
+they're not being used so you'll and we
+
+1268
+01:04:40,930 --> 01:04:44,680
+already saw that single parenthesis is
+
+1269
+01:04:42,820 --> 01:04:49,060
+sort of a reduced version of this form
+
+1270
+01:04:44,680 --> 01:04:52,720
+so let's just do some examples of these
+
+1271
+01:04:49,060 --> 01:04:56,320
+address computations and let's imagine
+
+1272
+01:04:52,720 --> 01:05:00,420
+that register RDX hold text F with three
+
+1273
+01:04:56,320 --> 01:05:06,340
+zeros and RCX held a one with two zeros
+
+1274
+01:05:00,420 --> 01:05:09,160
+so if I rather than doing one at a time
+
+1275
+01:05:06,340 --> 01:05:11,740
+you can see each of these I'm taking RDX
+
+1276
+01:05:09,160 --> 01:05:15,400
+which is f with three zeros adding eight
+
+1277
+01:05:11,740 --> 01:05:18,760
+and so that's F zero zero eight here I'm
+
+1278
+01:05:15,400 --> 01:05:22,600
+adding together registers RDX and RCX
+
+1279
+01:05:18,760 --> 01:05:25,000
+and it gives me F 1 0 0 I'm doing the
+
+1280
+01:05:22,600 --> 01:05:30,970
+same here except that I'm scaling RCX by
+
+1281
+01:05:25,000 --> 01:05:35,830
+4 so 4 times 1 0 0 is is 4 0 0 and I'm
+
+1282
+01:05:30,970 --> 01:05:39,550
+adding that to F and here I'm taking RDX
+
+1283
+01:05:35,830 --> 01:05:43,540
+which is f 0 with 3 zeros if I double
+
+1284
+01:05:39,550 --> 01:05:46,690
+that I get 1e with 3 zeros if you think
+
+1285
+01:05:43,540 --> 01:05:51,180
+about shifting an F to the left 1 you
+
+1286
+01:05:46,690 --> 01:05:55,240
+get a 1 and then it goes 1 1 1 0 and
+
+1287
+01:05:51,180 --> 01:05:58,360
+that's an e ok and then I'm adding this
+
+1288
+01:05:55,240 --> 01:06:00,010
+displacement of 8 0 to it so the point
+
+1289
+01:05:58,360 --> 01:06:02,080
+of this is all of this is arithmetic
+
+1290
+01:06:00,010 --> 01:06:05,620
+it's all using whatever is in the
+
+1291
+01:06:02,080 --> 01:06:07,570
+register and there's some rules for how
+
+1292
+01:06:05,620 --> 01:06:09,880
+you combine this and get an address and
+
+1293
+01:06:07,570 --> 01:06:13,500
+then that's being used to either read or
+
+1294
+01:06:09,880 --> 01:06:13,500
+write some memory locations
+
+1295
+01:06:14,520 --> 01:06:21,119
+okay so now what is the final part of it
+
+1296
+01:06:17,430 --> 01:06:24,060
+today I'll go through some arithmetic
+
+1297
+01:06:21,119 --> 01:06:26,130
+and one of the things that we'll be sure
+
+1298
+01:06:24,060 --> 01:06:28,800
+to confuse you and drive you crazy and
+
+1299
+01:06:26,130 --> 01:06:31,680
+make you be sending email to the staff
+
+1300
+01:06:28,800 --> 01:06:35,220
+for explanation is an instruction called
+
+1301
+01:06:31,680 --> 01:06:38,460
+load effective address and the reason is
+
+1302
+01:06:35,220 --> 01:06:41,310
+its purpose in life is to do basically
+
+1303
+01:06:38,460 --> 01:06:45,420
+the ampersand operation of C to compute
+
+1304
+01:06:41,310 --> 01:06:48,750
+an address based on some whatever you
+
+1305
+01:06:45,420 --> 01:06:50,670
+want to compute an address from but it
+
+1306
+01:06:48,750 --> 01:06:53,100
+also turns out to be a pretty handy way
+
+1307
+01:06:50,670 --> 01:06:57,710
+to do arithmetic and the C compiler
+
+1308
+01:06:53,100 --> 01:07:02,070
+likes to use it so in particular
+
+1309
+01:06:57,710 --> 01:07:04,110
+it looks the the format of it looks like
+
+1310
+01:07:02,070 --> 01:07:07,470
+a move instruction there's a source and
+
+1311
+01:07:04,110 --> 01:07:10,440
+a destination but the destination has to
+
+1312
+01:07:07,470 --> 01:07:15,360
+be a register and the source will be one
+
+1313
+01:07:10,440 --> 01:07:17,280
+of these memory references so it looks
+
+1314
+01:07:15,360 --> 01:07:19,800
+like a move instruction it looks like
+
+1315
+01:07:17,280 --> 01:07:21,420
+you're doing some address computation
+
+1316
+01:07:19,800 --> 01:07:24,150
+then you're reading from memory and
+
+1317
+01:07:21,420 --> 01:07:26,520
+storing it to a register but what it
+
+1318
+01:07:24,150 --> 01:07:30,150
+actually does is it does that address
+
+1319
+01:07:26,520 --> 01:07:33,300
+computation and then it actually writes
+
+1320
+01:07:30,150 --> 01:07:35,960
+that address not the memory value but
+
+1321
+01:07:33,300 --> 01:07:39,210
+the the value of got that got computed
+
+1322
+01:07:35,960 --> 01:07:40,740
+directly to the register which is what
+
+1323
+01:07:39,210 --> 01:07:43,140
+you want to do here remember the
+
+1324
+01:07:40,740 --> 01:07:45,540
+ampersand operation is give me the
+
+1325
+01:07:43,140 --> 01:07:51,060
+address of some place give me a pointer
+
+1326
+01:07:45,540 --> 01:07:54,240
+that designates some location so for
+
+1327
+01:07:51,060 --> 01:07:57,960
+example this is fairly typical in C code
+
+1328
+01:07:54,240 --> 01:08:03,180
+if you say multiply X by 12 it will turn
+
+1329
+01:07:57,960 --> 01:08:05,250
+it into a le Lotus and address
+
+1330
+01:08:03,180 --> 01:08:09,720
+computation and this is just a clever
+
+1331
+01:08:05,250 --> 01:08:13,619
+way to compute three times our GI adds
+
+1332
+01:08:09,720 --> 01:08:17,759
+are di plus two times r di so that three
+
+1333
+01:08:13,619 --> 01:08:25,240
+times R di and stores it in our ax and
+
+1334
+01:08:17,759 --> 01:08:27,190
+then Sal Q means shift left by two and
+
+1335
+01:08:25,240 --> 01:08:29,620
+so you remember shifting up by two is
+
+1336
+01:08:27,190 --> 01:08:32,350
+like multiplying by four so the first
+
+1337
+01:08:29,620 --> 01:08:35,560
+value computed three times X I shift
+
+1338
+01:08:32,350 --> 01:08:40,600
+that left four by two positions and I
+
+1339
+01:08:35,560 --> 01:08:42,760
+have twelve times X so that's a very
+
+1340
+01:08:40,600 --> 01:08:45,070
+special that le.a but you'll see it all
+
+1341
+01:08:42,760 --> 01:08:47,560
+over the place so you need to be ready
+
+1342
+01:08:45,070 --> 01:08:49,080
+for it these other ones look more like
+
+1343
+01:08:47,560 --> 01:08:51,340
+what you'd expect for arithmetic
+
+1344
+01:08:49,080 --> 01:08:54,910
+instructions they have names like add
+
+1345
+01:08:51,340 --> 01:08:56,770
+and subtract and multiply and so forth
+
+1346
+01:08:54,910 --> 01:09:00,180
+and they all have the same general
+
+1347
+01:08:56,770 --> 01:09:02,470
+format that they have two arguments and
+
+1348
+01:09:00,180 --> 01:09:05,260
+what's called the destination is
+
+1349
+01:09:02,470 --> 01:09:08,340
+actually also a source it's a little
+
+1350
+01:09:05,260 --> 01:09:12,130
+like in C if you say X plus equals Y
+
+1351
+01:09:08,340 --> 01:09:14,890
+it's saying take the value of x add the
+
+1352
+01:09:12,130 --> 01:09:18,120
+value of y and then store the result in
+
+1353
+01:09:14,890 --> 01:09:20,830
+X and now the destination is like that
+
+1354
+01:09:18,120 --> 01:09:23,170
+the other thing that's weird is that the
+
+1355
+01:09:20,830 --> 01:09:25,630
+operands are in the inverse order from
+
+1356
+01:09:23,170 --> 01:09:27,460
+where you'd expect them to be so the
+
+1357
+01:09:25,630 --> 01:09:29,230
+source comes first in the destination
+
+1358
+01:09:27,460 --> 01:09:31,380
+comes last and that's important to
+
+1359
+01:09:29,230 --> 01:09:31,380
+remember
+
+1360
+01:09:32,380 --> 01:09:37,020
+and other thing you'll see that there's
+
+1361
+01:09:34,900 --> 01:09:39,760
+nothing special here whether it's a
+
+1362
+01:09:37,020 --> 01:09:42,550
+except that this is a arithmetic shift
+
+1363
+01:09:39,760 --> 01:09:44,200
+and this is a logical shift of whether
+
+1364
+01:09:42,550 --> 01:09:45,730
+it's assigned your unsigned value
+
+1365
+01:09:44,200 --> 01:09:48,400
+because you remember the bit level
+
+1366
+01:09:45,730 --> 01:09:53,170
+behavior of these two instructions is
+
+1367
+01:09:48,400 --> 01:09:55,570
+the same and then there's a series of
+
+1368
+01:09:53,170 --> 01:09:58,870
+instructions that are used that are just
+
+1369
+01:09:55,570 --> 01:10:03,820
+take one operand increment decrement a
+
+1370
+01:09:58,870 --> 01:10:05,730
+negate and not not is not is like the
+
+1371
+01:10:03,820 --> 01:10:09,970
+tilde operation and see not the
+
+1372
+01:10:05,730 --> 01:10:12,130
+exclamation mark so those are the basic
+
+1373
+01:10:09,970 --> 01:10:13,540
+instructions and again now we can
+
+1374
+01:10:12,130 --> 01:10:15,280
+actually look at some programs and
+
+1375
+01:10:13,540 --> 01:10:18,610
+understand them and here's one that just
+
+1376
+01:10:15,280 --> 01:10:21,340
+does a bunch of junk of arithmetic
+
+1377
+01:10:18,610 --> 01:10:24,130
+instructions and it converts into the
+
+1378
+01:10:21,340 --> 01:10:27,070
+following assembly code and you see it's
+
+1379
+01:10:24,130 --> 01:10:31,510
+using this LA instruction multiple times
+
+1380
+01:10:27,070 --> 01:10:34,210
+to do addition in various forms and it
+
+1381
+01:10:31,510 --> 01:10:36,790
+also has shifting and it has
+
+1382
+01:10:34,210 --> 01:10:38,350
+multiplication you saw in the original
+
+1383
+01:10:36,790 --> 01:10:42,700
+code I just have addition and
+
+1384
+01:10:38,350 --> 01:10:44,590
+multiplication here I have various
+
+1385
+01:10:42,700 --> 01:10:47,050
+instructions I only have one multiply
+
+1386
+01:10:44,590 --> 01:10:49,060
+here whereas I had two there so the
+
+1387
+01:10:47,050 --> 01:10:51,400
+compiler instead of scrambling things
+
+1388
+01:10:49,060 --> 01:10:54,490
+around trying to find clever ways to
+
+1389
+01:10:51,400 --> 01:10:58,330
+implement what you're asking for using
+
+1390
+01:10:54,490 --> 01:11:01,770
+less complex expensive less
+
+1391
+01:10:58,330 --> 01:11:01,770
+time-consuming instructions
+
+1392
+01:11:02,420 --> 01:11:10,670
+and if you sort of go through this code
+
+1393
+01:11:05,540 --> 01:11:12,980
+carefully what you'll find is that this
+
+1394
+01:11:10,670 --> 01:11:16,000
+instruction here corresponds to this
+
+1395
+01:11:12,980 --> 01:11:18,619
+computation of t1 is adding two values
+
+1396
+01:11:16,000 --> 01:11:22,760
+and giving it a new name it's putting in
+
+1397
+01:11:18,619 --> 01:11:28,909
+our ax similarly this one is adding V to
+
+1398
+01:11:22,760 --> 01:11:31,580
+t1 and storing it back in in our a X the
+
+1399
+01:11:28,909 --> 01:11:34,130
+x box for doesn't show up directly here
+
+1400
+01:11:31,580 --> 01:11:36,920
+it turns out what it does is it jumps
+
+1401
+01:11:34,130 --> 01:11:41,510
+right it head to here and multiply Y by
+
+1402
+01:11:36,920 --> 01:11:46,400
+48 it does it by first computing 3y like
+
+1403
+01:11:41,510 --> 01:11:49,489
+we saw before and computing shifting
+
+1404
+01:11:46,400 --> 01:11:53,239
+that left by 4 because 3 times 16 is 48
+
+1405
+01:11:49,489 --> 01:11:56,449
+and then the 4 here that sin x plus 4
+
+1406
+01:11:53,239 --> 01:11:58,570
+actually shows up here it just uses the
+
+1407
+01:11:56,449 --> 01:12:04,400
+displacement field of this computation
+
+1408
+01:11:58,570 --> 01:12:06,139
+to add 4 to some other values and so
+
+1409
+01:12:04,400 --> 01:12:07,850
+this is labeled then these comments show
+
+1410
+01:12:06,139 --> 01:12:11,179
+how these correspond to the program and
+
+1411
+01:12:07,850 --> 01:12:12,830
+these registers show it so the important
+
+1412
+01:12:11,179 --> 01:12:14,389
+thing to get from here you will want to
+
+1413
+01:12:12,830 --> 01:12:18,500
+actually go back through this and make
+
+1414
+01:12:14,389 --> 01:12:22,250
+sure you believe that the comments are
+
+1415
+01:12:18,500 --> 01:12:24,110
+correct but it's very important for you
+
+1416
+01:12:22,250 --> 01:12:25,310
+to figure out this la instruction
+
+1417
+01:12:24,110 --> 01:12:26,630
+otherwise you're just going to be
+
+1418
+01:12:25,310 --> 01:12:28,820
+hopelessly confused
+
+1419
+01:12:26,630 --> 01:12:31,060
+and it's also important to understand
+
+1420
+01:12:28,820 --> 01:12:33,710
+that the the code that gets generated
+
+1421
+01:12:31,060 --> 01:12:36,260
+will correctly implement your si
+
+1422
+01:12:33,710 --> 01:12:38,260
+function but it might not exactly
+
+1423
+01:12:36,260 --> 01:12:41,179
+replicate at a low level
+
+1424
+01:12:38,260 --> 01:12:45,409
+the exact sequence of operations you
+
+1425
+01:12:41,179 --> 01:12:47,719
+specified at a high level so that will
+
+1426
+01:12:45,409 --> 01:12:50,000
+just to summarize then you've already
+
+1427
+01:12:47,719 --> 01:12:53,119
+gotten a glimpse then of of what this
+
+1428
+01:12:50,000 --> 01:12:55,130
+very odd world of machine programming is
+
+1429
+01:12:53,119 --> 01:12:59,360
+and how different it is from C code
+
+1430
+01:12:55,130 --> 01:13:02,960
+already it's also you've already seen
+
+1431
+01:12:59,360 --> 01:13:07,159
+that x86 is weird like I said it's
+
+1432
+01:13:02,960 --> 01:13:10,670
+English it's not a Latin it's not well
+
+1433
+01:13:07,159 --> 01:13:14,150
+designed and but you just got to deal
+
+1434
+01:13:10,670 --> 01:13:17,439
+with that so that's your beginning to
+
+1435
+01:13:14,150 --> 01:13:19,469
+machine level programming thanks a lot
+
+1436
+01:13:17,439 --> 01:13:19,469
+I
+

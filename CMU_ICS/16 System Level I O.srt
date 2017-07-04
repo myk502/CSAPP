@@ -1,0 +1,5256 @@
+1
+00:00:00,030 --> 00:00:07,020
+good afternoon everyone so I apologize I
+
+2
+00:00:05,190 --> 00:00:09,030
+have to I'm going to sit mostly through
+
+3
+00:00:07,020 --> 00:00:11,309
+this lecture I managed to do something
+
+4
+00:00:09,030 --> 00:00:14,910
+to my knee yesterday and I'm having
+
+5
+00:00:11,309 --> 00:00:17,449
+trouble moving around very much but
+
+6
+00:00:14,910 --> 00:00:21,560
+today what we're going to talk about is
+
+7
+00:00:17,449 --> 00:00:25,109
+input/output what it looks like from the
+
+8
+00:00:21,560 --> 00:00:27,930
+programmers perspective and this is a
+
+9
+00:00:25,109 --> 00:00:31,679
+you've already learned instead of a lot
+
+10
+00:00:27,930 --> 00:00:35,760
+of the standard UNIX libraries for like
+
+11
+00:00:31,679 --> 00:00:37,829
+printf and scanf and those routines and
+
+12
+00:00:35,760 --> 00:00:39,570
+we'll talk about them a little but what
+
+13
+00:00:37,829 --> 00:00:42,210
+will first talk about is actually lower
+
+14
+00:00:39,570 --> 00:00:44,930
+level i/o stuff that is directly
+
+15
+00:00:42,210 --> 00:00:47,039
+interfacing to the operating system and
+
+16
+00:00:44,930 --> 00:00:50,010
+this is what you're going to need to
+
+17
+00:00:47,039 --> 00:00:52,410
+learn about partly some of this material
+
+18
+00:00:50,010 --> 00:00:54,809
+you're going to need for the next web
+
+19
+00:00:52,410 --> 00:00:59,640
+that comes out at midnight tonight the
+
+20
+00:00:54,809 --> 00:01:01,680
+shell lab and you'll need to also you'll
+
+21
+00:00:59,640 --> 00:01:04,199
+be revisiting this several other labs
+
+22
+00:01:01,680 --> 00:01:09,770
+along the course including the final web
+
+23
+00:01:04,199 --> 00:01:13,500
+the the web proxy web so this is sort of
+
+24
+00:01:09,770 --> 00:01:16,500
+where we're we're really digging down
+
+25
+00:01:13,500 --> 00:01:18,750
+deeply into this type of programming you
+
+26
+00:01:16,500 --> 00:01:21,930
+do if you're writing system software
+
+27
+00:01:18,750 --> 00:01:24,900
+things that are very just barely above
+
+28
+00:01:21,930 --> 00:01:28,979
+the operating system level and I know
+
+29
+00:01:24,900 --> 00:01:32,159
+for myself of learning this material I
+
+30
+00:01:28,979 --> 00:01:35,070
+actually learned this material from 213
+
+31
+00:01:32,159 --> 00:01:36,270
+my co-author David Halloran is the one
+
+32
+00:01:35,070 --> 00:01:38,670
+who knew this stuff already
+
+33
+00:01:36,270 --> 00:01:40,500
+he wrote that part of the book I learned
+
+34
+00:01:38,670 --> 00:01:43,110
+it by reading the book just like you are
+
+35
+00:01:40,500 --> 00:01:45,049
+but I found it actually very useful to
+
+36
+00:01:43,110 --> 00:01:47,070
+know and a variety of different other
+
+37
+00:01:45,049 --> 00:01:50,759
+situations I've been in in the meantime
+
+38
+00:01:47,070 --> 00:01:53,340
+this is quite a few years ago and so I
+
+39
+00:01:50,759 --> 00:01:54,930
+think it's worth understanding and I'll
+
+40
+00:01:53,340 --> 00:01:58,860
+also mention this kind of material
+
+41
+00:01:54,930 --> 00:02:02,369
+usually is taught you don't really see
+
+42
+00:01:58,860 --> 00:02:04,020
+it covered in most books except for ones
+
+43
+00:02:02,369 --> 00:02:06,899
+that are really oriented toward system
+
+44
+00:02:04,020 --> 00:02:09,750
+programmers and are fairly arcane or you
+
+45
+00:02:06,899 --> 00:02:12,239
+try and learn it by reading man pages
+
+46
+00:02:09,750 --> 00:02:12,900
+and that's a fairly cryptic way to try
+
+47
+00:02:12,239 --> 00:02:16,260
+and understand
+
+48
+00:02:12,900 --> 00:02:18,840
+and a sort of a set of abstractions
+
+49
+00:02:16,260 --> 00:02:23,549
+provided by an API so I hope you'll find
+
+50
+00:02:18,840 --> 00:02:25,379
+this useful so what we'll talk about
+
+51
+00:02:23,549 --> 00:02:28,650
+then is that what I mentioned this
+
+52
+00:02:25,379 --> 00:02:31,769
+low-level i/o that I supported by UNIX
+
+53
+00:02:28,650 --> 00:02:34,829
+and other related operating systems and
+
+54
+00:02:31,769 --> 00:02:38,819
+then a package called Rio which stands
+
+55
+00:02:34,829 --> 00:02:42,439
+to robust IO oh and you will actually
+
+56
+00:02:38,819 --> 00:02:46,170
+not be using this package until the last
+
+57
+00:02:42,439 --> 00:02:48,750
+lab for the course the proxy lab at
+
+58
+00:02:46,170 --> 00:02:51,690
+which time you'll use it a lot but it's
+
+59
+00:02:48,750 --> 00:02:53,400
+worth looking at and partly it's in the
+
+60
+00:02:51,690 --> 00:02:56,159
+book it's well documented in the book
+
+61
+00:02:53,400 --> 00:02:58,799
+and if you really want to understand how
+
+62
+00:02:56,159 --> 00:03:01,170
+software works or a system works the
+
+63
+00:02:58,799 --> 00:03:03,209
+best thing you can do is if you've if it
+
+64
+00:03:01,170 --> 00:03:05,310
+there's good quality source code to look
+
+65
+00:03:03,209 --> 00:03:08,280
+at and study you can learn a lot from
+
+66
+00:03:05,310 --> 00:03:10,439
+doing that and I really recommend for
+
+67
+00:03:08,280 --> 00:03:12,959
+that chapter in the book that you go
+
+68
+00:03:10,439 --> 00:03:15,269
+ahead and study all of the code that
+
+69
+00:03:12,959 --> 00:03:18,989
+makes up Rio it's not a huge amount and
+
+70
+00:03:15,269 --> 00:03:21,150
+just getting for the subtlety is
+
+71
+00:03:18,989 --> 00:03:23,250
+involved in how you deal with errors how
+
+72
+00:03:21,150 --> 00:03:27,389
+you deal with exceptional conditions and
+
+73
+00:03:23,250 --> 00:03:30,329
+things like that and then we'll talk to
+
+74
+00:03:27,389 --> 00:03:32,250
+them about how files are represented the
+
+75
+00:03:30,329 --> 00:03:36,000
+sort of various data structures behind
+
+76
+00:03:32,250 --> 00:03:39,840
+files how they support standard i/o and
+
+77
+00:03:36,000 --> 00:03:43,979
+i/o redirection and unix and also talk
+
+78
+00:03:39,840 --> 00:03:45,810
+about the so-called buffered i/o the i/o
+
+79
+00:03:43,979 --> 00:03:50,519
+that you're more familiar with and see
+
+80
+00:03:45,810 --> 00:03:52,979
+when you use printf and scanf so UNIX
+
+81
+00:03:50,519 --> 00:03:55,079
+actually has a much simpler and more
+
+82
+00:03:52,979 --> 00:03:57,090
+unified view of i/o than any other
+
+83
+00:03:55,079 --> 00:04:00,599
+operating system it's one of the nice
+
+84
+00:03:57,090 --> 00:04:02,819
+design features of it is that a lot of
+
+85
+00:04:00,599 --> 00:04:05,819
+abstractions are built into the notion
+
+86
+00:04:02,819 --> 00:04:08,639
+of a file and a file is really just a
+
+87
+00:04:05,819 --> 00:04:10,530
+sequence of bytes and in UNIX does not
+
+88
+00:04:08,639 --> 00:04:14,459
+distinguish between different classes of
+
+89
+00:04:10,530 --> 00:04:16,859
+files unlike say Windows or earlier
+
+90
+00:04:14,459 --> 00:04:19,109
+versions of Macintosh operating system
+
+91
+00:04:16,859 --> 00:04:21,389
+it just thanks to them as fights and the
+
+92
+00:04:19,109 --> 00:04:24,240
+operating system level has essentially
+
+93
+00:04:21,389 --> 00:04:26,910
+no understanding of a more detailed
+
+94
+00:04:24,240 --> 00:04:30,400
+structure inside of a file
+
+95
+00:04:26,910 --> 00:04:32,910
+and one of the things it does is a file
+
+96
+00:04:30,400 --> 00:04:36,370
+is normally originally thought of is
+
+97
+00:04:32,910 --> 00:04:39,130
+something that stored on say a disk
+
+98
+00:04:36,370 --> 00:04:43,120
+drive or some other external storage
+
+99
+00:04:39,130 --> 00:04:45,970
+device and that you open you read it or
+
+100
+00:04:43,120 --> 00:04:48,970
+write it you close it those sort of
+
+101
+00:04:45,970 --> 00:04:52,240
+standard operations but UNIX also use
+
+102
+00:04:48,970 --> 00:04:55,090
+the notion of a file to represent many
+
+103
+00:04:52,240 --> 00:05:00,250
+other different things including for
+
+104
+00:04:55,090 --> 00:05:01,990
+example the devices that are the i/o
+
+105
+00:05:00,250 --> 00:05:04,720
+devices that are connected to a
+
+106
+00:05:01,990 --> 00:05:08,500
+particular machine the tty stands for
+
+107
+00:05:04,720 --> 00:05:12,130
+teletype which is a antique terminology
+
+108
+00:05:08,500 --> 00:05:15,190
+for how people used to actually
+
+109
+00:05:12,130 --> 00:05:18,040
+interface typewriters to computers the
+
+110
+00:05:15,190 --> 00:05:20,980
+other thing that our viewed as like
+
+111
+00:05:18,040 --> 00:05:24,000
+files are the network connections what
+
+112
+00:05:20,980 --> 00:05:26,800
+are known as sockets and when you do
+
+113
+00:05:24,000 --> 00:05:30,040
+communication over the Internet you do
+
+114
+00:05:26,800 --> 00:05:34,200
+it by you send a message by writing to a
+
+115
+00:05:30,040 --> 00:05:36,520
+socket and you accept incoming
+
+116
+00:05:34,200 --> 00:05:41,830
+communication by reading from a socket
+
+117
+00:05:36,520 --> 00:05:43,930
+and so the same low-level of API is the
+
+118
+00:05:41,830 --> 00:05:46,990
+same whether you're reading or writing
+
+119
+00:05:43,930 --> 00:05:50,160
+files on your disk drive or sending
+
+120
+00:05:46,990 --> 00:05:50,160
+packets over the Internet
+
+121
+00:05:54,250 --> 00:05:59,230
+so the core operations then associated
+
+122
+00:05:57,280 --> 00:06:01,180
+with files of course are opening and
+
+123
+00:05:59,230 --> 00:06:05,020
+closing them and reading and writing
+
+124
+00:06:01,180 --> 00:06:07,390
+them the other sort of attribute that's
+
+125
+00:06:05,020 --> 00:06:10,690
+associated with most but not all files
+
+126
+00:06:07,390 --> 00:06:13,210
+is what's called the file position so
+
+127
+00:06:10,690 --> 00:06:14,770
+again if you imagine when you're reading
+
+128
+00:06:13,210 --> 00:06:16,750
+from a file you don't want to always
+
+129
+00:06:14,770 --> 00:06:19,540
+start at the beginning every time you do
+
+130
+00:06:16,750 --> 00:06:21,550
+a read you you read some data and then
+
+131
+00:06:19,540 --> 00:06:24,520
+you read some more data and so that's a
+
+132
+00:06:21,550 --> 00:06:28,210
+tracked by a file position which is just
+
+133
+00:06:24,520 --> 00:06:30,940
+a counter that says how many bytes has
+
+134
+00:06:28,210 --> 00:06:33,970
+have been written read from this file so
+
+135
+00:06:30,940 --> 00:06:37,030
+far so that I know where to go and you
+
+136
+00:06:33,970 --> 00:06:39,940
+can actually even alter that value with
+
+137
+00:06:37,030 --> 00:06:42,490
+a various classes operation called
+
+138
+00:06:39,940 --> 00:06:45,090
+seeking which is just a way of changing
+
+139
+00:06:42,490 --> 00:06:47,380
+the file pointer the position pointer
+
+140
+00:06:45,090 --> 00:06:50,020
+now that doesn't work too well if your
+
+141
+00:06:47,380 --> 00:06:54,390
+input is a terminal where you can't move
+
+142
+00:06:50,020 --> 00:06:57,430
+you can't sort of back up and have a
+
+143
+00:06:54,390 --> 00:06:59,590
+recover data that was presented to it
+
+144
+00:06:57,430 --> 00:07:01,480
+earlier or jump ahead and start
+
+145
+00:06:59,590 --> 00:07:04,330
+accepting data that hasn't been typed
+
+146
+00:07:01,480 --> 00:07:06,850
+yet so there's some kinds of files have
+
+147
+00:07:04,330 --> 00:07:09,070
+a file position and seeking and others
+
+148
+00:07:06,850 --> 00:07:12,790
+don't similarly to a network socket you
+
+149
+00:07:09,070 --> 00:07:15,400
+can't jump up socket for it in time you
+
+150
+00:07:12,790 --> 00:07:19,930
+can only read or write the particular
+
+151
+00:07:15,400 --> 00:07:22,540
+packet as they come in but in general
+
+152
+00:07:19,930 --> 00:07:25,690
+think of it then is the file position as
+
+153
+00:07:22,540 --> 00:07:28,630
+part of the the data associated with an
+
+154
+00:07:25,690 --> 00:07:34,690
+open file that tells me how far along in
+
+155
+00:07:28,630 --> 00:07:36,880
+this file have I read or written and
+
+156
+00:07:34,690 --> 00:07:38,020
+then again the files there because
+
+157
+00:07:36,880 --> 00:07:40,930
+there's all these different things
+
+158
+00:07:38,020 --> 00:07:42,729
+they're sort of unified in this file
+
+159
+00:07:40,930 --> 00:07:45,700
+abstraction but obviously there's
+
+160
+00:07:42,729 --> 00:07:48,820
+differences and different attributes to
+
+161
+00:07:45,700 --> 00:07:50,380
+them and so there's sort of many
+
+162
+00:07:48,820 --> 00:07:52,590
+different categories and subcategories
+
+163
+00:07:50,380 --> 00:07:55,060
+but the ones we'll think about our a
+
+164
+00:07:52,590 --> 00:07:58,390
+regular files to think of things that
+
+165
+00:07:55,060 --> 00:08:02,919
+are on a disk drive directories which is
+
+166
+00:07:58,390 --> 00:08:05,260
+a directory is considered a type of file
+
+167
+00:08:02,919 --> 00:08:07,569
+meaning the data that's in there is just
+
+168
+00:08:05,260 --> 00:08:09,969
+enough as a file but of course
+
+169
+00:08:07,569 --> 00:08:11,499
+it's a special kind of file and that it
+
+170
+00:08:09,969 --> 00:08:14,889
+actually does have an interpretation
+
+171
+00:08:11,499 --> 00:08:16,899
+that entries in that file describe the
+
+172
+00:08:14,889 --> 00:08:20,499
+locations and attributes of other files
+
+173
+00:08:16,899 --> 00:08:24,999
+and then as I mentioned the term socket
+
+174
+00:08:20,499 --> 00:08:26,860
+is a connection to a network and it's
+
+175
+00:08:24,999 --> 00:08:29,649
+both for sending and for receiving
+
+176
+00:08:26,860 --> 00:08:31,380
+messages over the network there's other
+
+177
+00:08:29,649 --> 00:08:35,319
+files that we won't really talk about
+
+178
+00:08:31,380 --> 00:08:40,870
+for example when you pipe when you from
+
+179
+00:08:35,319 --> 00:08:43,000
+one application to another that both the
+
+180
+00:08:40,870 --> 00:08:45,610
+output of the first program and the
+
+181
+00:08:43,000 --> 00:08:50,399
+input of the second are special types of
+
+182
+00:08:45,610 --> 00:08:54,220
+files called pipes and they're handled
+
+183
+00:08:50,399 --> 00:08:56,620
+by writing is putting something into the
+
+184
+00:08:54,220 --> 00:08:59,410
+pipe and reading is to take something
+
+185
+00:08:56,620 --> 00:09:01,269
+out of that pipe a similar something
+
+186
+00:08:59,410 --> 00:09:04,060
+called a symbolic link which is just a
+
+187
+00:09:01,269 --> 00:09:06,130
+way that you can have multiple names for
+
+188
+00:09:04,060 --> 00:09:13,569
+a file and pointers to a file that
+
+189
+00:09:06,130 --> 00:09:15,880
+aren't really without having to make
+
+190
+00:09:13,569 --> 00:09:18,910
+separate copies of a file and then other
+
+191
+00:09:15,880 --> 00:09:22,689
+special types of devices so we won't
+
+192
+00:09:18,910 --> 00:09:24,970
+really we'll only consider the first
+
+193
+00:09:22,689 --> 00:09:34,120
+three types of files and in fact for
+
+194
+00:09:24,970 --> 00:09:36,220
+today mostly the first two so the idea
+
+195
+00:09:34,120 --> 00:09:38,230
+of a file then is it just contains
+
+196
+00:09:36,220 --> 00:09:41,139
+arbitrary data and the operating system
+
+197
+00:09:38,230 --> 00:09:43,269
+really for regular file doesn't try to
+
+198
+00:09:41,139 --> 00:09:46,720
+get into the details of what's inside
+
+199
+00:09:43,269 --> 00:09:48,519
+that file and there's some class of
+
+200
+00:09:46,720 --> 00:09:52,259
+applications that will distinguish
+
+201
+00:09:48,519 --> 00:09:54,759
+between a text file and a binary file
+
+202
+00:09:52,259 --> 00:09:57,790
+not really at the operating system level
+
+203
+00:09:54,759 --> 00:10:00,790
+but more higher levels and the main
+
+204
+00:09:57,790 --> 00:10:03,639
+difference with that is that a text file
+
+205
+00:10:00,790 --> 00:10:07,720
+should only have the standard characters
+
+206
+00:10:03,639 --> 00:10:10,480
+of ASCII or another class would be
+
+207
+00:10:07,720 --> 00:10:14,730
+various encoding that allow you to do in
+
+208
+00:10:10,480 --> 00:10:17,529
+coatings of non-english alphabets and
+
+209
+00:10:14,730 --> 00:10:20,920
+binary files would be things like an
+
+210
+00:10:17,529 --> 00:10:26,769
+image or a actual
+
+211
+00:10:20,920 --> 00:10:29,800
+a code or a video or audio file or
+
+212
+00:10:26,769 --> 00:10:32,050
+something that it's the you're within
+
+213
+00:10:29,800 --> 00:10:34,180
+that code there's a sequence of bytes
+
+214
+00:10:32,050 --> 00:10:41,949
+that are encoding numbers in some form
+
+215
+00:10:34,180 --> 00:10:44,470
+directly and then the main thing about a
+
+216
+00:10:41,949 --> 00:10:48,279
+text file is that there are certain
+
+217
+00:10:44,470 --> 00:10:50,740
+functions that distinguish a newline
+
+218
+00:10:48,279 --> 00:10:54,010
+character meaning the end of it line of
+
+219
+00:10:50,740 --> 00:10:58,060
+text and you already learned about that
+
+220
+00:10:54,010 --> 00:11:00,639
+character it's got the code of a zero a
+
+221
+00:10:58,060 --> 00:11:03,399
+as a bytecode and that became one of the
+
+222
+00:11:00,639 --> 00:11:05,889
+forbidden codes of your attacks because
+
+223
+00:11:03,399 --> 00:11:10,690
+it would be interpreted as a newline by
+
+224
+00:11:05,889 --> 00:11:13,000
+the function get ass just to mention
+
+225
+00:11:10,690 --> 00:11:14,949
+that and this is one place when you're
+
+226
+00:11:13,000 --> 00:11:18,699
+transferring files between say a Windows
+
+227
+00:11:14,949 --> 00:11:21,070
+machine and a Linux or a Mac one of the
+
+228
+00:11:18,699 --> 00:11:24,100
+things if it's a text file that has to
+
+229
+00:11:21,070 --> 00:11:25,899
+be changed is the two classes of systems
+
+230
+00:11:24,100 --> 00:11:28,180
+have different ways of interpreting of
+
+231
+00:11:25,899 --> 00:11:33,190
+encoding when is the end of a line and
+
+232
+00:11:28,180 --> 00:11:37,660
+in a Linux or Mac file it's just this
+
+233
+00:11:33,190 --> 00:11:41,920
+character code a which stands for line
+
+234
+00:11:37,660 --> 00:11:44,800
+feed where's the windows files finish
+
+235
+00:11:41,920 --> 00:11:47,320
+with a tooth character end of line
+
+236
+00:11:44,800 --> 00:11:49,630
+carriage return in line feed and I show
+
+237
+00:11:47,320 --> 00:11:52,600
+you this picture of an object that
+
+238
+00:11:49,630 --> 00:11:54,399
+you've probably only seen in museum but
+
+239
+00:11:52,600 --> 00:11:56,199
+it's a typewriter and just to tell you
+
+240
+00:11:54,399 --> 00:11:58,269
+what the heck is the carriage return and
+
+241
+00:11:56,199 --> 00:11:59,860
+what's the line feed I thought you might
+
+242
+00:11:58,269 --> 00:12:02,880
+like to in case you've never actually
+
+243
+00:11:59,860 --> 00:12:06,459
+used an old-fashioned typewriter
+
+244
+00:12:02,880 --> 00:12:09,160
+basically at the end of us on the left
+
+245
+00:12:06,459 --> 00:12:14,230
+hand side of a typewriter is this bar
+
+246
+00:12:09,160 --> 00:12:18,970
+and when you start typing along I'll the
+
+247
+00:12:14,230 --> 00:12:23,139
+page the this roller with your page on
+
+248
+00:12:18,970 --> 00:12:24,790
+it sinks along and it comes to the end
+
+249
+00:12:23,139 --> 00:12:26,709
+and then you want to get back to the
+
+250
+00:12:24,790 --> 00:12:30,190
+beginning of the next line so you want
+
+251
+00:12:26,709 --> 00:12:33,970
+to both do the carriage return which is
+
+252
+00:12:30,190 --> 00:12:34,899
+this thing shove it to the right and you
+
+253
+00:12:33,970 --> 00:12:38,470
+want to do a line
+
+254
+00:12:34,899 --> 00:12:42,009
+feed you want the roller on it to go
+
+255
+00:12:38,470 --> 00:12:43,959
+down to the next line so there's a knob
+
+256
+00:12:42,009 --> 00:12:45,639
+here that you can twist by hand but in
+
+257
+00:12:43,959 --> 00:12:48,639
+general what you do is you type along
+
+258
+00:12:45,639 --> 00:12:52,269
+and then you go slam like that and this
+
+259
+00:12:48,639 --> 00:12:57,550
+lever both pushes the thing back and it
+
+260
+00:12:52,269 --> 00:13:00,279
+rotates the the roller by one lines
+
+261
+00:12:57,550 --> 00:13:03,699
+worth and so carriage return line feed
+
+262
+00:13:00,279 --> 00:13:10,509
+is where that actually comes from in
+
+263
+00:13:03,699 --> 00:13:12,910
+case you wonder and then a directory as
+
+264
+00:13:10,509 --> 00:13:15,100
+I mentioned it's it's stored as a file
+
+265
+00:13:12,910 --> 00:13:17,679
+but it's a file that the operating
+
+266
+00:13:15,100 --> 00:13:19,480
+system eats the filesystem part of the
+
+267
+00:13:17,679 --> 00:13:22,269
+operating system actually interprets in
+
+268
+00:13:19,480 --> 00:13:24,970
+very specific ways and as you know
+
+269
+00:13:22,269 --> 00:13:27,730
+within every directory there's two
+
+270
+00:13:24,970 --> 00:13:30,699
+special files dot and dot dot referring
+
+271
+00:13:27,730 --> 00:13:37,600
+to the local file and its parent in the
+
+272
+00:13:30,699 --> 00:13:39,579
+tree structure and so in in most systems
+
+273
+00:13:37,600 --> 00:13:41,470
+systems that I know of there's a sort of
+
+274
+00:13:39,579 --> 00:13:44,339
+hierarchical organization to the files
+
+275
+00:13:41,470 --> 00:13:48,759
+we're not going to talk much about file
+
+276
+00:13:44,339 --> 00:13:52,540
+systems but there's a hierarchical
+
+277
+00:13:48,759 --> 00:13:55,990
+organization and that maintained this a
+
+278
+00:13:52,540 --> 00:13:58,089
+series of files each being the directory
+
+279
+00:13:55,990 --> 00:14:00,449
+and the directory then it's a pointer to
+
+280
+00:13:58,089 --> 00:14:04,059
+its sub directory which again are files
+
+281
+00:14:00,449 --> 00:14:06,220
+and so what's referred to in UNIX
+
+282
+00:14:04,059 --> 00:14:08,709
+terminology and most other operating
+
+283
+00:14:06,220 --> 00:14:14,199
+systems what's known as a path name is a
+
+284
+00:14:08,709 --> 00:14:17,759
+way to navigate through this hierarchy
+
+285
+00:14:14,199 --> 00:14:23,790
+of files and identify one particular one
+
+286
+00:14:17,759 --> 00:14:24,999
+and so that all comes to say that the
+
+287
+00:14:23,790 --> 00:14:27,009
+low-level
+
+288
+00:14:24,999 --> 00:14:29,920
+UNIX operations that use to implement
+
+289
+00:14:27,009 --> 00:14:31,720
+this are to open a file to read it and
+
+290
+00:14:29,920 --> 00:14:33,129
+write it and to close it and those
+
+291
+00:14:31,720 --> 00:14:36,339
+literally those are the names of the
+
+292
+00:14:33,129 --> 00:14:39,309
+functions so the open function then you
+
+293
+00:14:36,339 --> 00:14:41,619
+give a path name and remember pathnames
+
+294
+00:14:39,309 --> 00:14:45,939
+can be absolute meaning that they start
+
+295
+00:14:41,619 --> 00:14:48,549
+with a slash and they go all the way
+
+296
+00:14:45,939 --> 00:14:49,000
+down the hierarchy they can be relative
+
+297
+00:14:48,549 --> 00:14:50,770
+to
+
+298
+00:14:49,000 --> 00:14:56,410
+particular whatever your current
+
+299
+00:14:50,770 --> 00:14:59,080
+directory is where and they can also be
+
+300
+00:14:56,410 --> 00:15:05,230
+relative to a user if you use the tilde
+
+301
+00:14:59,080 --> 00:15:07,690
+slash or tilde L then that sort of a
+
+302
+00:15:05,230 --> 00:15:10,600
+shortcut in this path name to get to
+
+303
+00:15:07,690 --> 00:15:12,460
+particular users so a path name can be
+
+304
+00:15:10,600 --> 00:15:15,250
+any of those forms when you open it it
+
+305
+00:15:12,460 --> 00:15:17,890
+just has to be some way that just like
+
+306
+00:15:15,250 --> 00:15:20,110
+you specify in other places that you
+
+307
+00:15:17,890 --> 00:15:24,250
+tell where this particular file is
+
+308
+00:15:20,110 --> 00:15:27,120
+you're trying to open and so it's given
+
+309
+00:15:24,250 --> 00:15:30,280
+a path name and then it's given a
+
+310
+00:15:27,120 --> 00:15:32,410
+integer code that says what do you want
+
+311
+00:15:30,280 --> 00:15:34,210
+to do when you open this file
+
+312
+00:15:32,410 --> 00:15:38,080
+in what form do you want to open it and
+
+313
+00:15:34,210 --> 00:15:41,260
+that specified die series of constants
+
+314
+00:15:38,080 --> 00:15:46,780
+that are already predefined when you
+
+315
+00:15:41,260 --> 00:15:49,150
+include the propria and you can and
+
+316
+00:15:46,780 --> 00:15:53,110
+those actually get bitwise each of those
+
+317
+00:15:49,150 --> 00:15:57,060
+is a one bit flag in a power of two
+
+318
+00:15:53,110 --> 00:16:00,460
+position or it's a position one bit in a
+
+319
+00:15:57,060 --> 00:16:02,140
+field somewhere and so you can logically
+
+320
+00:16:00,460 --> 00:16:05,850
+or those together if you want multiple
+
+321
+00:16:02,140 --> 00:16:10,270
+combinations so for example I can say
+
+322
+00:16:05,850 --> 00:16:13,510
+read-only I can say read and write I can
+
+323
+00:16:10,270 --> 00:16:16,000
+say append meaning don't if I'm opening
+
+324
+00:16:13,510 --> 00:16:17,470
+it to write don't begin it the don't
+
+325
+00:16:16,000 --> 00:16:19,000
+start writing at the beginning start
+
+326
+00:16:17,470 --> 00:16:21,730
+writing it wherever the end of the file
+
+327
+00:16:19,000 --> 00:16:25,210
+is now so all those can be down to this
+
+328
+00:16:21,730 --> 00:16:29,050
+is described in the book by using the
+
+329
+00:16:25,210 --> 00:16:31,810
+right set of names of constants and
+
+330
+00:16:29,050 --> 00:16:33,370
+oaring them together and that will
+
+331
+00:16:31,810 --> 00:16:36,100
+return something that's called a file
+
+332
+00:16:33,370 --> 00:16:38,350
+descriptor and that's a very important
+
+333
+00:16:36,100 --> 00:16:39,700
+idea that and one of the reasons why
+
+334
+00:16:38,350 --> 00:16:41,230
+we're talking about this today this is
+
+335
+00:16:39,700 --> 00:16:43,360
+going to be very important in your lab
+
+336
+00:16:41,230 --> 00:16:48,339
+it's the notion of a file descriptor
+
+337
+00:16:43,360 --> 00:16:50,950
+which is just a small integer that lists
+
+338
+00:16:48,339 --> 00:16:53,140
+which particular one of the open files
+
+339
+00:16:50,950 --> 00:16:57,850
+that's being used by this particular
+
+340
+00:16:53,140 --> 00:17:00,700
+program are you referring to and so it's
+
+341
+00:16:57,850 --> 00:17:02,560
+a small number because these are a time
+
+342
+00:17:00,700 --> 00:17:06,100
+sequentially when you
+
+343
+00:17:02,560 --> 00:17:09,270
+in your program than you run and you're
+
+344
+00:17:06,100 --> 00:17:12,550
+in fact limited on most machines to some
+
+345
+00:17:09,270 --> 00:17:14,709
+some bounded number of open files you're
+
+346
+00:17:12,550 --> 00:17:21,370
+allowed to have at any time in fact if
+
+347
+00:17:14,709 --> 00:17:26,790
+you go to see on if you're on the
+
+348
+00:17:21,370 --> 00:17:26,790
+machine and you type in limits limit
+
+349
+00:17:29,330 --> 00:17:35,550
+you'll see there that entry called
+
+350
+00:17:31,740 --> 00:17:38,640
+descriptors 10:24 says that you can't
+
+351
+00:17:35,550 --> 00:17:40,710
+have more than a thousand 24 files open
+
+352
+00:17:38,640 --> 00:17:43,380
+at any given time and in fact if you've
+
+353
+00:17:40,710 --> 00:17:44,610
+got a thousand 24 files open it's a
+
+354
+00:17:43,380 --> 00:17:47,250
+chance you're doing something really
+
+355
+00:17:44,610 --> 00:17:48,660
+seriously wrong being that you haven't
+
+356
+00:17:47,250 --> 00:17:51,110
+been closing the files you should be
+
+357
+00:17:48,660 --> 00:17:51,110
+closing
+
+358
+00:17:58,590 --> 00:18:05,820
+and all of the system calls including
+
+359
+00:18:02,429 --> 00:18:08,639
+these always have a return code and the
+
+360
+00:18:05,820 --> 00:18:11,309
+return codes vary sometimes a negative
+
+361
+00:18:08,639 --> 00:18:14,190
+number is an error sometimes a zero is
+
+362
+00:18:11,309 --> 00:18:17,279
+an error they're all different and all
+
+363
+00:18:14,190 --> 00:18:18,870
+confusing and all inscrutable so you
+
+364
+00:18:17,279 --> 00:18:22,740
+have to look at the documentation for
+
+365
+00:18:18,870 --> 00:18:24,539
+every single one of those functions and
+
+366
+00:18:22,740 --> 00:18:28,259
+one of the the rules we're going to
+
+367
+00:18:24,539 --> 00:18:29,850
+hammer away at in this course is every
+
+368
+00:18:28,259 --> 00:18:32,909
+time you make a system call you should
+
+369
+00:18:29,850 --> 00:18:34,590
+check the return code to see if there's
+
+370
+00:18:32,909 --> 00:18:36,659
+an error and then do some appropriate
+
+371
+00:18:34,590 --> 00:18:38,820
+way of handling the error that's just a
+
+372
+00:18:36,659 --> 00:18:40,529
+practice it's a pain in the butt it
+
+373
+00:18:38,820 --> 00:18:43,320
+makes your code look like a rat's nest
+
+374
+00:18:40,529 --> 00:18:45,119
+of conditionals is you really would
+
+375
+00:18:43,320 --> 00:18:47,129
+rather not because often there's an
+
+376
+00:18:45,119 --> 00:18:48,749
+error you deciding what you're going to
+
+377
+00:18:47,129 --> 00:18:50,999
+do when there's an error is harder than
+
+378
+00:18:48,749 --> 00:18:53,970
+then figuring just ignoring it all
+
+379
+00:18:50,999 --> 00:18:55,559
+together and so there's a lot of code
+
+380
+00:18:53,970 --> 00:18:57,210
+out there where people just cross their
+
+381
+00:18:55,559 --> 00:18:59,850
+fingers and hope there's never errors in
+
+382
+00:18:57,210 --> 00:19:02,610
+their system calls but we're going to
+
+383
+00:18:59,850 --> 00:19:04,259
+really push on you hard to say every
+
+384
+00:19:02,610 --> 00:19:06,480
+time you make a system call check the
+
+385
+00:19:04,259 --> 00:19:11,519
+return code and do something if it's not
+
+386
+00:19:06,480 --> 00:19:14,730
+right and so the open will return a
+
+387
+00:19:11,519 --> 00:19:16,320
+number so that it's an int that it
+
+388
+00:19:14,730 --> 00:19:20,009
+returns but if it's a negative number
+
+389
+00:19:16,320 --> 00:19:22,610
+that means it couldn't open the the file
+
+390
+00:19:20,009 --> 00:19:25,619
+for example the file doesn't exist or
+
+391
+00:19:22,610 --> 00:19:31,340
+you're trying to open it in a mode that
+
+392
+00:19:25,619 --> 00:19:33,450
+you're not authorized to open again so
+
+393
+00:19:31,340 --> 00:19:35,460
+there are three particular file
+
+394
+00:19:33,450 --> 00:19:38,789
+descriptors associated with every single
+
+395
+00:19:35,460 --> 00:19:40,830
+process that runs one is standard input
+
+396
+00:19:38,789 --> 00:19:43,379
+the other standard output and the third
+
+397
+00:19:40,830 --> 00:19:45,590
+is standard error and they always have a
+
+398
+00:19:43,379 --> 00:19:54,299
+file descriptor number zero one and two
+
+399
+00:19:45,590 --> 00:19:56,490
+and so that you shouldn't really refer
+
+400
+00:19:54,299 --> 00:19:59,249
+to them by their file descriptor numbers
+
+401
+00:19:56,490 --> 00:20:03,659
+even though you actually can reliably
+
+402
+00:19:59,249 --> 00:20:05,999
+depend on those values simply if you
+
+403
+00:20:03,659 --> 00:20:09,240
+want to close the file you also open you
+
+404
+00:20:05,999 --> 00:20:12,390
+see you give a path name and a one bit a
+
+405
+00:20:09,240 --> 00:20:14,190
+one integer field that gives these flags
+
+406
+00:20:12,390 --> 00:20:17,550
+say something about the modes in which
+
+407
+00:20:14,190 --> 00:20:20,130
+you want to open it to close a file you
+
+408
+00:20:17,550 --> 00:20:21,840
+just say close and you give the file
+
+409
+00:20:20,130 --> 00:20:26,730
+descriptor number not the name of the
+
+410
+00:20:21,840 --> 00:20:28,950
+file and it returns a return code too so
+
+411
+00:20:26,730 --> 00:20:32,850
+you might say now why in the world could
+
+412
+00:20:28,950 --> 00:20:35,700
+you ever get an error closing a file if
+
+413
+00:20:32,850 --> 00:20:40,200
+it's open and the answers that actually
+
+414
+00:20:35,700 --> 00:20:42,210
+can happen in particular we'll see when
+
+415
+00:20:40,200 --> 00:20:44,820
+we have multi-threaded programs where
+
+416
+00:20:42,210 --> 00:20:46,590
+it's possible to have to essentially two
+
+417
+00:20:44,820 --> 00:20:50,690
+programs running at the same time
+
+418
+00:20:46,590 --> 00:20:52,620
+sharing their data structures and
+
+419
+00:20:50,690 --> 00:20:56,010
+interacting with each other sharing
+
+420
+00:20:52,620 --> 00:20:57,630
+their memory it's very important kind of
+
+421
+00:20:56,010 --> 00:21:00,330
+programming and one that you can really
+
+422
+00:20:57,630 --> 00:21:02,220
+make bad horrible mistakes in and one of
+
+423
+00:21:00,330 --> 00:21:03,690
+the bad horrible mistakes is if you try
+
+424
+00:21:02,220 --> 00:21:04,260
+to close the file that's already been
+
+425
+00:21:03,690 --> 00:21:06,810
+closed
+
+426
+00:21:04,260 --> 00:21:08,640
+it'll be an error and that can happen if
+
+427
+00:21:06,810 --> 00:21:11,340
+there's two different parts of your
+
+428
+00:21:08,640 --> 00:21:17,550
+program running and each of them tries
+
+429
+00:21:11,340 --> 00:21:20,610
+to close the file so in the book and in
+
+430
+00:21:17,550 --> 00:21:22,860
+the in this code you'll see we
+
+431
+00:21:20,610 --> 00:21:25,410
+introduced some error handling routines
+
+432
+00:21:22,860 --> 00:21:28,980
+one of which is called P error and all
+
+433
+00:21:25,410 --> 00:21:31,800
+it does is print some not whatever
+
+434
+00:21:28,980 --> 00:21:38,010
+message you want to print and then it
+
+435
+00:21:31,800 --> 00:21:40,590
+exits the program or no I guess it
+
+436
+00:21:38,010 --> 00:21:44,000
+doesn't the I'll mention it a little
+
+437
+00:21:40,590 --> 00:21:47,130
+while it just prints an error message
+
+438
+00:21:44,000 --> 00:21:48,900
+but the point is even even something as
+
+439
+00:21:47,130 --> 00:21:53,370
+mundane as closing a file you should be
+
+440
+00:21:48,900 --> 00:21:57,030
+checking the return code okay so this is
+
+441
+00:21:53,370 --> 00:22:00,090
+the function that reads of at this low
+
+442
+00:21:57,030 --> 00:22:01,590
+level is called read and it's given a
+
+443
+00:22:00,090 --> 00:22:04,680
+file descriptor
+
+444
+00:22:01,590 --> 00:22:07,020
+you provided a pointer to a buffer that
+
+445
+00:22:04,680 --> 00:22:11,460
+you you've had to allocate either
+
+446
+00:22:07,020 --> 00:22:13,920
+aesthetically or via malloc and you also
+
+447
+00:22:11,460 --> 00:22:17,460
+specify how long that buffer is so that
+
+448
+00:22:13,920 --> 00:22:21,240
+it can't overflow that buffer and read
+
+449
+00:22:17,460 --> 00:22:22,540
+just means read as many bytes as you
+
+450
+00:22:21,240 --> 00:22:24,700
+feel like
+
+451
+00:22:22,540 --> 00:22:27,760
+but no more than the number I tell you
+
+452
+00:22:24,700 --> 00:22:31,900
+to which sounds like a weird statement
+
+453
+00:22:27,760 --> 00:22:34,360
+what do you mean what you feel like well
+
+454
+00:22:31,900 --> 00:22:39,190
+it has to read at least one byte so if
+
+455
+00:22:34,360 --> 00:22:42,340
+for example it's a standard input it
+
+456
+00:22:39,190 --> 00:22:44,170
+will hang there and wait until actually
+
+457
+00:22:42,340 --> 00:22:47,680
+with standard input it will wait until
+
+458
+00:22:44,170 --> 00:22:52,210
+you've typed in a string and hit the
+
+459
+00:22:47,680 --> 00:22:54,930
+return and it will then read at least
+
+460
+00:22:52,210 --> 00:23:00,010
+some fraction of that into the program
+
+461
+00:22:54,930 --> 00:23:03,420
+if it's a network connection again the
+
+462
+00:23:00,010 --> 00:23:06,040
+read won't just wait it will hang until
+
+463
+00:23:03,420 --> 00:23:09,400
+something arrives on that particular
+
+464
+00:23:06,040 --> 00:23:12,610
+network connection and then read in some
+
+465
+00:23:09,400 --> 00:23:14,830
+number of bytes that have been sent to
+
+466
+00:23:12,610 --> 00:23:17,620
+it and I'm being vague by saying some
+
+467
+00:23:14,830 --> 00:23:19,870
+number because the truth is it there's
+
+468
+00:23:17,620 --> 00:23:22,420
+no guarantee it will read any fixed
+
+469
+00:23:19,870 --> 00:23:25,900
+number of bytes it will read at least
+
+470
+00:23:22,420 --> 00:23:28,450
+one and it won't read any more than that
+
+471
+00:23:25,900 --> 00:23:31,210
+buffer is but the number between that
+
+472
+00:23:28,450 --> 00:23:34,570
+might be variable and so when it reads
+
+473
+00:23:31,210 --> 00:23:36,130
+less than that the number of maximum
+
+474
+00:23:34,570 --> 00:23:39,250
+number of bytes you specify that's
+
+475
+00:23:36,130 --> 00:23:40,840
+called a short read and that can and
+
+476
+00:23:39,250 --> 00:23:43,750
+does happen and you have to write your
+
+477
+00:23:40,840 --> 00:23:46,500
+code expecting it and we'll talk about
+
+478
+00:23:43,750 --> 00:23:46,500
+that a little bit
+
+479
+00:23:48,530 --> 00:23:58,000
+oh and so again and by Reed returns an
+
+480
+00:23:53,740 --> 00:24:03,980
+assigned number actually of data type F
+
+481
+00:23:58,000 --> 00:24:09,260
+size T like SS ize underscore t which is
+
+482
+00:24:03,980 --> 00:24:11,960
+typically a long int so a potentially
+
+483
+00:24:09,260 --> 00:24:16,730
+negative number in it that that number
+
+484
+00:24:11,960 --> 00:24:19,670
+is if it's a zero it means that it's hit
+
+485
+00:24:16,730 --> 00:24:21,590
+it's detected and in the file that
+
+486
+00:24:19,670 --> 00:24:23,420
+you've run to the end of the stored file
+
+487
+00:24:21,590 --> 00:24:26,420
+that the network connection has been
+
+488
+00:24:23,420 --> 00:24:29,150
+closed or something has happened if it's
+
+489
+00:24:26,420 --> 00:24:31,400
+positive then that the number of bytes
+
+490
+00:24:29,150 --> 00:24:34,060
+that were read and if it's negative it's
+
+491
+00:24:31,400 --> 00:24:34,060
+an error code
+
+492
+00:24:38,570 --> 00:24:42,410
+so as I mentioned if it if it reads
+
+493
+00:24:40,760 --> 00:24:44,150
+fewer than the number of bytes you
+
+494
+00:24:42,410 --> 00:24:46,190
+specify that's referred to as a short
+
+495
+00:24:44,150 --> 00:24:51,170
+count and I'll talk about why that would
+
+496
+00:24:46,190 --> 00:24:53,210
+occur writing is sort of the same idea
+
+497
+00:24:51,170 --> 00:24:56,210
+that you provide a file descriptor you
+
+498
+00:24:53,210 --> 00:24:59,000
+provide a buffer where the the data that
+
+499
+00:24:56,210 --> 00:25:01,010
+you want to write out is stored and you
+
+500
+00:24:59,000 --> 00:25:06,920
+give up how many bytes long do you want
+
+501
+00:25:01,010 --> 00:25:09,170
+your right to be and it will write some
+
+502
+00:25:06,920 --> 00:25:12,410
+number of bytes to the output at least
+
+503
+00:25:09,170 --> 00:25:14,300
+one and no more than n byte but it might
+
+504
+00:25:12,410 --> 00:25:16,280
+not be all of them which is kind of
+
+505
+00:25:14,300 --> 00:25:18,380
+weird because you said I want to write
+
+506
+00:25:16,280 --> 00:25:21,410
+this I want to send it to a file I want
+
+507
+00:25:18,380 --> 00:25:25,880
+to send it over the Internet but it can
+
+508
+00:25:21,410 --> 00:25:28,220
+potentially not send them all and we'll
+
+509
+00:25:25,880 --> 00:25:32,920
+we'll talk about that a little bit so
+
+510
+00:25:28,220 --> 00:25:35,480
+again that's called a short right and
+
+511
+00:25:32,920 --> 00:25:39,470
+similarly it will return the number of
+
+512
+00:25:35,480 --> 00:25:44,420
+bytes that were written and so if it's
+
+513
+00:25:39,470 --> 00:25:47,030
+less than zero that's an error code so
+
+514
+00:25:44,420 --> 00:25:50,600
+just to give you a really simple example
+
+515
+00:25:47,030 --> 00:25:52,610
+of this in action this code does what
+
+516
+00:25:50,600 --> 00:25:54,140
+you call echoing meaning that you type
+
+517
+00:25:52,610 --> 00:25:56,720
+in something and it will print it out
+
+518
+00:25:54,140 --> 00:26:00,710
+and it does it in the most mundane way
+
+519
+00:25:56,720 --> 00:26:03,830
+possible by reading specifying a single
+
+520
+00:26:00,710 --> 00:26:06,230
+byte read and single byte right so you
+
+521
+00:26:03,830 --> 00:26:08,120
+remember I told you read will read at
+
+522
+00:26:06,230 --> 00:26:10,490
+least one byte but no more than the
+
+523
+00:26:08,120 --> 00:26:12,920
+number you've told it so when you give
+
+524
+00:26:10,490 --> 00:26:14,870
+it one it means it will read exactly one
+
+525
+00:26:12,920 --> 00:26:18,380
+byte and similarly with right if you say
+
+526
+00:26:14,870 --> 00:26:20,080
+right one byte that that's guaranteed to
+
+527
+00:26:18,380 --> 00:26:24,050
+happen
+
+528
+00:26:20,080 --> 00:26:27,170
+and so this is really really bad code in
+
+529
+00:26:24,050 --> 00:26:29,600
+the sense that call to read or to write
+
+530
+00:26:27,170 --> 00:26:32,930
+the system level call it's a relatively
+
+531
+00:26:29,600 --> 00:26:35,360
+expensive call it means kicking your
+
+532
+00:26:32,930 --> 00:26:37,910
+whole operation up to the operating
+
+533
+00:26:35,360 --> 00:26:41,060
+system doing what's called a context
+
+534
+00:26:37,910 --> 00:26:45,710
+switch meaning it will go into the
+
+535
+00:26:41,060 --> 00:26:48,890
+kernel of the system invoke operating
+
+536
+00:26:45,710 --> 00:26:49,960
+system functions do whatever the reader
+
+537
+00:26:48,890 --> 00:26:53,169
+right tells it to
+
+538
+00:26:49,960 --> 00:26:56,340
+to come back out switch back to your job
+
+539
+00:26:53,169 --> 00:27:00,880
+and that will typically take maybe
+
+540
+00:26:56,340 --> 00:27:03,429
+20,000 to 40,000 clock cycles which you
+
+541
+00:27:00,880 --> 00:27:06,390
+know a clock cycle nowadays is less than
+
+542
+00:27:03,429 --> 00:27:10,330
+a nanosecond so you say yeah it's a
+
+543
+00:27:06,390 --> 00:27:12,880
+you're talking maybe 10 microseconds
+
+544
+00:27:10,330 --> 00:27:15,220
+what's the big deal there but that'll
+
+545
+00:27:12,880 --> 00:27:19,630
+add up if you start sending long files
+
+546
+00:27:15,220 --> 00:27:22,090
+out over you know millions of bytes if
+
+547
+00:27:19,630 --> 00:27:25,830
+you start sending them a one byte at a
+
+548
+00:27:22,090 --> 00:27:28,289
+time you'll spend most of that time
+
+549
+00:27:25,830 --> 00:27:32,260
+sitting in the operating system going
+
+550
+00:27:28,289 --> 00:27:34,409
+going crazy so this is not a good idea
+
+551
+00:27:32,260 --> 00:27:37,179
+but it does work and that's actually a
+
+552
+00:27:34,409 --> 00:27:40,299
+easy mistake you can make the programmer
+
+553
+00:27:37,179 --> 00:27:42,970
+is to not use it is to use this
+
+554
+00:27:40,299 --> 00:27:45,010
+low-level writing and reading and the
+
+555
+00:27:42,970 --> 00:27:48,279
+program will function fine it's just it
+
+556
+00:27:45,010 --> 00:27:55,210
+will be really really slow but just to
+
+557
+00:27:48,279 --> 00:27:57,940
+give you a demo of this idea of calls
+
+558
+00:27:55,210 --> 00:28:00,299
+the operating system there's a pretty
+
+559
+00:27:57,940 --> 00:28:00,299
+cool
+
+560
+00:28:03,029 --> 00:28:08,460
+so this program and this is on the web
+
+561
+00:28:06,179 --> 00:28:11,159
+linked off the webpage the code for this
+
+562
+00:28:08,460 --> 00:28:14,640
+lecture so this one called
+
+563
+00:28:11,159 --> 00:28:18,539
+CPE standard in meaning copy standard
+
+564
+00:28:14,640 --> 00:28:20,610
+input is just the code I showed you and
+
+565
+00:28:18,539 --> 00:28:26,159
+so if you type something it will just
+
+566
+00:28:20,610 --> 00:28:33,740
+echo it back so it's reading in so it
+
+567
+00:28:26,159 --> 00:28:33,740
+looks to you and to me like it's a
+
+568
+00:28:35,120 --> 00:28:43,159
+reading on line of text and then echoing
+
+569
+00:28:39,090 --> 00:28:45,570
+it back but what it's actually doing is
+
+570
+00:28:43,159 --> 00:28:47,279
+again the interface to the terminal is
+
+571
+00:28:45,570 --> 00:28:49,200
+one that it doesn't actually wake up
+
+572
+00:28:47,279 --> 00:28:51,149
+this code until it gets a complete line
+
+573
+00:28:49,200 --> 00:28:53,730
+but it's actually just printing these
+
+574
+00:28:51,149 --> 00:28:58,620
+characters back one one character at a
+
+575
+00:28:53,730 --> 00:29:02,909
+time and I can demo that by there's a
+
+576
+00:28:58,620 --> 00:29:07,590
+pretty interesting facility called
+
+577
+00:29:02,909 --> 00:29:09,120
+tracing s trace then what s chase will
+
+578
+00:29:07,590 --> 00:29:15,029
+do if you give it the name of a program
+
+579
+00:29:09,120 --> 00:29:17,580
+is it will detect every every system
+
+580
+00:29:15,029 --> 00:29:20,100
+call that you make every basically
+
+581
+00:29:17,580 --> 00:29:23,399
+called to the operating system functions
+
+582
+00:29:20,100 --> 00:29:25,620
+that you make when you run a program and
+
+583
+00:29:23,399 --> 00:29:27,450
+it will generally view out this huge
+
+584
+00:29:25,620 --> 00:29:30,240
+amount of inscrutable stuff that you
+
+585
+00:29:27,450 --> 00:29:32,899
+don't really want to see I'll just show
+
+586
+00:29:30,240 --> 00:29:32,899
+you this Oh
+
+587
+00:29:32,990 --> 00:29:38,149
+it's telling you logging every single
+
+588
+00:29:36,090 --> 00:29:42,899
+call and it's usually way too much stuff
+
+589
+00:29:38,149 --> 00:29:45,000
+so the more useful way to do this is to
+
+590
+00:29:42,899 --> 00:29:47,850
+give it an argument that says I only
+
+591
+00:29:45,000 --> 00:29:51,059
+want to watch some limited class of
+
+592
+00:29:47,850 --> 00:29:53,250
+functions of when this is running and so
+
+593
+00:29:51,059 --> 00:29:58,289
+what I just want our calls to the right
+
+594
+00:29:53,250 --> 00:30:00,600
+the low level output right and you'll
+
+595
+00:29:58,289 --> 00:30:05,309
+see that what happens then is this
+
+596
+00:30:00,600 --> 00:30:09,990
+string i typed in I turned into a series
+
+597
+00:30:05,309 --> 00:30:12,340
+of 1 byte right calls to the low level
+
+598
+00:30:09,990 --> 00:30:15,590
+right function
+
+599
+00:30:12,340 --> 00:30:21,310
+and of course some way I could show you
+
+600
+00:30:15,590 --> 00:30:21,310
+the reeds and right try that
+
+601
+00:30:23,800 --> 00:30:29,480
+and it's all confused because I'm I'm
+
+602
+00:30:27,350 --> 00:30:31,220
+messing this comes out on standard error
+
+603
+00:30:29,480 --> 00:30:32,870
+but on the terminal it sort of
+
+604
+00:30:31,220 --> 00:30:35,450
+interleaving standard error and standard
+
+605
+00:30:32,870 --> 00:30:37,840
+out so it's kind of messy to look at but
+
+606
+00:30:35,450 --> 00:30:40,850
+again you can see that it's taking my
+
+607
+00:30:37,840 --> 00:30:49,760
+characters and it's reading 1 and
+
+608
+00:30:40,850 --> 00:30:52,670
+writing 1 in this loop so let's see
+
+609
+00:30:49,760 --> 00:30:54,880
+control D to get out of it back to the
+
+610
+00:30:52,670 --> 00:30:54,880
+code
+
+611
+00:31:01,690 --> 00:31:06,430
+so what's this short count business why
+
+612
+00:31:04,270 --> 00:31:08,530
+would that occur well there's a couple
+
+613
+00:31:06,430 --> 00:31:10,620
+ones as I mentioned if you counter an
+
+614
+00:31:08,530 --> 00:31:13,090
+end-of-file you're not going to read in
+
+615
+00:31:10,620 --> 00:31:17,260
+however many bytes you're given for the
+
+616
+00:31:13,090 --> 00:31:21,210
+buffer if you are reading text lines
+
+617
+00:31:17,260 --> 00:31:24,400
+from a terminal the terminal
+
+618
+00:31:21,210 --> 00:31:26,950
+handler will just send a wine two words
+
+619
+00:31:24,400 --> 00:31:29,230
+at a time with the newline character
+
+620
+00:31:26,950 --> 00:31:33,100
+terminating it if you're reading or
+
+621
+00:31:29,230 --> 00:31:36,340
+writing a network packet the way network
+
+622
+00:31:33,100 --> 00:31:38,380
+packets work is that or messages if you
+
+623
+00:31:36,340 --> 00:31:43,450
+have a big long message it's broken into
+
+624
+00:31:38,380 --> 00:31:53,290
+smaller chunks typically about a
+
+625
+00:31:43,450 --> 00:31:55,720
+thousand bytes or so question if you are
+
+626
+00:31:53,290 --> 00:32:02,380
+trying to read from an end-of-file where
+
+627
+00:31:55,720 --> 00:32:04,330
+we turn 0 is that a short count it's a
+
+628
+00:32:02,380 --> 00:32:08,800
+really short count yes but it's not a
+
+629
+00:32:04,330 --> 00:32:12,190
+negative yes so as it says here if you
+
+630
+00:32:08,800 --> 00:32:13,840
+encounter an in your file it'll actually
+
+631
+00:32:12,190 --> 00:32:16,420
+there's two things actually it's a
+
+632
+00:32:13,840 --> 00:32:18,760
+really good question if you're like near
+
+633
+00:32:16,420 --> 00:32:22,480
+the end of a file you have 100 bytes
+
+634
+00:32:18,760 --> 00:32:25,570
+left and you say read 200 your first
+
+635
+00:32:22,480 --> 00:32:27,520
+call to read will come back and get 100
+
+636
+00:32:25,570 --> 00:32:30,190
+character it would say 100 and it will
+
+637
+00:32:27,520 --> 00:32:32,830
+get that number and then you call again
+
+638
+00:32:30,190 --> 00:32:34,840
+the second time and it will return 0 and
+
+639
+00:32:32,830 --> 00:32:38,350
+so that's how you actually detect the
+
+640
+00:32:34,840 --> 00:32:39,670
+true end of file as opposed to you know
+
+641
+00:32:38,350 --> 00:32:41,800
+some other reason you might have gotten
+
+642
+00:32:39,670 --> 00:32:44,020
+a short count is if that you actually
+
+643
+00:32:41,800 --> 00:32:46,570
+get a read of 0 the only case you'll get
+
+644
+00:32:44,020 --> 00:32:52,150
+at 4 is an end of file so that's a good
+
+645
+00:32:46,570 --> 00:32:55,120
+question thanks so again if over the
+
+646
+00:32:52,150 --> 00:32:57,220
+Internet typically packets are round a
+
+647
+00:32:55,120 --> 00:33:00,520
+thousand bytes it's actually depends on
+
+648
+00:32:57,220 --> 00:33:02,610
+what where it's gone through what layers
+
+649
+00:33:00,520 --> 00:33:05,620
+in the protocols it's gone through but
+
+650
+00:33:02,610 --> 00:33:08,920
+1500 bytes is actually the standard what
+
+651
+00:33:05,620 --> 00:33:10,390
+they call minimum transmission unit so
+
+652
+00:33:08,920 --> 00:33:13,090
+if you have a big long file will come
+
+653
+00:33:10,390 --> 00:33:14,770
+back and in blocks like that and if
+
+654
+00:33:13,090 --> 00:33:15,520
+you're trying to read into a larger
+
+655
+00:33:14,770 --> 00:33:18,690
+buffer
+
+656
+00:33:15,520 --> 00:33:27,870
+it will typically come back in chunk
+
+657
+00:33:18,690 --> 00:33:30,040
+question no in other words your and
+
+658
+00:33:27,870 --> 00:33:32,590
+again if you're writing code you
+
+659
+00:33:30,040 --> 00:33:34,030
+shouldn't expect any number particularly
+
+660
+00:33:32,590 --> 00:33:44,980
+it will be dependent on the
+
+661
+00:33:34,030 --> 00:33:46,990
+implementation no because I'm only I'm
+
+662
+00:33:44,980 --> 00:33:51,550
+only reading or writing one character at
+
+663
+00:33:46,990 --> 00:33:55,180
+a time right so I guess you're asking
+
+664
+00:33:51,550 --> 00:33:57,010
+what if I like spent of a weak typing
+
+665
+00:33:55,180 --> 00:33:59,530
+characters in a really long string and
+
+666
+00:33:57,010 --> 00:34:04,750
+hit return I don't know if you try it
+
+667
+00:33:59,530 --> 00:34:06,520
+let me know the answer but it will cause
+
+668
+00:34:04,750 --> 00:34:07,960
+an error but that part believe me
+
+669
+00:34:06,520 --> 00:34:11,110
+they've really gone through that code a
+
+670
+00:34:07,960 --> 00:34:12,610
+lot of times and and gotten rid of all
+
+671
+00:34:11,110 --> 00:34:15,610
+those lurking buffer overflow
+
+672
+00:34:12,610 --> 00:34:17,340
+vulnerabilities in the code but will let
+
+673
+00:34:15,610 --> 00:34:19,870
+you do it I don't actually know but
+
+674
+00:34:17,340 --> 00:34:21,850
+within the you should write your code
+
+675
+00:34:19,870 --> 00:34:24,040
+again expecting short counts as a
+
+676
+00:34:21,850 --> 00:34:25,810
+possibility and by the way that's one of
+
+677
+00:34:24,040 --> 00:34:28,210
+the the headaches of using this
+
+678
+00:34:25,810 --> 00:34:30,460
+low-level i/o is is dealing with short
+
+679
+00:34:28,210 --> 00:34:33,370
+counts is not it's often a sort of a
+
+680
+00:34:30,460 --> 00:34:36,520
+nuisance of an application level so you
+
+681
+00:34:33,370 --> 00:34:40,169
+don't usually package this up this kind
+
+682
+00:34:36,520 --> 00:34:43,179
+of low-level file IO into other
+
+683
+00:34:40,169 --> 00:34:45,490
+libraries that you're calling it's only
+
+684
+00:34:43,179 --> 00:34:53,140
+really demonstrating this is the sort of
+
+685
+00:34:45,490 --> 00:34:55,600
+lowest level in the step and writing
+
+686
+00:34:53,140 --> 00:34:57,340
+also can give you a short count for
+
+687
+00:34:55,600 --> 00:34:59,620
+example if you're sending packets over a
+
+688
+00:34:57,340 --> 00:35:02,980
+network it will only send as many as is
+
+689
+00:34:59,620 --> 00:35:04,630
+that packet can hold and then return
+
+690
+00:35:02,980 --> 00:35:07,170
+back to you and you have to keep pumping
+
+691
+00:35:04,630 --> 00:35:10,150
+them out to send the different packets
+
+692
+00:35:07,170 --> 00:35:12,400
+and so usually when you write code that
+
+693
+00:35:10,150 --> 00:35:17,340
+uses this goal of while you have to
+
+694
+00:35:12,400 --> 00:35:19,980
+anticipate these short counts so
+
+695
+00:35:17,340 --> 00:35:25,810
+professor O'Halloran wrote a package
+
+696
+00:35:19,980 --> 00:35:27,790
+called Rio and you'll for now we'll just
+
+697
+00:35:25,810 --> 00:35:29,380
+talk about what this package is this is
+
+698
+00:35:27,790 --> 00:35:29,830
+a package that you're really going to
+
+699
+00:35:29,380 --> 00:35:32,610
+want to you
+
+700
+00:35:29,830 --> 00:35:35,410
+use for the the final web for the course
+
+701
+00:35:32,610 --> 00:35:37,300
+and so for right now it's more of a
+
+702
+00:35:35,410 --> 00:35:38,920
+high-level here's an example of code
+
+703
+00:35:37,300 --> 00:35:41,710
+that uses low-level IO
+
+704
+00:35:38,920 --> 00:35:44,170
+and packages up in a way that makes it a
+
+705
+00:35:41,710 --> 00:35:45,840
+little bit more palatable so Rio
+
+706
+00:35:44,170 --> 00:35:52,840
+provides actually a number of different
+
+707
+00:35:45,840 --> 00:35:58,210
+two different well actually three two
+
+708
+00:35:52,840 --> 00:36:01,990
+different levels of of interface to the
+
+709
+00:35:58,210 --> 00:36:04,480
+file this file IO the lowest one is
+
+710
+00:36:01,990 --> 00:36:10,810
+basically just a fairly small wrapper
+
+711
+00:36:04,480 --> 00:36:13,390
+around the existing the the IO the reads
+
+712
+00:36:10,810 --> 00:36:16,090
+and writes you saw that will handle the
+
+713
+00:36:13,390 --> 00:36:19,060
+short count issue and so when you say
+
+714
+00:36:16,090 --> 00:36:21,100
+with Rio if you make a call to the read
+
+715
+00:36:19,060 --> 00:36:25,420
+end function and you say some number
+
+716
+00:36:21,100 --> 00:36:27,280
+bite then that function will not return
+
+717
+00:36:25,420 --> 00:36:30,580
+until it's read that number of bytes so
+
+718
+00:36:27,280 --> 00:36:32,710
+better be careful that that that many
+
+719
+00:36:30,580 --> 00:36:36,970
+bytes are there if it's a network socket
+
+720
+00:36:32,710 --> 00:36:39,610
+or a file well because it will flag an
+
+721
+00:36:36,970 --> 00:36:42,970
+error message if it will actually hang
+
+722
+00:36:39,610 --> 00:36:46,330
+up if it's a network connection waiting
+
+723
+00:36:42,970 --> 00:36:48,280
+to read the bytes or return an error if
+
+724
+00:36:46,330 --> 00:36:51,430
+it hits a none into file what it's not
+
+725
+00:36:48,280 --> 00:36:53,110
+expected and similarly with right n it's
+
+726
+00:36:51,430 --> 00:36:56,740
+sort of a wrapper around the write
+
+727
+00:36:53,110 --> 00:36:59,610
+function that will deal with just loop
+
+728
+00:36:56,740 --> 00:37:04,240
+until the short counts are taken care of
+
+729
+00:36:59,610 --> 00:37:07,150
+and then there is a another class of i/o
+
+730
+00:37:04,240 --> 00:37:08,710
+that's called buffered i/o and this is
+
+731
+00:37:07,150 --> 00:37:11,830
+what you really want to use in practice
+
+732
+00:37:08,710 --> 00:37:16,420
+and what you mostly use with the
+
+733
+00:37:11,830 --> 00:37:19,060
+standard UNIX iOS functions is that you
+
+734
+00:37:16,420 --> 00:37:22,930
+want to within the user code build up a
+
+735
+00:37:19,060 --> 00:37:25,540
+little buffer of bytes that have either
+
+736
+00:37:22,930 --> 00:37:28,720
+been read in but not yet consumed by the
+
+737
+00:37:25,540 --> 00:37:30,640
+application program or you accumulate
+
+738
+00:37:28,720 --> 00:37:33,130
+some number of bytes in your program
+
+739
+00:37:30,640 --> 00:37:39,940
+before it actually shoved out into the
+
+740
+00:37:33,130 --> 00:37:42,100
+file or out onto the network and there's
+
+741
+00:37:39,940 --> 00:37:43,569
+two versions of that one is a text
+
+742
+00:37:42,100 --> 00:37:46,269
+oriented wine oriented eye
+
+743
+00:37:43,569 --> 00:37:52,799
+and the other is just a byte oriented
+
+744
+00:37:46,269 --> 00:37:54,880
+i/o so let's go through the what the
+
+745
+00:37:52,799 --> 00:37:57,009
+functions aren't actually look at the
+
+746
+00:37:54,880 --> 00:37:59,440
+code for them so as I mentioned the ones
+
+747
+00:37:57,009 --> 00:38:01,209
+called readin and writin are just very
+
+748
+00:37:59,440 --> 00:38:04,539
+thin they have the same general
+
+749
+00:38:01,209 --> 00:38:05,999
+semantics as the read and write but they
+
+750
+00:38:04,539 --> 00:38:10,229
+deal with the short count issue
+
+751
+00:38:05,999 --> 00:38:13,839
+so let's actually take a look at read em
+
+752
+00:38:10,229 --> 00:38:22,109
+so again readin is given a file
+
+753
+00:38:13,839 --> 00:38:25,599
+descriptor a destination buffer and a
+
+754
+00:38:22,109 --> 00:38:27,880
+indication of how many characters how
+
+755
+00:38:25,599 --> 00:38:37,719
+many bytes it's supposed to read and
+
+756
+00:38:27,880 --> 00:38:40,049
+it's supposed to it's supposed to we
+
+757
+00:38:37,719 --> 00:38:43,150
+returned I guess it will return either
+
+758
+00:38:40,049 --> 00:38:50,380
+negative number if there's an error zero
+
+759
+00:38:43,150 --> 00:38:53,829
+if it's at an end of file or the number
+
+760
+00:38:50,380 --> 00:38:55,690
+of bytes read so I guess I was a little
+
+761
+00:38:53,829 --> 00:38:57,670
+bit I should have been more careful if
+
+762
+00:38:55,690 --> 00:39:01,180
+it hits an end of file partway through
+
+763
+00:38:57,670 --> 00:39:03,009
+it will return a short count but that's
+
+764
+00:39:01,180 --> 00:39:05,440
+the only case it won't return a short
+
+765
+00:39:03,009 --> 00:39:09,130
+countess if there really it could have
+
+766
+00:39:05,440 --> 00:39:11,979
+read more bytes so the main loop here
+
+767
+00:39:09,130 --> 00:39:15,279
+you see is it keeps calling read over
+
+768
+00:39:11,979 --> 00:39:17,199
+and over again until it's happy ah one
+
+769
+00:39:15,279 --> 00:39:19,920
+way it can be happy is if it's read as
+
+770
+00:39:17,199 --> 00:39:24,039
+many bytes as it was supposed to write
+
+771
+00:39:19,920 --> 00:39:28,839
+read in the first place the other is
+
+772
+00:39:24,039 --> 00:39:31,440
+that if it hits an error code and you'll
+
+773
+00:39:28,839 --> 00:39:31,440
+notice that
+
+774
+00:39:33,329 --> 00:39:43,359
+oh and that there's some subtlety of
+
+775
+00:39:40,589 --> 00:39:45,579
+tracking which type of error that is but
+
+776
+00:39:43,359 --> 00:39:47,380
+in general the common cases it will
+
+777
+00:39:45,579 --> 00:39:54,390
+return the negative number indicating an
+
+778
+00:39:47,380 --> 00:39:58,960
+error if it if the number read is zero
+
+779
+00:39:54,390 --> 00:40:02,050
+then that indicated into file and so
+
+780
+00:39:58,960 --> 00:40:06,450
+what it will return is as many bytes as
+
+781
+00:40:02,050 --> 00:40:10,210
+it's read so return the short count and
+
+782
+00:40:06,450 --> 00:40:12,819
+here it's just saying okay I've read
+
+783
+00:40:10,210 --> 00:40:14,980
+this number of bytes and increment and
+
+784
+00:40:12,819 --> 00:40:17,109
+decrement the right values so the point
+
+785
+00:40:14,980 --> 00:40:19,030
+is that we'll keep looping keep doing
+
+786
+00:40:17,109 --> 00:40:21,760
+reads until it either gets the number of
+
+787
+00:40:19,030 --> 00:40:26,140
+bytes it should it hits an error or it
+
+788
+00:40:21,760 --> 00:40:28,390
+encounters an end-of-file and you'll see
+
+789
+00:40:26,140 --> 00:40:30,010
+it has its checking for all these
+
+790
+00:40:28,390 --> 00:40:34,030
+different error conditions for every
+
+791
+00:40:30,010 --> 00:40:36,220
+call it make so this code by the way is
+
+792
+00:40:34,030 --> 00:40:38,200
+sort of typical that it looks a little
+
+793
+00:40:36,220 --> 00:40:40,420
+messy when you first look at it but if
+
+794
+00:40:38,200 --> 00:40:45,160
+you sort of study it it all makes sense
+
+795
+00:40:40,420 --> 00:40:47,890
+oh so now let's talk about buffered i/o
+
+796
+00:40:45,160 --> 00:40:49,510
+and what buffered i/o is and this is a
+
+797
+00:40:47,890 --> 00:40:50,920
+very important concept so it's part of
+
+798
+00:40:49,510 --> 00:41:00,549
+the reason we want to show you the code
+
+799
+00:40:50,920 --> 00:41:05,470
+for it so the idea of buffered i/o is
+
+800
+00:41:00,549 --> 00:41:08,950
+that that there's a buffer meaning just
+
+801
+00:41:05,470 --> 00:41:11,980
+an array of characters array of bytes
+
+802
+00:41:08,950 --> 00:41:17,470
+they're allocated and associated with
+
+803
+00:41:11,980 --> 00:41:19,329
+this particular file and the program if
+
+804
+00:41:17,470 --> 00:41:21,849
+it's on a read what it will do is it
+
+805
+00:41:19,329 --> 00:41:25,240
+will fill up this buffer it will give a
+
+806
+00:41:21,849 --> 00:41:28,540
+read with a much larger number with a
+
+807
+00:41:25,240 --> 00:41:30,910
+large number basically the size of the
+
+808
+00:41:28,540 --> 00:41:34,240
+actual how much number you've allocated
+
+809
+00:41:30,910 --> 00:41:37,720
+for this buffer and the system will fill
+
+810
+00:41:34,240 --> 00:41:40,119
+that up with up to that number of
+
+811
+00:41:37,720 --> 00:41:43,540
+characters and then when the user
+
+812
+00:41:40,119 --> 00:41:46,130
+program wants to now look at this
+
+813
+00:41:43,540 --> 00:41:48,289
+get some bytes it will
+
+814
+00:41:46,130 --> 00:41:50,509
+check do I already have some in the
+
+815
+00:41:48,289 --> 00:41:53,779
+buffer that haven't been read yet and if
+
+816
+00:41:50,509 --> 00:41:56,839
+so I'll just return those and if not
+
+817
+00:41:53,779 --> 00:41:59,690
+then I'll refill the buffer so the idea
+
+818
+00:41:56,839 --> 00:42:01,819
+of it is instead of every time going to
+
+819
+00:41:59,690 --> 00:42:04,089
+the operating system and asking for one
+
+820
+00:42:01,819 --> 00:42:06,859
+character small number of characters
+
+821
+00:42:04,089 --> 00:42:09,529
+that called the operating system says
+
+822
+00:42:06,859 --> 00:42:12,799
+give me pretty much as many characters
+
+823
+00:42:09,529 --> 00:42:15,019
+as you've got up to some limit and then
+
+824
+00:42:12,799 --> 00:42:17,900
+I'll just go away and what the
+
+825
+00:42:15,019 --> 00:42:21,410
+application program I sort of pulled
+
+826
+00:42:17,900 --> 00:42:23,180
+these out a couple bytes at a time but I
+
+827
+00:42:21,410 --> 00:42:27,349
+won't bug the operating system to do it
+
+828
+00:42:23,180 --> 00:42:29,980
+I being the real function and the way it
+
+829
+00:42:27,349 --> 00:42:34,970
+does it is by just keeping a pointer of
+
+830
+00:42:29,980 --> 00:42:40,240
+the indicates what part of the the bytes
+
+831
+00:42:34,970 --> 00:42:43,849
+that I've already brought in from the
+
+832
+00:42:40,240 --> 00:42:45,559
+operating system call but the haven't
+
+833
+00:42:43,849 --> 00:42:47,869
+been supplied yet to the application
+
+834
+00:42:45,559 --> 00:42:49,849
+program and so in this sort of larger
+
+835
+00:42:47,869 --> 00:42:54,500
+picture of things if you imagine you're
+
+836
+00:42:49,849 --> 00:42:56,450
+you're walking you through a file at any
+
+837
+00:42:54,500 --> 00:42:59,720
+given point in time this buffer will
+
+838
+00:42:56,450 --> 00:43:01,849
+represent some range of in that file
+
+839
+00:42:59,720 --> 00:43:04,400
+where the green is the stuff that's
+
+840
+00:43:01,849 --> 00:43:07,339
+already been read by the application
+
+841
+00:43:04,400 --> 00:43:09,980
+program the pink is the stuff that's
+
+842
+00:43:07,339 --> 00:43:13,009
+been read but from the operating system
+
+843
+00:43:09,980 --> 00:43:17,480
+out of a file but not yet read by the
+
+844
+00:43:13,009 --> 00:43:20,180
+application program and the way this is
+
+845
+00:43:17,480 --> 00:43:24,160
+implemented once you think about it it's
+
+846
+00:43:20,180 --> 00:43:28,789
+not too hard to do is it associated with
+
+847
+00:43:24,160 --> 00:43:33,769
+every file connection then is a file
+
+848
+00:43:28,789 --> 00:43:37,220
+descriptor account that tells you how
+
+849
+00:43:33,769 --> 00:43:44,980
+many bytes there are that have not been
+
+850
+00:43:37,220 --> 00:43:48,380
+read yet a a pointer to where this this
+
+851
+00:43:44,980 --> 00:43:52,970
+changeover is and then the actual
+
+852
+00:43:48,380 --> 00:43:55,039
+storage of the the buffer itself the
+
+853
+00:43:52,970 --> 00:43:57,970
+characters allocated the bytes allocated
+
+854
+00:43:55,039 --> 00:43:57,970
+to the buffer itself
+
+855
+00:43:58,609 --> 00:44:08,549
+and so here's an example then of of
+
+856
+00:44:03,920 --> 00:44:11,339
+using Rio to do this echo that you first
+
+857
+00:44:08,549 --> 00:44:16,920
+read a line and reading a line means it
+
+858
+00:44:11,339 --> 00:44:20,990
+will look for and stop at a line feed
+
+859
+00:44:16,920 --> 00:44:25,099
+character and writing it back out and
+
+860
+00:44:20,990 --> 00:44:25,099
+again if you do the demo
+
+861
+00:44:30,589 --> 00:44:33,849
+of this code
+
+862
+00:44:37,720 --> 00:44:40,320
+Hey
+
+863
+00:44:48,380 --> 00:44:53,690
+it's a little again you get let me just
+
+864
+00:44:51,410 --> 00:44:58,059
+trace right because it's a little hard
+
+865
+00:44:53,690 --> 00:44:58,059
+to see the read hard to figure out with
+
+866
+00:45:03,860 --> 00:45:11,850
+so you'll see that it read the whole
+
+867
+00:45:09,570 --> 00:45:14,640
+line and now it's done to add the
+
+868
+00:45:11,850 --> 00:45:19,590
+operating system-level it's written just
+
+869
+00:45:14,640 --> 00:45:25,350
+one chunks worth one call to the the
+
+870
+00:45:19,590 --> 00:45:29,150
+operating systems write function instead
+
+871
+00:45:25,350 --> 00:45:29,150
+of a byte by byte
+
+872
+00:45:38,349 --> 00:45:42,699
+okay so again I'm not going to go
+
+873
+00:45:41,229 --> 00:45:46,150
+through all the code but it's actually
+
+874
+00:45:42,699 --> 00:45:48,489
+worth your while to do this and by the
+
+875
+00:45:46,150 --> 00:45:50,380
+way I've actually done some applications
+
+876
+00:45:48,489 --> 00:45:53,229
+where I took the Rio code I want to add
+
+877
+00:45:50,380 --> 00:45:54,880
+some features to it but it's a very
+
+878
+00:45:53,229 --> 00:45:59,559
+useful starting point to be able to
+
+879
+00:45:54,880 --> 00:46:01,719
+build your own customized routines okay
+
+880
+00:45:59,559 --> 00:46:06,880
+so let's talk about some other parts of
+
+881
+00:46:01,719 --> 00:46:10,420
+files one is that associated with a file
+
+882
+00:46:06,880 --> 00:46:12,249
+is what they call metadata so the data
+
+883
+00:46:10,420 --> 00:46:14,920
+are the actual contents of the files
+
+884
+00:46:12,249 --> 00:46:16,479
+actual bytes inside that file but
+
+885
+00:46:14,920 --> 00:46:19,410
+there's a whole bunch of other stuff
+
+886
+00:46:16,479 --> 00:46:21,670
+that's associated with the file
+
+887
+00:46:19,410 --> 00:46:25,559
+information about what type of file it
+
+888
+00:46:21,670 --> 00:46:31,359
+is what protection read/write/execute
+
+889
+00:46:25,559 --> 00:46:34,150
+protections it has some information
+
+890
+00:46:31,359 --> 00:46:34,869
+about the ownership of that file what
+
+891
+00:46:34,150 --> 00:46:39,279
+type it is
+
+892
+00:46:34,869 --> 00:46:41,469
+and also the times associated with it
+
+893
+00:46:39,279 --> 00:46:43,779
+when was it created when was it last
+
+894
+00:46:41,469 --> 00:46:46,690
+accessed and when was it last modified
+
+895
+00:46:43,779 --> 00:46:49,779
+so that's known as a metadata and every
+
+896
+00:46:46,690 --> 00:46:52,839
+a file has that kind of information
+
+897
+00:46:49,779 --> 00:46:54,880
+associated with it and you can actually
+
+898
+00:46:52,839 --> 00:47:02,140
+and it's in a data structure called a
+
+899
+00:46:54,880 --> 00:47:04,719
+stat data structure and you can if you
+
+900
+00:47:02,140 --> 00:47:10,690
+want to write code that then sort of
+
+901
+00:47:04,719 --> 00:47:13,779
+probes the directory structure of a of a
+
+902
+00:47:10,690 --> 00:47:17,529
+file system you can make a call to the
+
+903
+00:47:13,779 --> 00:47:19,719
+stat function and it's given the the
+
+904
+00:47:17,529 --> 00:47:24,640
+path name of the file you want to stat
+
+905
+00:47:19,719 --> 00:47:27,969
+and then a pointer to it one of these
+
+906
+00:47:24,640 --> 00:47:29,799
+stat data structures and then that our
+
+907
+00:47:27,969 --> 00:47:32,440
+data structure will get filled in by the
+
+908
+00:47:29,799 --> 00:47:35,440
+information for this particular file and
+
+909
+00:47:32,440 --> 00:47:40,119
+then you can test various attributes
+
+910
+00:47:35,440 --> 00:47:44,140
+about that file and see basically get
+
+911
+00:47:40,119 --> 00:47:46,959
+the information that that's stored here
+
+912
+00:47:44,140 --> 00:47:49,449
+and there's all these nasty compile time
+
+913
+00:47:46,959 --> 00:47:52,349
+constants that you use or macros that
+
+914
+00:47:49,449 --> 00:47:52,349
+use to
+
+915
+00:47:53,140 --> 00:47:58,920
+look at and examine these visa metadata
+
+916
+00:48:03,800 --> 00:48:09,590
+so here's a example I will do it but
+
+917
+00:48:07,190 --> 00:48:12,110
+it's a function called stat check it's
+
+918
+00:48:09,590 --> 00:48:14,930
+in the same directory and so if you
+
+919
+00:48:12,110 --> 00:48:17,900
+check some file or typically say well
+
+920
+00:48:14,930 --> 00:48:21,950
+it's a regular file and yes you're
+
+921
+00:48:17,900 --> 00:48:26,300
+allowed to read it but now if I call
+
+922
+00:48:21,950 --> 00:48:29,270
+chmod to eliminate set all the
+
+923
+00:48:26,300 --> 00:48:34,550
+protections to zero you know say no you
+
+924
+00:48:29,270 --> 00:48:39,710
+can't read it now and so again that's
+
+925
+00:48:34,550 --> 00:48:42,800
+just making use of this Gator here so
+
+926
+00:48:39,710 --> 00:48:46,100
+now this is the part that gets a lot
+
+927
+00:48:42,800 --> 00:48:47,840
+more tricky it's how our files how are
+
+928
+00:48:46,100 --> 00:48:49,520
+all this information about file is
+
+929
+00:48:47,840 --> 00:48:57,670
+actually represented by the programs
+
+930
+00:48:49,520 --> 00:48:57,670
+question yes stat gist
+
+931
+00:49:06,980 --> 00:49:15,560
+I'll tell you one way you can find out
+
+932
+00:49:09,330 --> 00:49:19,350
+what step does if you say man 2 stat
+
+933
+00:49:15,560 --> 00:49:22,140
+you'll get more than you want to know so
+
+934
+00:49:19,350 --> 00:49:30,990
+in general you know if you say man's
+
+935
+00:49:22,140 --> 00:49:34,260
+debt it'll give a unix of command that
+
+936
+00:49:30,990 --> 00:49:40,890
+you can use to step a file so I can say
+
+937
+00:49:34,260 --> 00:49:46,140
+stat dot and it will print out some
+
+938
+00:49:40,890 --> 00:49:52,590
+information about a file in this case of
+
+939
+00:49:46,140 --> 00:49:56,900
+my local directory let's see I can stat
+
+940
+00:49:52,590 --> 00:50:02,280
+any file here and it will print out some
+
+941
+00:49:56,900 --> 00:50:06,630
+some cryptic information about it but if
+
+942
+00:50:02,280 --> 00:50:08,340
+you say man 2 stat the UNIX man pages
+
+943
+00:50:06,630 --> 00:50:14,220
+are divided into different categories
+
+944
+00:50:08,340 --> 00:50:16,880
+and things that our system calls UNIX
+
+945
+00:50:14,220 --> 00:50:21,090
+system library calls are typically in
+
+946
+00:50:16,880 --> 00:50:24,090
+section 2 of the man pages and so that
+
+947
+00:50:21,090 --> 00:50:27,090
+will return information about it but the
+
+948
+00:50:24,090 --> 00:50:29,220
+main point of it is stat is then a
+
+949
+00:50:27,090 --> 00:50:31,380
+function that you call where you give it
+
+950
+00:50:29,220 --> 00:50:34,620
+a path name and a pointer to a buffer
+
+951
+00:50:31,380 --> 00:50:39,410
+that you want it and it will then fill
+
+952
+00:50:34,620 --> 00:50:41,580
+in the contents of the buffer with the
+
+953
+00:50:39,410 --> 00:50:45,120
+information about that particular file
+
+954
+00:50:41,580 --> 00:50:48,630
+and the form that it fills it in is one
+
+955
+00:50:45,120 --> 00:50:52,170
+of these data structures called a struct
+
+956
+00:50:48,630 --> 00:50:55,140
+step and that's pretty typical of a lot
+
+957
+00:50:52,170 --> 00:50:58,470
+of these functions is that they have
+
+958
+00:50:55,140 --> 00:51:00,900
+some predefined struct and if you want
+
+959
+00:50:58,470 --> 00:51:03,090
+to get it if you want to get information
+
+960
+00:51:00,900 --> 00:51:05,550
+you pass you allocate one of those
+
+961
+00:51:03,090 --> 00:51:06,990
+struts you pass a pointer to it and then
+
+962
+00:51:05,550 --> 00:51:11,630
+the library function will fill in the
+
+963
+00:51:06,990 --> 00:51:11,630
+details does that make sense
+
+964
+00:51:22,540 --> 00:51:29,330
+okay so now let's look at some of the
+
+965
+00:51:26,869 --> 00:51:32,090
+internal data structures that the
+
+966
+00:51:29,330 --> 00:51:35,300
+operating system maintains regarding the
+
+967
+00:51:32,090 --> 00:51:38,330
+files associated with a program and this
+
+968
+00:51:35,300 --> 00:51:40,369
+is a source of really nasty exam
+
+969
+00:51:38,330 --> 00:51:43,160
+problems I'll just warn you so you're
+
+970
+00:51:40,369 --> 00:51:45,290
+going to want to read this part of the
+
+971
+00:51:43,160 --> 00:51:47,869
+book carefully study the practice
+
+972
+00:51:45,290 --> 00:51:49,369
+problems look at the old exams because I
+
+973
+00:51:47,869 --> 00:51:51,290
+can guarantee you you're going to get
+
+974
+00:51:49,369 --> 00:51:54,590
+some of these on the final that's a
+
+975
+00:51:51,290 --> 00:51:58,490
+promise and they can be infinitely
+
+976
+00:51:54,590 --> 00:52:01,040
+obscure so we can we can torch you with
+
+977
+00:51:58,490 --> 00:52:05,900
+these so the main point is that
+
+978
+00:52:01,040 --> 00:52:07,869
+associated with any executing process
+
+979
+00:52:05,900 --> 00:52:15,920
+which you can think of a process is a
+
+980
+00:52:07,869 --> 00:52:18,230
+running program is a something called
+
+981
+00:52:15,920 --> 00:52:22,490
+the descriptor table and what that
+
+982
+00:52:18,230 --> 00:52:26,990
+contains is for every open file that you
+
+983
+00:52:22,490 --> 00:52:30,890
+have it has a pointer to a data
+
+984
+00:52:26,990 --> 00:52:32,630
+structure called an entry in a table
+
+985
+00:52:30,890 --> 00:52:38,390
+that's maintained by the operating
+
+986
+00:52:32,630 --> 00:52:45,950
+system globally which describes each of
+
+987
+00:52:38,390 --> 00:52:50,830
+the open files actually each of every
+
+988
+00:52:45,950 --> 00:52:56,960
+time a file is opened that allocates a
+
+989
+00:52:50,830 --> 00:53:00,080
+record in this open file table and so as
+
+990
+00:52:56,960 --> 00:53:04,040
+I mentioned file descriptor 0 1 & 2 have
+
+991
+00:53:00,080 --> 00:53:06,410
+specific meanings and the other files or
+
+992
+00:53:04,040 --> 00:53:08,450
+other ones that you've opened up during
+
+993
+00:53:06,410 --> 00:53:13,460
+the course of your program execution and
+
+994
+00:53:08,450 --> 00:53:18,080
+have not yet closed so that so each of
+
+995
+00:53:13,460 --> 00:53:20,839
+these then is a reference to a
+
+996
+00:53:18,080 --> 00:53:24,770
+particular open file and it gives
+
+997
+00:53:20,839 --> 00:53:26,839
+information about that file and it also
+
+998
+00:53:24,770 --> 00:53:28,970
+gives the position in the file that
+
+999
+00:53:26,839 --> 00:53:31,609
+currently is that I told you every time
+
+1000
+00:53:28,970 --> 00:53:33,589
+you open a file there's a for a regular
+
+1001
+00:53:31,609 --> 00:53:35,569
+file at least there's an Associated
+
+1002
+00:53:33,589 --> 00:53:38,599
+position of where in the file
+
+1003
+00:53:35,569 --> 00:53:40,479
+it was your last reader right or where
+
+1004
+00:53:38,599 --> 00:53:44,660
+would you be your next free to write and
+
+1005
+00:53:40,479 --> 00:53:46,849
+so that's the file pause and there's
+
+1006
+00:53:44,660 --> 00:53:50,109
+also a reference count which is used by
+
+1007
+00:53:46,849 --> 00:53:52,309
+the operating system to keep track of
+
+1008
+00:53:50,109 --> 00:53:58,640
+because we'll see it's possible to have
+
+1009
+00:53:52,309 --> 00:54:01,309
+multiple multiple processes sharing an
+
+1010
+00:53:58,640 --> 00:54:03,140
+entry in this Open File table and it
+
+1011
+00:54:01,309 --> 00:54:05,719
+uses this reference count which is
+
+1012
+00:54:03,140 --> 00:54:09,739
+standard way of keeping track of memory
+
+1013
+00:54:05,719 --> 00:54:12,319
+allocation to know when it no longer
+
+1014
+00:54:09,739 --> 00:54:17,269
+needs that entry if when there's been
+
+1015
+00:54:12,319 --> 00:54:19,400
+enough when the file is no longer
+
+1016
+00:54:17,269 --> 00:54:23,959
+accessible and therefore this entry is
+
+1017
+00:54:19,400 --> 00:54:25,940
+not needed so for every one of your open
+
+1018
+00:54:23,959 --> 00:54:28,910
+files that will have an entry in this
+
+1019
+00:54:25,940 --> 00:54:32,049
+table and this table as I said is shared
+
+1020
+00:54:28,910 --> 00:54:36,589
+across the whole operating system and
+
+1021
+00:54:32,049 --> 00:54:38,989
+then associated with every file is
+
+1022
+00:54:36,589 --> 00:54:42,380
+called the V node which stands for
+
+1023
+00:54:38,989 --> 00:54:45,559
+virtual node and this is where that
+
+1024
+00:54:42,380 --> 00:54:47,989
+contains the sort of information about
+
+1025
+00:54:45,559 --> 00:54:51,170
+this file in particular where is it
+
+1026
+00:54:47,989 --> 00:54:55,489
+stored on this information that you can
+
+1027
+00:54:51,170 --> 00:55:00,229
+get from stat and things like that how
+
+1028
+00:54:55,489 --> 00:55:04,400
+big it is and and things like that so
+
+1029
+00:55:00,229 --> 00:55:06,619
+that's for every every file in the
+
+1030
+00:55:04,400 --> 00:55:10,009
+system actually has a V node entry
+
+1031
+00:55:06,619 --> 00:55:13,729
+whether it's open or closed now this can
+
+1032
+00:55:10,009 --> 00:55:16,459
+get complicated so for example if within
+
+1033
+00:55:13,729 --> 00:55:19,519
+a single program you call open twice on
+
+1034
+00:55:16,459 --> 00:55:22,420
+the same function you'll actually get
+
+1035
+00:55:19,519 --> 00:55:25,479
+two different file descriptors and
+
+1036
+00:55:22,420 --> 00:55:28,609
+you'll be able to access that same file
+
+1037
+00:55:25,479 --> 00:55:33,049
+and have two different positions in it
+
+1038
+00:55:28,609 --> 00:55:38,029
+and it makes sense if you imagine you're
+
+1039
+00:55:33,049 --> 00:55:40,459
+reading from a file and you might want
+
+1040
+00:55:38,029 --> 00:55:42,289
+to read from two different positions in
+
+1041
+00:55:40,459 --> 00:55:43,959
+that file within the same program and
+
+1042
+00:55:42,289 --> 00:55:48,199
+you can do that that's perfectly legal
+
+1043
+00:55:43,959 --> 00:55:49,270
+you just call open twice and that will
+
+1044
+00:55:48,199 --> 00:55:52,930
+keep track of two
+
+1045
+00:55:49,270 --> 00:55:54,760
+positions so the point is these file
+
+1046
+00:55:52,930 --> 00:55:56,950
+descriptors might be referring to the
+
+1047
+00:55:54,760 --> 00:55:58,990
+same file but they're actually at
+
+1048
+00:55:56,950 --> 00:56:02,080
+different positions within the file and
+
+1049
+00:55:58,990 --> 00:56:04,630
+that can happen also if you're if you've
+
+1050
+00:56:02,080 --> 00:56:06,910
+opened a file for both reading and for
+
+1051
+00:56:04,630 --> 00:56:10,090
+writing and you're writing ahead and
+
+1052
+00:56:06,910 --> 00:56:12,640
+then reading characters bytes that have
+
+1053
+00:56:10,090 --> 00:56:15,670
+already been written that makes sense
+
+1054
+00:56:12,640 --> 00:56:19,780
+it's not such a good idea to have two
+
+1055
+00:56:15,670 --> 00:56:22,510
+different write file opens that are
+
+1056
+00:56:19,780 --> 00:56:24,880
+writing simultaneously you can mess up
+
+1057
+00:56:22,510 --> 00:56:26,410
+the file pretty badly that way but
+
+1058
+00:56:24,880 --> 00:56:29,440
+there's nothing in the operating system
+
+1059
+00:56:26,410 --> 00:56:33,040
+that prevents you from doing that so it
+
+1060
+00:56:29,440 --> 00:56:36,670
+won't it's not a good idea but it's a
+
+1061
+00:56:33,040 --> 00:56:39,490
+legal operation so that's the point is
+
+1062
+00:56:36,670 --> 00:56:43,480
+you have to distinguish at what level is
+
+1063
+00:56:39,490 --> 00:56:50,920
+sharing taking place and you see that if
+
+1064
+00:56:43,480 --> 00:56:54,460
+you have two different table entries
+
+1065
+00:56:50,920 --> 00:56:56,080
+sharing one file then that what's
+
+1066
+00:56:54,460 --> 00:56:59,640
+different there is that you can be
+
+1067
+00:56:56,080 --> 00:56:59,640
+working at different file positions
+
+1068
+00:57:00,480 --> 00:57:07,420
+similarly of course the more common
+
+1069
+00:57:03,520 --> 00:57:09,720
+thing is you have two different open
+
+1070
+00:57:07,420 --> 00:57:12,640
+files in there refer to different files
+
+1071
+00:57:09,720 --> 00:57:16,060
+but now and this is where life gets
+
+1072
+00:57:12,640 --> 00:57:19,780
+exciting if you call Fork you remember
+
+1073
+00:57:16,060 --> 00:57:22,420
+about Fork that it spawns a child but
+
+1074
+00:57:19,780 --> 00:57:24,640
+that child inherits a lot of information
+
+1075
+00:57:22,420 --> 00:57:27,820
+from its parent and one of the things
+
+1076
+00:57:24,640 --> 00:57:29,920
+that inherits is its descriptor table it
+
+1077
+00:57:27,820 --> 00:57:33,960
+gets a replica of that descriptor table
+
+1078
+00:57:29,920 --> 00:57:37,260
+and so now both the parent and the child
+
+1079
+00:57:33,960 --> 00:57:39,940
+have identical entries in their
+
+1080
+00:57:37,260 --> 00:57:42,970
+descriptor table and so they're sharing
+
+1081
+00:57:39,940 --> 00:57:46,330
+files but not at the file level but at
+
+1082
+00:57:42,970 --> 00:57:50,110
+the Open File table and what that means
+
+1083
+00:57:46,330 --> 00:57:52,900
+is if the parent does a read it'll bump
+
+1084
+00:57:50,110 --> 00:57:56,550
+along the file position and if the child
+
+1085
+00:57:52,900 --> 00:57:59,950
+know does it read it will it will see
+
+1086
+00:57:56,550 --> 00:58:01,690
+this from this new position so you can
+
+1087
+00:57:59,950 --> 00:58:02,650
+see why the exam problems get really
+
+1088
+00:58:01,690 --> 00:58:06,400
+interesting
+
+1089
+00:58:02,650 --> 00:58:08,410
+because that will keep track of all
+
+1090
+00:58:06,400 --> 00:58:14,200
+these different possibilities and
+
+1091
+00:58:08,410 --> 00:58:16,119
+they'll do different things and so and
+
+1092
+00:58:14,200 --> 00:58:18,160
+then of course the parent or the child
+
+1093
+00:58:16,119 --> 00:58:19,960
+can start opening and closing their own
+
+1094
+00:58:18,160 --> 00:58:22,809
+files as well and that will get very
+
+1095
+00:58:19,960 --> 00:58:26,859
+messy and here's what you see the reason
+
+1096
+00:58:22,809 --> 00:58:30,700
+for having reference counts here that if
+
+1097
+00:58:26,859 --> 00:58:34,180
+you have a lot of forking going on then
+
+1098
+00:58:30,700 --> 00:58:40,660
+you can create multiple pointers to this
+
+1099
+00:58:34,180 --> 00:58:42,970
+a table entry and in order to really
+
+1100
+00:58:40,660 --> 00:58:46,930
+really close the file each of these has
+
+1101
+00:58:42,970 --> 00:58:49,359
+to call closed before the file is truly
+
+1102
+00:58:46,930 --> 00:58:57,369
+truly closed from an operating system
+
+1103
+00:58:49,359 --> 00:58:59,910
+perspective so there's other fun things
+
+1104
+00:58:57,369 --> 00:59:02,559
+that make life interesting too and
+
+1105
+00:58:59,910 --> 00:59:04,839
+contribute to the exam problem
+
+1106
+00:59:02,559 --> 00:59:11,039
+possibilities what is it call called
+
+1107
+00:59:04,839 --> 00:59:11,039
+dupe - and the purpose the dupe - is -
+
+1108
+00:59:12,420 --> 00:59:21,970
+excuse me duplicate a entry in the
+
+1109
+00:59:18,819 --> 00:59:25,619
+descriptor table and the most common use
+
+1110
+00:59:21,970 --> 00:59:28,680
+of that is a IO redirection that either
+
+1111
+00:59:25,619 --> 00:59:31,420
+greater or less than sign to either
+
+1112
+00:59:28,680 --> 00:59:34,420
+redirect read the instead of from
+
+1113
+00:59:31,420 --> 00:59:37,150
+standard input from a file or instead of
+
+1114
+00:59:34,420 --> 00:59:40,029
+writing to standard output to write to a
+
+1115
+00:59:37,150 --> 00:59:42,130
+file and the way the operating system
+
+1116
+00:59:40,029 --> 00:59:44,890
+actually implements that is shortly
+
+1117
+00:59:42,130 --> 00:59:54,210
+after starting the program it will call
+
+1118
+00:59:44,890 --> 00:59:57,309
+called Duke - to make it so that the
+
+1119
+00:59:54,210 --> 01:00:01,480
+file descriptor 1 is not the standard
+
+1120
+00:59:57,309 --> 01:00:04,390
+output of the for this process but it's
+
+1121
+01:00:01,480 --> 01:00:07,690
+actually the original standard output
+
+1122
+01:00:04,390 --> 01:00:09,549
+but it's actually a descriptor for the
+
+1123
+01:00:07,690 --> 01:00:11,319
+file that it's supposed to write to and
+
+1124
+01:00:09,549 --> 01:00:12,550
+same with if it's doing input
+
+1125
+01:00:11,319 --> 01:00:16,010
+redirection
+
+1126
+01:00:12,550 --> 01:00:18,710
+and but you can call Duke to yourself
+
+1127
+01:00:16,010 --> 01:00:22,090
+and do these kind of things and these
+
+1128
+01:00:18,710 --> 01:00:22,090
+actually good reasons for doing so
+
+1129
+01:00:25,840 --> 01:00:32,780
+so in particular imagine I open the file
+
+1130
+01:00:29,030 --> 01:00:39,200
+and standard output points to the sort
+
+1131
+01:00:32,780 --> 01:00:43,040
+of normal thing and I open a new file I
+
+1132
+01:00:39,200 --> 01:00:43,370
+call it B and then I call Duke to excuse
+
+1133
+01:00:43,040 --> 01:00:46,340
+me
+
+1134
+01:00:43,370 --> 01:00:48,890
+and now what both file descriptor 1 and
+
+1135
+01:00:46,340 --> 01:00:51,290
+file descriptor for are sharing this
+
+1136
+01:00:48,890 --> 01:00:54,740
+entry in the file table and you see the
+
+1137
+01:00:51,290 --> 01:00:57,320
+reference count of 2 and so in order to
+
+1138
+01:00:54,740 --> 01:00:59,920
+really close it then what would
+
+1139
+01:00:57,320 --> 01:01:02,660
+typically happen at this point is the
+
+1140
+01:00:59,920 --> 01:01:04,880
+this is happens before it starts to your
+
+1141
+01:01:02,660 --> 01:01:11,810
+program you'd want to close file
+
+1142
+01:01:04,880 --> 01:01:13,940
+descriptor 4 and in fact there's a lot
+
+1143
+01:01:11,810 --> 01:01:17,270
+of bugs you can make by not closing
+
+1144
+01:01:13,940 --> 01:01:19,250
+files it's easy to make mistakes when
+
+1145
+01:01:17,270 --> 01:01:27,860
+you have multiple entries in these
+
+1146
+01:01:19,250 --> 01:01:30,410
+tables yep no C if I call close this one
+
+1147
+01:01:27,860 --> 01:01:34,750
+it just decrement sits reference count
+
+1148
+01:01:30,410 --> 01:01:34,750
+but this remains a valid entry here
+
+1149
+01:01:35,440 --> 01:01:52,030
+while a yes but due to will decrement
+
+1150
+01:01:43,000 --> 01:01:53,920
+the reference count of the original dupe
+
+1151
+01:01:52,030 --> 01:02:02,859
+to goes backwards from where you think
+
+1152
+01:01:53,920 --> 01:02:05,200
+it should so do two is the I want what
+
+1153
+01:02:02,859 --> 01:02:10,420
+what I referred to for example file
+
+1154
+01:02:05,200 --> 01:02:13,480
+descriptor I want file descriptor for to
+
+1155
+01:02:10,420 --> 01:02:16,329
+become what I can use to and refer to
+
+1156
+01:02:13,480 --> 01:02:18,849
+with file descriptor 1 here it will
+
+1157
+01:02:16,329 --> 01:02:24,000
+actually decrement the reference count
+
+1158
+01:02:18,849 --> 01:02:30,760
+of this before it done does the copy
+
+1159
+01:02:24,000 --> 01:02:34,260
+otherwise it would create like a an
+
+1160
+01:02:30,760 --> 01:02:34,260
+orphan in this table right
+
+1161
+01:02:36,530 --> 01:02:45,680
+Oh so anyways dupe 2 also is a powerful
+
+1162
+01:02:41,900 --> 01:02:48,770
+but dangerous mechanism so now finally
+
+1163
+01:02:45,680 --> 01:02:51,320
+let me just mention the much more common
+
+1164
+01:02:48,770 --> 01:02:53,780
+i/o that application programs use is
+
+1165
+01:02:51,320 --> 01:02:56,030
+what's known as the standard i/o and
+
+1166
+01:02:53,780 --> 01:02:59,510
+that's what's documented in knr and it's
+
+1167
+01:02:56,030 --> 01:03:03,410
+actually part of the the C standard all
+
+1168
+01:02:59,510 --> 01:03:05,450
+these different functions and so the
+
+1169
+01:03:03,410 --> 01:03:07,430
+main feature it adds is sort of like
+
+1170
+01:03:05,450 --> 01:03:10,280
+what you saw with the REO package it
+
+1171
+01:03:07,430 --> 01:03:12,650
+adds buffering so it doesn't have to do
+
+1172
+01:03:10,280 --> 01:03:21,710
+this low-level stuff and it avoids all
+
+1173
+01:03:12,650 --> 01:03:23,870
+than some of the nastiness and the way
+
+1174
+01:03:21,710 --> 01:03:29,810
+it works is what we've already seen it
+
+1175
+01:03:23,870 --> 01:03:31,930
+uses buffering to do a vio so just as an
+
+1176
+01:03:29,810 --> 01:03:31,930
+example
+
+1177
+01:03:44,680 --> 01:03:50,989
+here's some code that calls printf one
+
+1178
+01:03:49,039 --> 01:03:58,930
+character at a time to print the word
+
+1179
+01:03:50,989 --> 01:03:58,930
+hello but if I run that and is trace it
+
+1180
+01:04:05,009 --> 01:04:10,359
+you see that there's only one system
+
+1181
+01:04:07,749 --> 01:04:13,180
+call to two right and it works the same
+
+1182
+01:04:10,359 --> 01:04:16,029
+way you saw with the Rio code it builds
+
+1183
+01:04:13,180 --> 01:04:21,160
+up a buffer and it's not until this call
+
+1184
+01:04:16,029 --> 01:04:24,579
+to F flush that forces the output to
+
+1185
+01:04:21,160 --> 01:04:26,170
+actually be a printed output usually
+
+1186
+01:04:24,579 --> 01:04:31,749
+that happens automatically actually if
+
+1187
+01:04:26,170 --> 01:04:35,380
+you print up a line feed it will flush
+
+1188
+01:04:31,749 --> 01:04:46,329
+it so that I think that called F wash is
+
+1189
+01:04:35,380 --> 01:04:51,119
+probably redundant here so and so that's
+
+1190
+01:04:46,329 --> 01:04:51,119
+the benefit so buffered i/o is much more
+
+1191
+01:04:51,869 --> 01:05:05,259
+efficient because it because of the
+
+1192
+01:04:54,910 --> 01:05:07,359
+buffering so as a result we've now seen
+
+1193
+01:05:05,259 --> 01:05:10,450
+three different types of i/o there's the
+
+1194
+01:05:07,359 --> 01:05:13,390
+low-level i/o called you referred to as
+
+1195
+01:05:10,450 --> 01:05:14,950
+UNIX i/o you saw this package that was
+
+1196
+01:05:13,390 --> 01:05:16,960
+written specifically for the book and
+
+1197
+01:05:14,950 --> 01:05:20,079
+for the course called Rio and then
+
+1198
+01:05:16,960 --> 01:05:24,099
+there's a much larger and in fact richer
+
+1199
+01:05:20,079 --> 01:05:26,950
+set of i/o functions provided by the
+
+1200
+01:05:24,099 --> 01:05:29,230
+UNIX standard library so you might ask a
+
+1201
+01:05:26,950 --> 01:05:30,880
+couple questions one is well why the
+
+1202
+01:05:29,230 --> 01:05:33,970
+heck did you write this when you've
+
+1203
+01:05:30,880 --> 01:05:35,920
+already got that if if UNIX provides
+
+1204
+01:05:33,970 --> 01:05:38,799
+buffered i/o why did you do it yourself
+
+1205
+01:05:35,920 --> 01:05:42,970
+and the reason is this stuff doesn't it
+
+1206
+01:05:38,799 --> 01:05:45,819
+works really well for the i/o you do to
+
+1207
+01:05:42,970 --> 01:05:48,279
+a terminal or defiled but it doesn't do
+
+1208
+01:05:45,819 --> 01:05:50,829
+very well with network connections it
+
+1209
+01:05:48,279 --> 01:05:53,470
+wasn't really designed for that and so
+
+1210
+01:05:50,829 --> 01:05:54,819
+it gets really messed up and so the main
+
+1211
+01:05:53,470 --> 01:05:56,829
+reason you're going to find yourself
+
+1212
+01:05:54,819 --> 01:05:59,470
+using this is when you're starting to
+
+1213
+01:05:56,829 --> 01:06:02,829
+use network connections oh the other
+
+1214
+01:05:59,470 --> 01:06:05,349
+thing is these do not coexist very well
+
+1215
+01:06:02,829 --> 01:06:07,059
+buffered i/o with a reow i/o
+
+1216
+01:06:05,349 --> 01:06:08,859
+because they each maintain their own
+
+1217
+01:06:07,059 --> 01:06:11,769
+buffers and they don't know about each
+
+1218
+01:06:08,859 --> 01:06:13,390
+other and they get terribly confused so
+
+1219
+01:06:11,769 --> 01:06:13,930
+you kind of have to pick one or the
+
+1220
+01:06:13,390 --> 01:06:15,350
+other
+
+1221
+01:06:13,930 --> 01:06:17,660
+with respect to any
+
+1222
+01:06:15,350 --> 01:06:25,550
+ticular i/o connection and don't try to
+
+1223
+01:06:17,660 --> 01:06:27,920
+mix and match them so like I said UNIX
+
+1224
+01:06:25,550 --> 01:06:30,080
+i/o then the low-level stuff from an
+
+1225
+01:06:27,920 --> 01:06:31,970
+application perspective it's like really
+
+1226
+01:06:30,080 --> 01:06:35,000
+painful to use especially with short
+
+1227
+01:06:31,970 --> 01:06:40,400
+counts and error codes and and all that
+
+1228
+01:06:35,000 --> 01:06:42,200
+stuff and so in general you want to
+
+1229
+01:06:40,400 --> 01:06:44,870
+either write your own package or use
+
+1230
+01:06:42,200 --> 01:06:46,940
+some other package around it and so as I
+
+1231
+01:06:44,870 --> 01:06:49,430
+said standard i/o it gives you printf
+
+1232
+01:06:46,940 --> 01:06:52,630
+and scanf and all these nice features
+
+1233
+01:06:49,430 --> 01:07:01,370
+it's uniform it exists on all systems
+
+1234
+01:06:52,630 --> 01:07:04,760
+it's reasonably standardized so in
+
+1235
+01:07:01,370 --> 01:07:08,300
+general then use the the standard i/o
+
+1236
+01:07:04,760 --> 01:07:13,310
+for most year of day-to-day uses of
+
+1237
+01:07:08,300 --> 01:07:16,790
+files I'll use the raw IO for low-level
+
+1238
+01:07:13,310 --> 01:07:20,450
+stuff like when you have to and partly
+
+1239
+01:07:16,790 --> 01:07:22,040
+it turns out signals are not you
+
+1240
+01:07:20,450 --> 01:07:24,740
+shouldn't use standard i/o when you're
+
+1241
+01:07:22,040 --> 01:07:26,510
+writing signal handlers and then the REO
+
+1242
+01:07:24,740 --> 01:07:30,560
+you're going to find useful for in
+
+1243
+01:07:26,510 --> 01:07:35,080
+particular for doing networking one
+
+1244
+01:07:30,560 --> 01:07:37,550
+other thing that you should one bug that
+
+1245
+01:07:35,080 --> 01:07:41,210
+students do over and over again in this
+
+1246
+01:07:37,550 --> 01:07:45,170
+course is they try to do a line oriented
+
+1247
+01:07:41,210 --> 01:07:47,450
+i/o on things that aren't lines so like
+
+1248
+01:07:45,170 --> 01:07:49,130
+a JPEG image or something like that and
+
+1249
+01:07:47,450 --> 01:07:52,580
+the reason that's important is that
+
+1250
+01:07:49,130 --> 01:07:55,400
+these functions are treat the end of
+
+1251
+01:07:52,580 --> 01:07:57,200
+line character zero a is a very special
+
+1252
+01:07:55,400 --> 01:07:59,300
+character they'll stop reading or
+
+1253
+01:07:57,200 --> 01:08:02,330
+something like that or if it's going
+
+1254
+01:07:59,300 --> 01:08:04,850
+between Windows and UNIX it will
+
+1255
+01:08:02,330 --> 01:08:06,800
+actually change one from carriage
+
+1256
+01:08:04,850 --> 01:08:09,350
+returns from line feed to carriage
+
+1257
+01:08:06,800 --> 01:08:11,690
+return line feed sin way functions like
+
+1258
+01:08:09,350 --> 01:08:14,120
+steer land and steer copy will stop when
+
+1259
+01:08:11,690 --> 01:08:15,590
+they hit a null byte and that's not what
+
+1260
+01:08:14,120 --> 01:08:19,400
+you want to do when these are network
+
+1261
+01:08:15,590 --> 01:08:21,980
+packets you're trying to send out so be
+
+1262
+01:08:19,400 --> 01:08:24,609
+careful some of the functions you've
+
+1263
+01:08:21,980 --> 01:08:27,680
+used a lot and you're very familiar with
+
+1264
+01:08:24,609 --> 01:08:30,340
+may be completely inappropriate for
+
+1265
+01:08:27,680 --> 01:08:33,590
+are things where you're doing binary of
+
+1266
+01:08:30,340 --> 01:08:35,750
+data or you're communicating over
+
+1267
+01:08:33,590 --> 01:08:38,360
+networks and things like that so be sure
+
+1268
+01:08:35,750 --> 01:08:40,340
+you understand what you're doing when
+
+1269
+01:08:38,360 --> 01:08:45,200
+you start to use these kind of functions
+
+1270
+01:08:40,340 --> 01:08:47,630
+oh so those do you really want to know
+
+1271
+01:08:45,200 --> 01:08:49,160
+this stuff there's there's a fellow
+
+1272
+01:08:47,630 --> 01:08:55,280
+named Richard Stevens who unfortunately
+
+1273
+01:08:49,160 --> 01:08:57,920
+died awhile quite a while ago but his
+
+1274
+01:08:55,280 --> 01:09:00,050
+books live on and there's various people
+
+1275
+01:08:57,920 --> 01:09:05,210
+have signed up to become co-authors with
+
+1276
+01:09:00,050 --> 01:09:08,560
+him in his absence and creating new
+
+1277
+01:09:05,210 --> 01:09:12,110
+editions of these books that used to
+
+1278
+01:09:08,560 --> 01:09:13,940
+date back way far so and if you really
+
+1279
+01:09:12,110 --> 01:09:16,430
+want to know how this stuff works you
+
+1280
+01:09:13,940 --> 01:09:18,560
+want to be the 8th programmer these
+
+1281
+01:09:16,430 --> 01:09:21,710
+books are the best you can get but I'll
+
+1282
+01:09:18,560 --> 01:09:25,600
+also warn you your bookshelf will become
+
+1283
+01:09:21,710 --> 01:09:28,370
+very heavy laden because there's there's
+
+1284
+01:09:25,600 --> 01:09:30,770
+volumes one two and three and then
+
+1285
+01:09:28,370 --> 01:09:33,440
+there's networking books and Stevens is
+
+1286
+01:09:30,770 --> 01:09:35,150
+like a encyclopedic reference but
+
+1287
+01:09:33,440 --> 01:09:36,440
+they're excellent books if you really
+
+1288
+01:09:35,150 --> 01:09:40,220
+want to understand something
+
+1289
+01:09:36,440 --> 01:09:43,880
+read Stevens oh and there's another book
+
+1290
+01:09:40,220 --> 01:09:46,190
+that is just specific to Linux that's
+
+1291
+01:09:43,880 --> 01:09:49,010
+fairly nice and somewhat it's very
+
+1292
+01:09:46,190 --> 01:09:50,810
+detailed but since it's only trying to
+
+1293
+01:09:49,010 --> 01:09:54,710
+deal with Linux it's a little bit less
+
+1294
+01:09:50,810 --> 01:09:57,140
+of weird than trying to read Stevens
+
+1295
+01:09:54,710 --> 01:09:58,910
+because Stevens will say in this version
+
+1296
+01:09:57,140 --> 01:10:00,500
+of UNIX it works this way in this
+
+1297
+01:09:58,910 --> 01:10:02,540
+version it works that way and blah blah
+
+1298
+01:10:00,500 --> 01:10:05,450
+blah and it's all different and it will
+
+1299
+01:10:02,540 --> 01:10:10,780
+drive you crazy but Stevens is still
+
+1300
+01:10:05,450 --> 01:10:13,250
+it's an outstanding set of books ok so
+
+1301
+01:10:10,780 --> 01:10:14,720
+this is an example and I'm not going to
+
+1302
+01:10:13,250 --> 01:10:16,970
+go through it but these are the kind of
+
+1303
+01:10:14,720 --> 01:10:20,210
+things that we use to torture students
+
+1304
+01:10:16,970 --> 01:10:23,600
+that you open some file descriptors and
+
+1305
+01:10:20,210 --> 01:10:26,570
+you do some dupes and you do some Forks
+
+1306
+01:10:23,600 --> 01:10:29,930
+and so you end up with a real spaghetti
+
+1307
+01:10:26,570 --> 01:10:32,120
+for all the pointers and what's shared
+
+1308
+01:10:29,930 --> 01:10:35,210
+and what's not shared and then you ask
+
+1309
+01:10:32,120 --> 01:10:36,980
+what will this print and of course you
+
+1310
+01:10:35,210 --> 01:10:40,930
+have to trace through in great detail
+
+1311
+01:10:36,980 --> 01:10:42,850
+what's really going on so those are
+
+1312
+01:10:40,930 --> 01:10:45,250
+in the book and I recommend you work on
+
+1313
+01:10:42,850 --> 01:10:47,700
+some of those okay that'll do it for
+
+1314
+01:10:45,250 --> 01:10:47,700
+today then
+
