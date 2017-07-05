@@ -4,6 +4,6 @@
 int main(void)
 {
     show_float(0);
-    show_int(0xffffffff);
+    show_int(1);
     return 0;
 }

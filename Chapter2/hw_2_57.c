@@ -7,11 +7,11 @@ void show_short(short x)
 }
 void show_long(long x)
 {
-    show_byte(&x,sizeof(long ));
+    show_byte((byte_pointer)&x,sizeof(long ));
 }
 void show_double(double x)
 {
-    show_byte(&x,sizeof(double));
+    show_byte((byte_pointer)&x,sizeof(double));
 }
 
 int main(void)

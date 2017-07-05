@@ -1,6 +1,6 @@
 #include<stdio.h>
-typedef unsigned char *byte_pointer;
-void show_byte(byte_pointer start,int offset)
+#include"show_byte.h"
+void show_byte(byte_pointer start,size_t offset)
 {
     for(int i=0;i<offset;i++)
         printf("%.2x",start[i]);
