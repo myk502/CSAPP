@@ -1884,255 +1884,255 @@ other stuff in the other bionda that's
 
 472
 00:24:06,510 --> 00:24:10,110
-programming you just get more
+在处理这些bug的过程中，你们会学到很多
 
 473
 00:24:08,130 --> 00:24:12,090
-experienced and you know at times that
+同时你们也会不时的意识到
 
 474
 00:24:10,110 --> 00:24:14,789
-you should actually put bounds checking
+在自己的代码里应该自己做（指针）的范围检查
 
 475
 00:24:12,090 --> 00:24:19,490
-in your own code and there's also tools
+当然也有工具能够帮助你debug
 
 476
 00:24:14,789 --> 00:24:22,080
-available that will help you sort of of
+当然也有工具能够帮助你debug
 
 477
 00:24:19,490 --> 00:24:24,419
-bulletproof your code so that it will
+它们可以作为你的程序的防弹衣
 
 478
 00:24:22,080 --> 00:24:26,070
-detect these kind of problems so it's
+这些工具能够检测到指针非法引用的问题
 
 479
 00:24:24,419 --> 00:24:28,320
-not like you have to change languages
+当然这并不意味着你要更改编程语言
 
 480
 00:24:26,070 --> 00:24:32,190
-but it is a particular feature of these
+但是（不做指针范围检查）是C/C++的一个特性
 
 481
 00:24:28,320 --> 00:24:34,140
-languages and so understanding sort of
+深入理解数据结构在机器层面的表示
 
 482
 00:24:32,190 --> 00:24:36,210
-the Machine level representation of data
+深入理解数据结构在机器层面的表示
 
 483
 00:24:34,140 --> 00:24:38,460
-structures and how they work is very
+以及这些数据结构是如何运作的
 
 484
 00:24:36,210 --> 00:24:40,860
-really makes a huge difference in your
+一方面，能够提升你们处理
 
 485
 00:24:38,460 --> 00:24:43,289
-ability to deal with these kind of
+这一类脆弱情况（bug）的能力
 
 486
 00:24:40,860 --> 00:24:45,210
-vulnerabilities and things of ulnar
+这里所说的脆弱是也是从安全的角度来说的
 
 487
 00:24:43,289 --> 00:24:51,450
-abilities by the way also from a
+因为错误的指针引用会导致很严重的安全问题
 
 488
 00:24:45,210 --> 00:24:53,159
-security perspective the the fourth sort
+我们在本课程将要接触到的第四章
 
 489
 00:24:51,450 --> 00:24:55,429
-of theme we'll cover in the course is
+会涉及到如何提升你的程序的性能
 
 490
 00:24:53,159 --> 00:24:59,220
-getting performance out of programs
+会涉及到如何提升你的程序的性能
 
 491
 00:24:55,429 --> 00:25:00,929
-other parts of the curriculum in CS do
+和你在数据结构、算法课程学到的渐进分析不同
 
 492
 00:24:59,220 --> 00:25:02,760
-much more emphasis on getting the right
+那些课程（DSA）更多的关注于
 
 493
 00:25:00,929 --> 00:25:04,860
-algorithm at the right data structure
+在合适的数据结构上使用恰当的算法来降低理论复杂度
 
 494
 00:25:02,760 --> 00:25:07,320
-and that's really well and good it's
+当然那些内容是很重要的，也是很棒的
 
 495
 00:25:04,860 --> 00:25:11,390
-important stuff I don't deny it but they
+我不否认这一点
 
 496
 00:25:07,320 --> 00:25:14,039
-some amount of the sort of low-level
+但我们的课程会更多的涉及较低层面的优化
 
 497
 00:25:11,390 --> 00:25:16,650
-optimization that you need to do that
+这是你们之前从未接触过的
 
 498
 00:25:14,039 --> 00:25:19,140
-you need to understand what the system
+你们需要理解计算机系统做了什么
 
 499
 00:25:16,650 --> 00:25:21,450
-does what makes it run well what makes
+是什么让计算机系统运作正常
 
 500
 00:25:19,140 --> 00:25:24,330
-it run for way in order to be able to do
+当计算机运行出现问题的时候到底是哪里出问题了
 
 501
 00:25:21,450 --> 00:25:29,640
-that kind of optimization so the example
+在理解了这些之后，你们就能够从底层对程序进行优化
 
 502
 00:25:24,330 --> 00:25:31,980
-we like to use is these two functions do
+我们很喜欢的关于底层优化的一个例子
 
 503
 00:25:29,640 --> 00:25:37,789
-exactly the same thing in terms of their
+我们会给大家展示两个函数
 
 504
 00:25:31,980 --> 00:25:41,970
-their behavior what they do is copy a
+这两个函数做了同一件事
 
 505
 00:25:37,789 --> 00:25:46,130
-matrix or array from called source or
+把一个叫做SRC的二维数组（矩阵）赋值给名为DST的二维数组
 
 506
 00:25:41,970 --> 00:25:51,990
-SRC to a destination DST they're both
+这两个二维数组（矩阵）的规模
 
 507
 00:25:46,130 --> 00:25:54,570
-size to be 2048 rows 2048 columns
+都是2048*2048
 
 508
 00:25:51,990 --> 00:25:56,700
-two-dimensional arrays and you'll see
+都是2048*2048
 
 509
 00:25:54,570 --> 00:25:59,010
-that the programs do the obvious thing
+我们来看一下代码
 
 510
 00:25:56,700 --> 00:26:01,470
-you have a nested pair of loops to do
+我们有一个嵌套的循环
 
 511
 00:25:59,010 --> 00:26:04,620
-the row and column indices and you just
+循环变量是行/列的下标
 
 512
 00:26:01,470 --> 00:26:06,929
-copy from one source element to a
+每次循环所做的事情
 
 513
 00:26:04,620 --> 00:26:09,600
-destination element the only thing
+不过是把src矩阵的一个元素赋值给dst矩阵的一个元素
 
 514
 00:26:06,929 --> 00:26:14,010
-that's different you'll see is that the
+这两个函数的唯一区别，正如你所看到的
 
 515
 00:26:09,600 --> 00:26:15,840
-two loops their nesting is different the
+是它们的循环嵌套形式
 
 516
 00:26:14,010 --> 00:26:20,460
-nesting order is different in one case
+这两个函数的循环嵌套顺序不同
 
 517
 00:26:15,840 --> 00:26:23,170
-I'm going kind of row first
+我可以把行循环放在外层
 
 518
 00:26:20,460 --> 00:26:25,300
-going through all the rows and then the
+先访问每一行，然后依次复制每一行的每一个元素
 
 519
 00:26:23,170 --> 00:26:27,550
-columns and the other is for any given
+另一个函数则是对于每一列，依次复制各个元素
 
 520
 00:26:25,300 --> 00:26:29,200
-row I'm copying all the columns that's
+（这里教授的意思我没太搞懂，相信大家能看懂）
 
 521
 00:26:27,550 --> 00:26:32,110
-really the only difference between these
+这就是这两个程序唯一的区别
 
 522
 00:26:29,200 --> 00:26:35,380
-two programs but what you'll find if you
+但是如果你去运行它(linux下可用time）
 
 523
 00:26:32,110 --> 00:26:37,180
-run it on a typical system is that that
+在一个特定的系统下运行这两个程序
 
 524
 00:26:35,380 --> 00:26:39,730
-one is much faster than the other in
+你会发现其中一个程序的运行速度远远快于另外一个
 
 525
 00:26:37,180 --> 00:26:42,610
-this particular machine we ran it on it
+在我们的电脑上，这两个程序的运行所需时间
 
 526
 00:26:39,730 --> 00:26:45,310
-was about close to 20 times difference
+竟然有20倍的差距
 
 527
 00:26:42,610 --> 00:26:48,370
-in performance so something fishy is
+所以肯定有些我们不知道的事情发生了
 
 528
 00:26:45,310 --> 00:26:50,400
-going on if the same program that
+不然没有办法解释这奇异的现象
 
 529
 00:26:48,370 --> 00:26:53,350
-differs only in this seemingly
+这两个程序的差异仅仅是循环的顺序
 
 530
 00:26:50,400 --> 00:26:55,510
-insignificant way a way that has no
+这样看似不起眼的差异
 
 531
 00:26:53,350 --> 00:26:57,280
-effect whatsoever on its functionality
+对最终功能毫无影响的差异
 
 532
 00:26:55,510 --> 00:27:01,180
-can have this much performance
+竟会产生如此结果
 
 533
 00:26:57,280 --> 00:27:05,100
-difference and so to understand this you
+要理解为什么会这样
 
 534
 00:27:01,180 --> 00:27:05,100
-need to stare at the cover of the book
+你可以看一下我们CSAPP书的封面
 
 535
 00:27:07,020 --> 00:27:14,710
