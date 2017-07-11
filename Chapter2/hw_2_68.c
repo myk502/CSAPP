@@ -8,12 +8,12 @@
 
 int lower_one_mask(int n)
 {
-    int w=sizeof(int);
+    int w=sizeof(int)<<3;
     unsigned x=-1;
     return x>>(w-n);
 }
 int main(void)
 {
-    printf("%#010X\n%#010X\n",lower_one_mask(6),lower_one_mask(17));
+    printf("%#X\n%#X\n",lower_one_mask(6),lower_one_mask(17));
     return 0;
 }
