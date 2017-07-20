@@ -178,6 +178,7 @@ int logicalShift(int x, int n) {
  */
 int bitCount(int x) {
 	//take reference to XuYajing's blog
+	//use divide and conquer,first divide x to 8*4bit
 	//The address:https://elegenthus.github.io/post/Manipulating%20Bits/
 	int sum=0,mask;
 	mask=0x11|(0x11<<8);//Now mask equals to 0x1111
@@ -203,7 +204,14 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+	//just like the xor trick
+	unsigned t=~x;
+	t=t&(t>>16);
+	t=t&(t>>8);
+	t=t&(t>>4);
+	t=t&(t>>2);
+	t=t&(t>>1);
+	return t;
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -212,7 +220,7 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 2;
+	return 1<<31;
 }
 /* 
  * fitsBits - return 1 if x can be represented as an 
@@ -223,8 +231,12 @@ int tmin(void) {
  *   Max ops: 15
  *   Rating: 2
  */
-int fitsBits(int x, int n) {
-  return 2;
+int fitsBits(int x, int n) 
+{
+	//To see whether the (n-1) bit equals to all MSB (w-n) bits
+	x=x>>(n-1);
+	//(x==0)||(x==-1)
+	return (!x)|(!(x+1));
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
