@@ -205,12 +205,14 @@ int bitCount(int x) {
  */
 int bang(int x) {
 	//just like the xor trick
-	unsigned t=~x;
+	//calculate the and sum of all bits in ~x
+	int t=~x;
 	t=t&(t>>16);
 	t=t&(t>>8);
 	t=t&(t>>4);
 	t=t&(t>>2);
 	t=t&(t>>1);
+	t&=0x1;
 	return t;
 }
 /* 
@@ -234,7 +236,7 @@ int tmin(void) {
 int fitsBits(int x, int n) 
 {
 	//To see whether the (n-1) bit equals to all MSB (w-n) bits
-	x=x>>(n-1);
+	x=x>>(n+~0);
 	//(x==0)||(x==-1)
 	return (!x)|(!(x+1));
 }
@@ -247,7 +249,13 @@ int fitsBits(int x, int n)
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+	int bias,flag;//bias is the bias needed for negative number
+	//flag is the MSB of x
+	flag=(x>>31);
+	bias=(1<<n)+(~0);
+	bias&=flag;//Only negative numbers need bias
+	x+=bias;
+	return x>>n;
 }
 /* 
  * negate - return -x 
@@ -257,7 +265,7 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+	return ~x+1;
 }
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
@@ -267,7 +275,10 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+	//when x is 0,return 0
+	int flag=(x>>31);//Now the LSB of flag is the MSB of x
+	flag&=0x1;//only keep the LSB of flag
+	return (!flag)^(!x);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -277,7 +288,18 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+	//we can not use y-x to avoid overflow
+	//This problem is too hard so I take reference to Internet
+	//when x and y has the same MSB，calculate y-x then !it
+	//else just return x_flag(the MSB of x)
+	int y_minus_x_flag,x_flag,y_flag,y_minus_x=y+~x+1;
+	//flag means the MSB of a number
+	//calculate y-x
+	y_minus_x=y+~x+1;
+	y_minus_x_flag=!!(y_minus_x>>31);//a new way to get the MSB of a number
+	x_flag=!!(x>>31);
+	y_flag=!!(y>>31);
+	return (!y_minus_x_flag&(!(x_flag^y_flag))) | (x_flag&(x_flag^y_flag));
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
