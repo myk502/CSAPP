@@ -309,7 +309,26 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4
  */
 int ilog2(int x) {
-  return 2;
+	//This program takes refrence to the Internet
+	//First consider the First 16 bit of x,if x>0xffff then the last 16 bit is useless so we can do right shift
+	//After the right shift,what is left is the original First 16 bits
+	//t records the answer
+	//use (!!x) as a representation of (x!=0)
+	//use bit-or to do add operation
+	int s,t,u;
+	u=x;
+	t = (!!(u >> 16)) << 4;
+	u >>= t;
+	s = (!!(u >> 8)) << 3;
+	u >>= s;
+	t |= s;
+	s= (!!(u >> 4)) << 2;
+	u >>= s;
+	t |= s;
+	s=(!!(u >> 2)) << 1;
+	u >>= s;
+	t |= s;
+	return (t | (u >> 1));
 }
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
@@ -323,7 +342,15 @@ int ilog2(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+	//check whether uf is NaN
+	unsigned mask;
+	int temp;
+	mask=1U<<31;
+	temp=uf | mask;
+	temp >>= 23;
+	if((!(~ temp)) && (!!(uf<<9))  )
+		return uf;
+	return uf ^ mask;
 }
 /* 
  * float_i2f - Return bit-level equivalent of expression (float) x
