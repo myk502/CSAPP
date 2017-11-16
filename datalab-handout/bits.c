@@ -362,7 +362,39 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 unsigned float_i2f(int x) {
-  return 2;
+	int flag = (x & 0x80000000), i, val1, val2, len, tempp, temp;//flag equals to (1 << 31) or 0,indicating the sign bit of x
+	if(x == 0x80000000)//if x equals to INT_MIN
+		return 0xcf000000;//Then we can not take -x, so just return the answer
+	if(flag)//flag equals to (1 << 31) or 0, and flag is considered true when flag equals to (1 << 31)
+		x = -x;//x now equals to abs(x)
+	i = 31;//initialization of i, i will be the first bit of 1(from left to right, except the sign bit)
+	do
+	{
+		if( x >> (--i) & 0x1)
+			break;
+	}
+	while(i);
+	if(x == 0)//x equals to zero
+		return 0;
+	temp = i + 127;//This temp is exp, 127 is the bias
+	len = i - 23;//if i is greater than 23, than len is the number of bits that needed to be rounded
+	if(len > 0)
+	{
+		val2 = x & ((0xffffffffU) >> (32 - len) );//Save the bits that will be rounded in val2
+		val1 = (x >> len) & 0x007fffff;//val1 is the frac domain
+		tempp = 1 << (len - 1);//set tempp to justify the round stat
+		if((val2 > tempp) || ((val2 == tempp) && ((val1 & 0x1))))//There is a carry '1' here
+			val1++;
+	}
+	else
+		val1 = (x << (-len)) & 0x007fffff;//if len <= 0, which means the 23 bit of frac is enough, we do not need to consider val2
+
+	if(val1 == 0x00800000 )//corner case, special judge
+	{
+		val1 = 0;
+		temp++;
+	}
+	return flag  | ((temp << 23)) | (val1);
 }
 /* 
  * float_twice - Return bit-level equivalent of expression 2*f for
