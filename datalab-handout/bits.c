@@ -407,6 +407,25 @@ unsigned float_i2f(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned float_twice(unsigned uf) {
-  return 2;
+unsigned float_twice(unsigned uf) 
+{
+	unsigned s, exp, frac;
+	s = uf & 0x80000000;//s is the sign bit
+	exp = (uf >> 23) & 0x000000ff;//exp is the exponent domain
+	frac = uf & 0x007fffff;//get the lowest 23 bits of uf
+	if(exp == 255)//NaN or INF
+		return uf;
+	if(exp == 0)//denormalized floating point number
+	{
+		if(frac & 0x00400000)//if the first bit of frac is 1
+			exp++;
+		frac = (frac << 1) & 0x007fffff;
+	}
+	else
+	{
+		exp++;
+		if(exp == 255)//If 2*uf is INF
+			frac = 0;
+	}
+	return s | (exp << 23) | frac;
 }
