@@ -1,0 +1,59 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Include your name and ID here.
+# Written by fanese-myk, use iaddq, rearrange instruction to avoid load/use hazzard
+# use loop unrolling 2*1
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = l len
+ncopy:
+
+##################################################################
+# You can modify this portion
+	# Loop header
+	xorq %rax,%rax		# count1 = 0;
+	andq %rdx,%rdx		# test len
+	jg NORMAL			# if len == 0, just return 0
+	ret
+NORMAL:
+	iaddq $-1, %rdx		# calculate len - 1
+	je REST				# if len == 1, jump to REST
+Loop:
+	mrmovq (%rdi), %r10	# read val from src...
+	iaddq $16, %rdi		# src+=2
+	rmmovq %r10, (%rsi) # save *src to *rsi
+	andq %r10, %r10		# test %r10
+	jle ADD1			# if This number is not greater than 0, than not add %rax
+	iaddq $1, %rax		# add the number of postive numbers
+ADD1:	
+	mrmovq -8(%rdi), %r10	# read the second number
+	iaddq $16, %rsi			# dst += 2
+	rmmovq %r10, -8(%rsi)	# save *(src + 1) to *(dst + 1)
+	andq %r10, %r10			# val <= 0?
+	jle ADD2				# if not, add the count
+	iaddq $1, %rax			# count++
+ADD2:
+	iaddq $-2, %rdx			# len -= 2 if(len - 1 > 0) that means len > 1
+	jg Loop					# if so, goto Loop:
+
+	jl Done        			# when out of loop, if(len - 1 < 0), then we have finished looping over all elements
+REST:
+	mrmovq (%rdi), %r10		# load *src
+	andq %r10, %r10			# test *src
+	jle ADD3				# if not greater than 0, jump
+	iaddq $1, %rax			# add the count of postive numbers
+ADD3:	
+	rmmovq %r10, (%rsi)		# save
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */

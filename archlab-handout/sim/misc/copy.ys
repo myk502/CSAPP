@@ -1,0 +1,58 @@
+# This is a y86-64 Assembly code written by fanesemyk, as Part A of CSAPP archlab
+
+		.pos 0
+		irmovq stack, %rsp
+		call main
+		halt
+	.align 8
+# Source block
+src:
+		.quad 0x00a
+		.quad 0x0b0
+		.quad 0xc00
+
+# Destination block
+dest:
+		.quad 0x111
+		.quad 0x222
+		.quad 0x333
+
+# long copy_block(long* src, long* dest, long len)
+copy_block:
+		pushq %r12      #save r12, for it is callee-save
+		pushq %r13      #save r13, for storing integer 1
+		pushq %r14		#save r14, for storing integer 8
+		irmovq $1, %r13
+		irmovq $8, %r14
+		irmovq $0, %rax #result = 0
+		jmp loop_test   #jump to the start point of loop
+loop:
+		mrmovq 0(%rdi), %r12  #use %r12 to save *rdi
+		addq %r14, %rdi       #rdi++
+		rmmovq %r12, (%rsi)   #*rsi = *(rdi - 1)
+		addq %r14, %rsi       #rsi++
+		xorq %r12, %rax
+		subq %r13, %rdx
+loop_test:
+		andq %rdx, %rdx
+		jg loop
+		popq %r14
+		popq %r13
+		popq %r12
+		ret
+
+main:
+		irmovq src, %rdi
+		irmovq dest, %rsi
+		irmovq $3, %rdx
+		call copy_block
+		ret
+
+		.pos 0x300
+stack:
+
+
+		
+
+
+

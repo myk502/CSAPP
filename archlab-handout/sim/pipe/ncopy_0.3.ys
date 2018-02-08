@@ -1,0 +1,46 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Include your name and ID here.
+# Written by fanese-myk, use rearrange instruction to avoid load/use hazzard
+# change the jle Npos position, tring to reduce wrongly predicted branch bubble cost
+# Describe how and why you modified the baseline code.
+#
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+	# Loop header
+	xorq %rax,%rax		# count = 0;
+	andq %rdx,%rdx		# len <= 0?
+	jg YES	# the same as ver0.2
+	ret
+YES:	
+	irmovq $1, %r11
+	irmovq $8, %r12
+Loop:	mrmovq (%rdi), %r10	# read val from src...
+	addq %r12, %rdi		# src++
+	subq %r11, %rdx		# len--
+	rmmovq %r10, (%rsi)	# ...and store it to dst
+	andq %r10, %r10		# val <= 0?
+	jle Npos		# if so, goto Npos:
+	addq %r11, %rax		# count++
+Npos:
+	addq %r12, %rsi		# dst++
+	andq %rdx,%rdx		# len > 0?
+	jg Loop			# if so, goto Loop:
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */

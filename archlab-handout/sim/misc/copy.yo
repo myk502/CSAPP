@@ -1,0 +1,58 @@
+                            | # This is a y86-64 Assembly code written by fanesemyk, as Part A of CSAPP archlab
+                            | 
+0x000:                      | 		.pos 0
+0x000: 30f40003000000000000 | 		irmovq stack, %rsp
+0x00a: 80a300000000000000   | 		call main
+0x013: 00                   | 		halt
+0x018:                      | 	.align 8
+                            | # Source block
+0x018:                      | src:
+0x018: 0a00000000000000     | 		.quad 0x00a
+0x020: b000000000000000     | 		.quad 0x0b0
+0x028: 000c000000000000     | 		.quad 0xc00
+                            | 
+                            | # Destination block
+0x030:                      | dest:
+0x030: 1101000000000000     | 		.quad 0x111
+0x038: 2202000000000000     | 		.quad 0x222
+0x040: 3303000000000000     | 		.quad 0x333
+                            | 
+                            | # long copy_block(long* src, long* dest, long len)
+0x048:                      | copy_block:
+0x048: a0cf                 | 		pushq %r12      #save r12, for it is callee-save
+0x04a: a0df                 | 		pushq %r13      #save r13, for storing integer 1
+0x04c: a0ef                 | 		pushq %r14		#save r14, for storing integer 8
+0x04e: 30fd0100000000000000 | 		irmovq $1, %r13
+0x058: 30fe0800000000000000 | 		irmovq $8, %r14
+0x062: 30f00000000000000000 | 		irmovq $0, %rax #result = 0
+0x06c: 709100000000000000   | 		jmp loop_test   #jump to the start point of loop
+0x075:                      | loop:
+0x075: 50c70000000000000000 | 		mrmovq 0(%rdi), %r12  #use %r12 to save *rdi
+0x07f: 60e7                 | 		addq %r14, %rdi       #rdi++
+0x081: 40c60000000000000000 | 		rmmovq %r12, (%rsi)   #*rsi = *(rdi - 1)
+0x08b: 60e6                 | 		addq %r14, %rsi       #rsi++
+0x08d: 63c0                 | 		xorq %r12, %rax
+0x08f: 61d2                 | 		subq %r13, %rdx
+0x091:                      | loop_test:
+0x091: 6222                 | 		andq %rdx, %rdx
+0x093: 767500000000000000   | 		jg loop
+0x09c: b0ef                 | 		popq %r14
+0x09e: b0df                 | 		popq %r13
+0x0a0: b0cf                 | 		popq %r12
+0x0a2: 90                   | 		ret
+                            | 
+0x0a3:                      | main:
+0x0a3: 30f71800000000000000 | 		irmovq src, %rdi
+0x0ad: 30f63000000000000000 | 		irmovq dest, %rsi
+0x0b7: 30f20300000000000000 | 		irmovq $3, %rdx
+0x0c1: 804800000000000000   | 		call copy_block
+0x0ca: 90                   | 		ret
+                            | 
+0x300:                      | 		.pos 0x300
+0x300:                      | stack:
+                            | 
+                            | 
+                            | 		
+                            | 
+                            | 
+                            | 

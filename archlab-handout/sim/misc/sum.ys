@@ -1,0 +1,43 @@
+# This is a y86-64 Assembly code written by fanesemyk, as Part A of CSAPP archlab
+
+		.pos 0
+		irmovq stack, %rsp
+		call main
+		halt
+
+# Sample linked list
+
+		.align 8
+ele1:
+		.quad 0x00a
+		.quad e1e2
+e1e2:
+		.quad 0x0b0
+		.quad e1e3
+e1e3:
+		.quad 0xc00
+		.quad 0
+
+# long sum_list(list_ptr ls)
+# ls stored in %rdi
+
+sum_list:
+		irmovq $0, %rax
+		jmp loop1
+loop:
+		mrmovq 0(%rdi), %rsi
+		addq %rsi, %rax
+		mrmovq 8(%rdi), %rsi
+		rrmovq %rsi, %rdi
+loop1:
+		andq %rdi, %rdi
+		jne loop
+		ret
+
+main:
+		irmovq ele1, %rdi
+		call sum_list
+		ret
+
+		.pos 0x400
+stack:

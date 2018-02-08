@@ -1,0 +1,43 @@
+# This is a y86-64 Assembly code written by fanesemyk, as Part A of CSAPP archlab
+
+		.pos 0
+		irmovq stack, %rsp
+		call main
+		halt
+
+# Sample linked list
+
+		.align 8
+ele1:
+		.quad 0x00a
+		.quad e1e2
+e1e2:
+		.quad 0x0b0
+		.quad e1e3
+e1e3:
+		.quad 0xc00
+		.quad 0
+
+# long rsum_list(list_ptr ls)
+# ls in %rdi
+
+rsum_list:
+		pushq %r12  #callee-save registers, save it because we will change it
+		irmovq $0, %rax
+		andq %rdi,%rdi
+		je RETURN
+		mrmovq 0(%rdi), %r12 #store the node value in %rsi
+		mrmovq 8(%rdi), %rdi #replace %rdi with the node pointer
+		call rsum_list
+		addq %r12, %rax
+RETURN:
+		popq %r12
+		ret
+
+main:
+		irmovq ele1, %rdi
+		call rsum_list
+		ret
+
+		.pos 0x400
+stack:
