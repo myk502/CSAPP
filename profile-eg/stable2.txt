@@ -1,0 +1,8 @@
+Case		Sort	List	Lower	Strlen	Hash	Rest
+Initial  	0	0	0	0	0	0
+Quicksort	0	0	0	0	0	0
+Iter First	0	0	0	0	0	0
+Iter Last	0	0	0	0	0	0
+Big Table	0	0	0	0	0	0
+Better Hash	0	0	0	0	0	0
+Linear Lower	0	0	0	0	0	0
