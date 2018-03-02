@@ -1,0 +1,3 @@
+./myspin 2 &
+./myspin 3 &
+jobs

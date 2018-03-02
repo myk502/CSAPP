@@ -1,0 +1,18 @@
+pid_t Fork(void);
+char* Fgets(char*, int, FILE*);
+void unix_error(char* msg);
+void Pause(void);
+typedef void (*sighandler_t)(int);
+sighandler_t Signal(int, sighandler_t);
+ssize_t Sio_puts(char s[]);
+ssize_t Sio_putl(long v);
+void Sio_error(char s[]);
+unsigned int Sleep(unsigned int secs);
+typedef void handler_t(int);
+handler_t* Signal(int signum, handler_t* handler);
+void Sigprocmask(int, const sigset_t*, sigset_t*);
+void Execve(const char* filename, char *const argv[], char *const envp[]);
+void Sigfillset(sigset_t* set);
+void Sigemptyset(sigset_t* set);
+void Sigaddset(sigset_t* set, int signum);
+pid_t Waitpid(pid_t, int*, int);
